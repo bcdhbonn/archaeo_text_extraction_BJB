@@ -19,7 +19,7 @@ from rdflib import Graph, Namespace, RDF, SKOS
 
 # Lokale Pfade auf Ihrem Windows-System
 pdf_base_dir = r"D:\Sciebo\BCDH_Projektbox\Projekte\BonnerJahrbuecher_etxract_2026\BJB_PDF_1970_2014"
-filename = "1970.pdf"
+filename = "1973.pdf"
 
 # Vokabular liegt im Workspace-Ordner (e:\AIBJB)
 vocab_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "archaevocabNLDE.ttl")
@@ -47,8 +47,8 @@ except Exception as e:
 MODEL_NAME = "gemini-2.5-flash-lite" # Standardisiert auf das aktuelle stabile Modell
 
 # Seitenbereich
-START_PAGE = 75
-END_PAGE = 80
+START_PAGE = 26
+END_PAGE = 137
 
 # Bestimme das Publikationsjahr aus dem PDF-Namen für die Layout-Auswahl
 try:
