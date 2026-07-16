@@ -1,0 +1,8 @@
+__pycache__/
+.agents/
+*.pdf
+.gemini/
+scratch/
+test_regex.py
+inspect_chars.py
+lookup_places.py

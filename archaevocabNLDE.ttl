@@ -1,0 +1,1311 @@
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix ex: <http://example.org/archaeology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+ex:Abschlag a skos:Concept ;
+    skos:broader ex:Steinobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Abschlag"@de,
+        "Afslag"@nl .
+
+ex:Altsteinzeit a skos:Concept ;
+    skos:broader ex:Steinzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Altsteinzeit"@de,
+        "Oude Steentijd"@nl .
+
+ex:Bandkeramik a skos:Concept ;
+    skos:broader ex:Steinzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Bandkeramik"@de,
+        "Bandkeramiek"@nl .
+
+ex:Baukeramik_General a skos:Concept ;
+    skos:broader ex:Baukeramik ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Baukeramik"@de,
+        "Bouwkeramiek"@nl .
+
+ex:Beil a skos:Concept ;
+    skos:broader ex:Steinobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Beil"@de,
+        "Bijl"@nl .
+
+ex:Beisetzung a skos:Concept ;
+    skos:broader ex:Grab ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Beisetzung"@de,
+        "Bijzetting"@nl .
+
+ex:Bestattung a skos:Concept ;
+    skos:broader ex:Grab ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Bestattung"@de,
+        "Begraving"@nl .
+
+ex:Bestimmung a skos:Concept ;
+    skos:broader ex:Datierung_unbekannt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Bestimmung"@de,
+        "determinatie"@nl .
+
+ex:Brandgrab a skos:Concept ;
+    skos:broader ex:Grab ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Brandgrab"@de,
+        "Brandgraf"@nl .
+
+ex:Bronze a skos:Concept ;
+    skos:broader ex:Metallobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Bronze"@de,
+        "Brons"@nl .
+
+ex:Bronzezeit a skos:Concept ;
+    skos:broader ex:Metallzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Bronzezeit"@de,
+        "Bronstijd"@nl .
+
+ex:Brunnen a skos:Concept ;
+    skos:broader ex:Infrastruktur ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Brunnen"@de,
+        "Waterput"@nl .
+
+ex:Dachziegel a skos:Concept ;
+    skos:broader ex:Baukeramik ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Dachziegel"@de,
+        "Dakpan"@nl .
+
+ex:Dorf a skos:Concept ;
+    skos:broader ex:Siedlung ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Dorf"@de,
+        "Dorp"@nl .
+
+ex:Eisen a skos:Concept ;
+    skos:broader ex:Metallobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Eisen"@de,
+        "IJzer"@nl .
+
+ex:Eisenzeit a skos:Concept ;
+    skos:broader ex:Metallzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Eisenzeit"@de,
+        "IJzertijd"@nl .
+
+ex:Facettiert a skos:Concept ;
+    skos:broader ex:Steinobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Facettiert"@de,
+        "Gefacetteerd"@nl .
+
+ex:Felsgesteinbeil a skos:Concept ;
+    skos:broader ex:Steinobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Felsgesteinbeil"@de,
+        "Natuurstenen bijl"@nl .
+
+ex:Fensterglas a skos:Concept ;
+    skos:broader ex:Glas_Kat ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Fensterglas"@de,
+        "Vensterglas"@nl .
+
+ex:Feuerstein a skos:Concept ;
+    skos:broader ex:Steinobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Feuerstein"@de,
+        "Vuursteen"@nl .
+
+ex:Feuersteinbeil a skos:Concept ;
+    skos:broader ex:Steinobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Feuersteinbeil"@de,
+        "Vuurstenen bijl"@nl .
+
+ex:Fibel a skos:Concept ;
+    skos:broader ex:Metallobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Fibel"@de,
+        "Fibula"@nl .
+
+ex:Fruehmittelalter a skos:Concept ;
+    skos:broader ex:Mittelalter ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Frühmittelalter"@de,
+        "Vroege Middeleeuwen"@nl .
+
+ex:Fundament a skos:Concept ;
+    skos:broader ex:Gebaeude ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Fundament"@de,
+        "Fundering"@nl .
+
+ex:Gebaeude_General a skos:Concept ;
+    skos:broader ex:Gebaeude ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Gebäude"@de,
+        "Gebouw"@nl .
+
+ex:Glas a skos:Concept ;
+    skos:broader ex:Glas_Kat ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Glas"@de,
+        "Glas"@nl .
+
+ex:Glasgefaess a skos:Concept ;
+    skos:broader ex:Glas_Kat ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Glasgefäß"@de,
+        "Glaswerk"@nl .
+
+ex:Glasperle a skos:Concept ;
+    skos:broader ex:Glas_Kat ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Glasperle"@de,
+        "Glaskraal"@nl .
+
+ex:Glockenbecher a skos:Concept ;
+    skos:broader ex:Steinzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Glockenbecher"@de,
+        "Klokbekercultuur (Bell Beakers)"@nl .
+
+ex:Gold a skos:Concept ;
+    skos:broader ex:Metallobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Gold"@de,
+        "Goud"@nl .
+
+ex:Grabbeigaben a skos:Concept ;
+    skos:broader ex:Grab ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Grabbeigaben"@de,
+        "Grafgiften"@nl .
+
+ex:Graben_Gracht a skos:Concept ;
+    skos:broader ex:Grabenwerk ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Graben"@de,
+        "Gracht"@nl .
+
+ex:Graben_Greppel a skos:Concept ;
+    skos:broader ex:Grabenwerk ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Graben"@de,
+        "Greppel"@nl .
+
+ex:Graeberfeld a skos:Concept ;
+    skos:broader ex:Grab ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Gräberfeld"@de,
+        "Grafveld"@nl .
+
+ex:Grubenhaus a skos:Concept ;
+    skos:broader ex:Gebaeude ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Grubenhaus"@de,
+        "Hutkom"@nl .
+
+ex:Hallstatt a skos:Concept ;
+    skos:broader ex:Metallzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Hallstatt"@de,
+        "Vroege IJzertijd"@nl .
+
+ex:Hausgrundriss a skos:Concept ;
+    skos:broader ex:Gebaeude ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Hausgrundriss"@de,
+        "Huisplattegrond"@nl .
+
+ex:Hausplatz a skos:Concept ;
+    skos:broader ex:Siedlung ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Hausplatz"@de,
+        "Huisplaats"@nl .
+
+ex:Hochmittelalter a skos:Concept ;
+    skos:broader ex:Mittelalter ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Hochmittelalter"@de,
+        "Volle Middeleeuwen"@nl .
+
+ex:Hofstelle a skos:Concept ;
+    skos:broader ex:Siedlung ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Hofstelle"@de,
+        "Erf"@nl .
+
+ex:Holz a skos:Concept ;
+    skos:broader ex:Organisch ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Holz"@de,
+        "Hout"@nl .
+
+ex:Huegelgrab a skos:Concept ;
+    skos:broader ex:Grab ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Hügelgrab"@de,
+        "Grafheuvel"@nl .
+
+ex:Imbrex a skos:Concept ;
+    skos:broader ex:Baukeramik ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Imbrex"@de,
+        "Imbrex"@nl .
+
+ex:Industriezeitalter a skos:Concept ;
+    skos:broader ex:Neuzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Industriezeitalter"@de,
+        "Industriële tijd"@nl .
+
+ex:Irdenware a skos:Concept ;
+    skos:broader ex:Keramik ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Irdenware"@de,
+        "Aardewerk"@nl .
+
+ex:Jungsteinzeit a skos:Concept ;
+    skos:broader ex:Steinzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Jungsteinzeit"@de,
+        "Nieuwe Steentijd"@nl .
+
+ex:Kaiserzeit a skos:Concept ;
+    skos:broader ex:Roemische_Zeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Kaiserzeit"@de,
+        "Romeinse Keizertijd"@nl .
+
+ex:Kalkbrennofen a skos:Concept ;
+    skos:broader ex:Produktion ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Kalkbrennofen"@de,
+        "Kalkoven"@nl .
+
+ex:Kanal a skos:Concept ;
+    skos:broader ex:Infrastruktur ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Kanal"@de,
+        "Kanaal"@nl .
+
+ex:Karolingerzeit a skos:Concept ;
+    skos:broader ex:Mittelalter ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Karolingerzeit"@de,
+        "Karolingisch"@nl .
+
+ex:Keller a skos:Concept ;
+    skos:broader ex:Gebaeude ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Keller"@de,
+        "Kelder"@nl .
+
+ex:Klinge a skos:Concept ;
+    skos:broader ex:Steinobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Klinge"@de,
+        "Kling"@nl .
+
+ex:Knochen a skos:Concept ;
+    skos:broader ex:Organisch ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Knochen"@de,
+        "Bot"@nl .
+
+ex:Koerpergrab a skos:Concept ;
+    skos:broader ex:Grab ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Körpergrab"@de,
+        "Lijkbegraving"@nl .
+
+ex:Kreisgraben a skos:Concept ;
+    skos:broader ex:Grabenwerk ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Kreisgraben"@de,
+        "Kringgreppel"@nl .
+
+ex:Krug a skos:Concept ;
+    skos:broader ex:Keramik ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Krug"@de,
+        "Kruik"@nl .
+
+ex:LBK a skos:Concept ;
+    skos:broader ex:Steinzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "LBK"@de,
+        "Lineaire Bandkeramiek"@nl .
+
+ex:Landwehr a skos:Concept ;
+    skos:broader ex:Grabenwerk ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Landwehr"@de,
+        "Landweer"@nl .
+
+ex:Latene a skos:Concept ;
+    skos:broader ex:Metallzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Latène"@de,
+        "Late IJzertijd"@nl .
+
+ex:Leder a skos:Concept ;
+    skos:broader ex:Organisch ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Leder"@de,
+        "Leer"@nl .
+
+ex:Leichenbrand a skos:Concept ;
+    skos:broader ex:Grab ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Leichenbrand"@de,
+        "Crematie"@nl .
+
+ex:Mauerwerk a skos:Concept ;
+    skos:broader ex:Gebaeude ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Mauerwerk"@de,
+        "Muurwerk"@nl .
+
+ex:Meiler a skos:Concept ;
+    skos:broader ex:Produktion ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Meiler"@de,
+        "Houtskoolmeiler"@nl .
+
+ex:Merowingerzeit a skos:Concept ;
+    skos:broader ex:Mittelalter ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Merowingerzeit"@de,
+        "Merovingisch"@nl .
+
+ex:Mesolithikum a skos:Concept ;
+    skos:broader ex:Steinzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Mesolithikum"@de,
+        "Mesolithicum"@nl .
+
+ex:Metall a skos:Concept ;
+    skos:broader ex:Metallobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Metall"@de,
+        "Metaal"@nl .
+
+ex:Metallzeit_General a skos:Concept ;
+    skos:broader ex:Metallzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Metallzeit"@de,
+        "Metaaltijden"@nl .
+
+ex:Michelsberger_Kultur a skos:Concept ;
+    skos:broader ex:Steinzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Michelsberger Kultur"@de,
+        "Michelsberg"@nl .
+
+ex:Mittelalter_General a skos:Concept ;
+    skos:broader ex:Mittelalter ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Mittelalter"@de,
+        "Middeleeuwen"@nl .
+
+ex:Mittelsteinzeit a skos:Concept ;
+    skos:broader ex:Steinzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Mittelsteinzeit"@de,
+        "Midden-Steentijd"@nl .
+
+ex:Moderne a skos:Concept ;
+    skos:broader ex:Neuzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Moderne"@de,
+        "Moderne Tijd"@nl .
+
+ex:Muehlstein a skos:Concept ;
+    skos:broader ex:Steinobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Mühlstein"@de,
+        "Maalsteen"@nl .
+
+ex:Muenze a skos:Concept ;
+    skos:broader ex:Metallobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Münze"@de,
+        "Munt"@nl .
+
+ex:Napoleonshoed a skos:Concept ;
+    skos:broader ex:Steinobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Napoleonshoed"@de,
+        "Napoleonshoed"@nl .
+
+ex:Neolithikum a skos:Concept ;
+    skos:broader ex:Steinzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Neolithikum"@de,
+        "Neolithicum"@nl .
+
+ex:Neuzeit_General a skos:Concept ;
+    skos:broader ex:Neuzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Neuzeit"@de,
+        "Nieuwe Tijd"@nl .
+
+ex:Ofen a skos:Concept ;
+    skos:broader ex:Produktion ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Ofen"@de,
+        "Oven"@nl .
+
+ex:Palaeolithikum a skos:Concept ;
+    skos:broader ex:Steinzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Paläolithikum"@de,
+        "Paleolithicum"@nl .
+
+ex:Perle a skos:Concept ;
+    skos:broader ex:Glas_Kat ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Perle"@de,
+        "Kraal"@nl .
+
+ex:Pfostenbau a skos:Concept ;
+    skos:broader ex:Gebaeude ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Pfostenbau"@de,
+        "Paalbouw"@nl .
+
+ex:Pfostengrube a skos:Concept ;
+    skos:broader ex:Gebaeude ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Pfostengrube"@de,
+        "Paalkuil"@nl .
+
+ex:Pfostenspur a skos:Concept ;
+    skos:broader ex:Gebaeude ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Pfostenspur"@de,
+        "Paalspoor"@nl .
+
+ex:Provinzialroemisch a skos:Concept ;
+    skos:broader ex:Roemische_Zeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Provinzialrömisch"@de,
+        "Gallo-Romeins"@nl .
+
+ex:Prunkbeil a skos:Concept ;
+    skos:broader ex:Metallobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Prunkbeil"@de,
+        "Pronkbijl"@nl .
+
+ex:Reibstein a skos:Concept ;
+    skos:broader ex:Steinobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Reibstein"@de,
+        "Loper / Ligger"@nl .
+
+ex:Rennfeuer a skos:Concept ;
+    skos:broader ex:Produktion ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Rennfeuer"@de,
+        "IJzerproductie"@nl .
+
+ex:Schanze a skos:Concept ;
+    skos:broader ex:Grabenwerk ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Schanze"@de,
+        "Schans"@nl .
+
+ex:Scherbe a skos:Concept ;
+    skos:broader ex:Keramik ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Scherbe"@de,
+        "Scherven"@nl .
+
+ex:Schlacke a skos:Concept ;
+    skos:broader ex:Metallobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Schlacke"@de,
+        "Slak"@nl .
+
+ex:Schlackenhalde a skos:Concept ;
+    skos:broader ex:Produktion ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Schlackenhalde"@de,
+        "Slakken"@nl .
+
+ex:Schmuck a skos:Concept ;
+    skos:broader ex:Metallobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Schmuck"@de,
+        "Sieraden"@nl .
+
+ex:Schnurkeramik a skos:Concept ;
+    skos:broader ex:Steinzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Schnurkeramik"@de,
+        "Touwbekercultuur"@nl .
+
+ex:Siedlungsgelaende a skos:Concept ;
+    skos:broader ex:Siedlung ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Siedlungsgelände"@de,
+        "Nederzettingsterrein"@nl .
+
+ex:Siedlungsspuren a skos:Concept ;
+    skos:broader ex:Siedlung ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Siedlungsspuren"@de,
+        "Nederzettingssporen"@nl .
+
+ex:Silber a skos:Concept ;
+    skos:broader ex:Metallobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Silber"@de,
+        "Zilver"@nl .
+
+ex:Silex a skos:Concept ;
+    skos:broader ex:Steinobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Silex"@de,
+        "Silex"@nl .
+
+ex:Spaetantike a skos:Concept ;
+    skos:broader ex:Roemische_Zeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Spätantike"@de,
+        "Laat-Romeins"@nl .
+
+ex:Spaetmittelalter a skos:Concept ;
+    skos:broader ex:Mittelalter ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Spätmittelalter"@de,
+        "Late Middeleeuwen"@nl .
+
+ex:Speicher a skos:Concept ;
+    skos:broader ex:Gebaeude ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Speicher"@de,
+        "Spieker"@nl .
+
+ex:Spitzoval a skos:Concept ;
+    skos:broader ex:Steinobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Spitzoval"@de,
+        "Spitsovale doorsnede"@nl .
+
+ex:Steinzeit_General a skos:Concept ;
+    skos:broader ex:Steinzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Steinzeit"@de,
+        "Steentijd"@nl .
+
+ex:Steinzeug a skos:Concept ;
+    skos:broader ex:Keramik ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Steinzeug"@de,
+        "Steengoed"@nl .
+
+ex:Strasse a skos:Concept ;
+    skos:broader ex:Infrastruktur ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Straße"@de,
+        "Straat"@nl .
+
+ex:Tegula a skos:Concept ;
+    skos:broader ex:Baukeramik ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Tegula"@de,
+        "Tegula"@nl .
+
+ex:Terra_Sigillata a skos:Concept ;
+    skos:broader ex:Keramik ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Terra Sigillata"@de,
+        "Terra Sigillata"@nl .
+
+ex:Textil a skos:Concept ;
+    skos:broader ex:Organisch ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Textil"@de,
+        "Textiel"@nl .
+
+ex:Toepferofen a skos:Concept ;
+    skos:broader ex:Produktion ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Töpferofen"@de,
+        "Pottenbakkersoven"@nl .
+
+ex:Topf a skos:Concept ;
+    skos:broader ex:Keramik ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Topf"@de,
+        "Pot"@nl .
+
+ex:Trichterbecher a skos:Concept ;
+    skos:broader ex:Steinzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Trichterbecher"@de,
+        "Trechterbeker"@nl .
+
+ex:Urgeschichte_General a skos:Concept ;
+    skos:broader ex:Urgeschichte ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Urgeschichte"@de,
+        "Oertijd"@nl .
+
+ex:Urne a skos:Concept ;
+    skos:broader ex:Keramik ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Urne"@de,
+        "Urn (schragrandurn)"@nl .
+
+ex:Urnenfeld a skos:Concept ;
+    skos:broader ex:Grab ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Urnenfeld"@de,
+        "Urnenveldje"@nl .
+
+ex:Urnenfelderzeit a skos:Concept ;
+    skos:broader ex:Metallzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Urnenfelderzeit"@de,
+        "Urnenveldenperiode"@nl .
+
+ex:Urnengrab a skos:Concept ;
+    skos:broader ex:Grab ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Urnengrab"@de,
+        "Urnengraf"@nl .
+
+ex:Vorgeschichte a skos:Concept ;
+    skos:broader ex:Urgeschichte ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Vorgeschichte"@de,
+        "Voorgeschiedenis"@nl .
+
+ex:Vorroemische_Eisenzeit a skos:Concept ;
+    skos:broader ex:Metallzeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Vorrömische Eisenzeit"@de,
+        "Voor-Romeinse IJzertijd"@nl .
+
+ex:Waffe a skos:Concept ;
+    skos:broader ex:Metallobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Waffe"@de,
+        "Wapen"@nl .
+
+ex:Wallanlage a skos:Concept ;
+    skos:broader ex:Grabenwerk ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Wallanlage"@de,
+        "Wal"@nl .
+
+ex:Wasserleitung a skos:Concept ;
+    skos:broader ex:Infrastruktur ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Wasserleitung"@de,
+        "Waterleiding"@nl .
+
+ex:Weg a skos:Concept ;
+    skos:broader ex:Infrastruktur ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Weg"@de,
+        "Weg"@nl .
+
+ex:Wohnplatz a skos:Concept ;
+    skos:broader ex:Siedlung ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Wohnplatz"@de,
+        "Woonplaats"@nl .
+
+ex:Wuestung a skos:Concept ;
+    skos:broader ex:Siedlung ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Wüstung"@de,
+        "Verlaten nederzetting"@nl .
+
+ex:Ziegel a skos:Concept ;
+    skos:broader ex:Baukeramik ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Ziegel"@de,
+        "Tegel"@nl .
+
+ex:burgus_a0f8 a skos:Concept ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Burgus"@de .
+
+ex:fraenkisch a skos:Concept ;
+    skos:broader ex:Mittelalter ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "fränkisch"@de,
+        "Frankisch"@nl .
+
+ex:fraglich a skos:Concept ;
+    skos:broader ex:Datierung_unbekannt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "fraglich"@de,
+        "ongedateerd"@nl .
+
+ex:grube_4574 a skos:Concept ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Grube"@de .
+
+ex:nicht_datiert a skos:Concept ;
+    skos:broader ex:Datierung_unbekannt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "nicht datiert"@de,
+        "niet gedateerd"@nl .
+
+ex:ohne_Befund a skos:Concept ;
+    skos:broader ex:Datierung_unbekannt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "ohne Befund"@de,
+        "geen vondsten"@nl .
+
+ex:unbekannt a skos:Concept ;
+    skos:broader ex:Datierung_unbekannt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "unbekannt"@de,
+        "onbekend"@nl .
+
+ex:vor_und_fruehgeschichtlich a skos:Concept ;
+    skos:broader ex:Urgeschichte ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "vor- und frühgeschichtlich"@de,
+        "vroegste geschiedenis"@nl .
+
+ex:Grab_General a skos:Concept ;
+    skos:broader ex:Grab ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:narrower ex:grabareal_997f ;
+    skos:prefLabel "Grab unbestimmt"@de,
+        "Graf"@nl .
+
+ex:Steingeraet a skos:Concept ;
+    skos:broader ex:Steinobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:narrower ex:wetzstein_7213 ;
+    skos:prefLabel "Steingerät"@de,
+        "Natuursteen"@nl .
+
+ex:altweg_023b a skos:Concept ;
+    skos:broader ex:Infrastruktur ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Altweg"@de .
+
+ex:bleisarg_60ae a skos:Concept ;
+    skos:broader ex:Grab ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Bleisarg"@de .
+
+ex:bleistück_6074 a skos:Concept ;
+    skos:broader ex:Metallobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Bleistück"@de .
+
+ex:brandschicht_4c2f a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Brandschicht"@de .
+
+ex:dolium_5746 a skos:Concept ;
+    skos:broader ex:Keramik ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Dolium"@de .
+
+ex:estrichboden_806a a skos:Concept ;
+    skos:broader ex:architekturfragment_bbb4 ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Estrichboden"@de .
+
+ex:fahrrinnen_8829 a skos:Concept ;
+    skos:broader ex:Infrastruktur ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Fahrrinnen"@de .
+
+ex:firnisware_798d a skos:Concept ;
+    skos:broader ex:Keramik ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Firnisware"@de .
+
+ex:glasfluß_fec5 a skos:Concept ;
+    skos:broader ex:Glas_Kat ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Glasfluß"@de .
+
+ex:grube_5e60 a skos:Concept ;
+    skos:altLabel "Gruben"@de ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Grube"@de .
+
+ex:hausausschachtung_34cb a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Hausausschachtung"@de .
+
+ex:herdstelle_3bb4 a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Herdstelle"@de .
+
+ex:hohlweg_c39f a skos:Concept ;
+    skos:broader ex:Infrastruktur ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Hohlweg"@de .
+
+ex:hütte_0ffb a skos:Concept ;
+    skos:broader ex:Gebaeude ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Hütte"@de .
+
+ex:kaltwasserbecken_1c9d a skos:Concept ;
+    skos:broader ex:architekturfragment_bbb4 ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Kaltwasserbecken"@de .
+
+ex:kanne_f441 a skos:Concept ;
+    skos:broader ex:Gefaess ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Kanne"@de .
+
+ex:kapelle_c7df a skos:Concept ;
+    skos:broader ex:Gebaeude ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Kapelle"@de .
+
+ex:kloster_2598 a skos:Concept ;
+    skos:broader ex:Siedlung ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Kloster"@de .
+
+ex:lager_e133 a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Lager"@de .
+
+ex:laufhorizont_520f a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Laufhorizont"@de .
+
+ex:luftschutzraum_db1b a skos:Concept ;
+    skos:broader ex:Befestigung ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Luftschutzraum"@de .
+
+ex:mauer_8065 a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Mauer"@de .
+
+ex:mauer_f288 a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Mauer"@de .
+
+ex:nietstift_2453 a skos:Concept ;
+    skos:broader ex:Metallobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Nietstift"@de .
+
+ex:nietstift_5b72 a skos:Concept ;
+    skos:broader ex:Objekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Nietstift"@de .
+
+ex:pfosten_46b3 a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Pfosten"@de .
+
+ex:pfosten_5bde a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Pfosten"@de .
+
+ex:putz_0c10 a skos:Concept ;
+    skos:broader ex:architekturfragment_bbb4 ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Putz"@de .
+
+ex:riemendurchzug_4923 a skos:Concept ;
+    skos:broader ex:Metallobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Riemendurchzug"@de .
+
+ex:ring_a65a a skos:Concept ;
+    skos:broader ex:Metallobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Ring"@de .
+
+ex:rinnen_8694 a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Rinnen"@de .
+
+ex:sarkophag_307e a skos:Concept ;
+    skos:broader ex:Steinobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Sarkophag"@de .
+
+ex:schale_1af1 a skos:Concept ;
+    skos:broader ex:Gefaess ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Schale"@de .
+
+ex:schloßblech_d72d a skos:Concept ;
+    skos:broader ex:Metallobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Schloßblech"@de .
+
+ex:schüssel_3e41 a skos:Concept ;
+    skos:broader ex:Gefaess ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Schüssel"@de .
+
+ex:spolien_bd8b a skos:Concept ;
+    skos:broader ex:Objekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Spolien"@de .
+
+ex:spolien_d212 a skos:Concept ;
+    skos:broader ex:architekturfragment_bbb4 ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Spolien"@de .
+
+ex:strigil_62d1 a skos:Concept ;
+    skos:altLabel "Strigilis"@de ;
+    skos:broader ex:Metallobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Strigil"@de .
+
+ex:säulenbasis_ca3e a skos:Concept ;
+    skos:broader ex:architekturfragment_bbb4 ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Säulenbasis"@de .
+
+ex:terrassierung_49c3 a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Terrassierung"@de .
+
+ex:terrassierung_c4bb a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Terrassierung"@de .
+
+ex:tonlager_8f50 a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Tonlager"@de .
+
+ex:tonpfeife_4638 a skos:Concept ;
+    skos:broader ex:Keramik ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Tonpfeife"@de .
+
+ex:treppe_ada2 a skos:Concept ;
+    skos:broader ex:architekturfragment_bbb4 ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Treppe"@de .
+
+ex:trümmerstelle_4c26 a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Trümmerstelle"@de .
+
+ex:töpferei_41be a skos:Concept ;
+    skos:broader ex:Produktion ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Töpferei"@de .
+
+ex:venusfigur_865e a skos:Concept ;
+    skos:broader ex:Steinobjekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Venusfigur"@de .
+
+ex:villa_rustica_88aa a skos:Concept ;
+    skos:altLabel "Gutshof"@de,
+        "Villa"@de ;
+    skos:broader ex:Siedlung ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Villa rustica"@de .
+
+ex:wall_20a9 a skos:Concept ;
+    skos:broader ex:Befestigung ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Wall"@de .
+
+ex:wasserbecken_7e11 a skos:Concept ;
+    skos:broader ex:architekturfragment_bbb4 ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Wasserbecken"@de .
+
+ex:wegerinne_548b a skos:Concept ;
+    skos:broader ex:Infrastruktur ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Wegerinne"@de .
+
+ex:wetzstein_7213 a skos:Concept ;
+    skos:broader ex:Steingeraet ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Wetzstein"@de .
+
+ex:Befestigung a skos:Concept ;
+    skos:broader ex:Grabenwerk ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:narrower ex:luftschutzraum_db1b,
+        ex:wall_20a9 ;
+    skos:prefLabel "Befestigung"@de,
+        "Verdedigingswerk"@nl .
+
+ex:durchgang_c1d9 a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Architektur"@de,
+        "Durchgang"@de .
+
+ex:grabareal_997f a skos:Concept ;
+    skos:altLabel "Grab"@de ;
+    skos:broader ex:Grab ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Grabareal"@de .
+
+ex:Gefaess a skos:Concept ;
+    skos:broader ex:Keramik ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:narrower ex:kanne_f441,
+        ex:schale_1af1,
+        ex:schüssel_3e41 ;
+    skos:prefLabel "Gefäß"@de,
+        "Vaatwerk"@nl .
+
+ex:Neuzeit a skos:Concept ;
+    skos:broader ex:Epoche_Zeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Neuzeit"@de,
+        "Nieuwe Tijd"@nl .
+
+ex:Roemische_Zeit a skos:Concept ;
+    skos:broader ex:Epoche_Zeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Römische Zeit"@de,
+        "Romeinse Tijd"@nl .
+
+ex:Urgeschichte a skos:Concept ;
+    skos:broader ex:Epoche_Zeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Urgeschichte"@de,
+        "Prehistorie"@nl .
+
+ex:Organisch a skos:Concept ;
+    skos:broader ex:Objekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Organisch"@de,
+        "Organisch materiaal"@nl .
+
+ex:Baukeramik a skos:Concept ;
+    skos:broader ex:Objekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Baukeramik"@de,
+        "Bouwkeramiek"@nl .
+
+ex:Datierung_unbekannt a skos:Concept ;
+    skos:broader ex:Epoche_Zeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Datierung unbekannt"@de,
+        "Datering onbekend"@nl .
+
+ex:Glas_Kat a skos:Concept ;
+    skos:broader ex:Objekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:narrower ex:glasfluß_fec5 ;
+    skos:prefLabel "Glas"@de,
+        "Glas"@nl .
+
+ex:Epoche_Zeit a skos:Concept ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:narrower ex:Datierung_unbekannt,
+        ex:Metallzeit,
+        ex:Mittelalter,
+        ex:Neuzeit,
+        ex:Roemische_Zeit,
+        ex:Steinzeit,
+        ex:Urgeschichte ;
+    skos:prefLabel "Epoche/Zeit"@de,
+        "Tijdperken"@nl ;
+    skos:topConceptOf ex:ArchVokabular .
+
+ex:Grabenwerk a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Grabenwerk"@de,
+        "Grachtwerken"@nl .
+
+ex:Metallzeit a skos:Concept ;
+    skos:broader ex:Epoche_Zeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Metallzeit"@de,
+        "Metaaltijden"@nl .
+
+ex:Mittelalter a skos:Concept ;
+    skos:broader ex:Epoche_Zeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Mittelalter"@de,
+        "Middeleeuwen"@nl .
+
+ex:Produktion a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:narrower ex:töpferei_41be ;
+    skos:prefLabel "Produktion"@de,
+        "Productie"@nl .
+
+ex:architekturfragment_bbb4 a skos:Concept ;
+    skos:broader ex:Objekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:narrower ex:durchgang_c1d9,
+        ex:estrichboden_806a,
+        ex:kaltwasserbecken_1c9d,
+        ex:putz_0c10,
+        ex:spolien_d212,
+        ex:säulenbasis_ca3e,
+        ex:treppe_ada2,
+        ex:wasserbecken_7e11 ;
+    skos:prefLabel "Architekturelement"@de,
+        "Architekturfragment"@de .
+
+ex:Infrastruktur a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:narrower ex:altweg_023b,
+        ex:fahrrinnen_8829,
+        ex:hohlweg_c39f,
+        ex:wegerinne_548b ;
+    skos:prefLabel "Infrastruktur"@de,
+        "Infrastructuur"@nl .
+
+ex:Objekt a skos:Concept ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:narrower ex:Baukeramik,
+        ex:Glas_Kat,
+        ex:Keramik,
+        ex:Metallobjekt,
+        ex:Organisch,
+        ex:Steinobjekt,
+        ex:architekturfragment_bbb4,
+        ex:nietstift_5b72,
+        ex:spolien_bd8b ;
+    skos:prefLabel "Objekt"@de,
+        "Vondsten"@nl ;
+    skos:topConceptOf ex:ArchVokabular .
+
+ex:Siedlung a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:narrower ex:kloster_2598,
+        ex:villa_rustica_88aa ;
+    skos:prefLabel "Siedlung"@de,
+        "Nederzetting"@nl .
+
+ex:Keramik a skos:Concept ;
+    skos:broader ex:Objekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:narrower ex:dolium_5746,
+        ex:firnisware_798d,
+        ex:tonpfeife_4638 ;
+    skos:prefLabel "Keramik"@de,
+        "Keramiek"@nl .
+
+ex:Gebaeude a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:narrower ex:hütte_0ffb,
+        ex:kapelle_c7df ;
+    skos:prefLabel "Gebäude"@de,
+        "Gebouwen"@nl .
+
+ex:Grab a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:narrower ex:Grab_General,
+        ex:bleisarg_60ae,
+        ex:grabareal_997f ;
+    skos:prefLabel "Grab"@de,
+        "Graf"@nl .
+
+ex:Steinzeit a skos:Concept ;
+    skos:broader ex:Epoche_Zeit ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:prefLabel "Steinzeit"@de,
+        "Steentijd"@nl .
+
+ex:Steinobjekt a skos:Concept ;
+    skos:broader ex:Objekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:narrower ex:sarkophag_307e,
+        ex:venusfigur_865e ;
+    skos:prefLabel "Steinobjekt"@de,
+        "Natuursteen (Categorie)"@nl .
+
+ex:Metallobjekt a skos:Concept ;
+    skos:broader ex:Objekt ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:narrower ex:bleistück_6074,
+        ex:nietstift_2453,
+        ex:riemendurchzug_4923,
+        ex:ring_a65a,
+        ex:schloßblech_d72d,
+        ex:strigil_62d1 ;
+    skos:prefLabel "Metallobjekt"@de,
+        "Metaal (Categorie)"@nl .
+
+ex:Befund a skos:Concept ;
+    skos:broader ex:Befund ;
+    skos:inScheme ex:ArchVokabular ;
+    skos:narrower ex:Befund,
+        ex:Gebaeude,
+        ex:Grab,
+        ex:Grabenwerk,
+        ex:Infrastruktur,
+        ex:Produktion,
+        ex:Siedlung,
+        ex:brandschicht_4c2f,
+        ex:durchgang_c1d9,
+        ex:grube_5e60,
+        ex:hausausschachtung_34cb,
+        ex:herdstelle_3bb4,
+        ex:lager_e133,
+        ex:laufhorizont_520f,
+        ex:mauer_8065,
+        ex:mauer_f288,
+        ex:pfosten_46b3,
+        ex:pfosten_5bde,
+        ex:rinnen_8694,
+        ex:terrassierung_49c3,
+        ex:terrassierung_c4bb,
+        ex:tonlager_8f50,
+        ex:trümmerstelle_4c26 ;
+    skos:prefLabel "Befund"@de,
+        "Rohstoffgewinnung"@de,
+        "Sporen"@nl ;
+    skos:topConceptOf ex:ArchVokabular .
+
+ex:ArchVokabular a skos:ConceptScheme ;
+    dct:title "Archäologisches Vokabular (DE/NL)"@de,
+        "Archeologische Vocabulaire (DE/NL)"@nl ;
+    skos:hasTopConcept ex:Befund,
+        ex:Epoche_Zeit,
+        ex:Objekt .
+
