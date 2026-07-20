@@ -401,8 +401,17 @@ if text_pages:
         out_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), out_filename)
             
         df.to_csv(out_file, sep=";", index=False, encoding="utf-8-sig")
-        print(f"🎉 Datei gespeichert: {out_file}")
+        print(f"Datei gespeichert: {out_file}")
         print(df[['massnahme_id', 'ort', 'befunde_norm', 'funde_norm']].head(20).to_string())
+        
+        # Automatisch HTML-Vorschau mit Farbhervorhebung generieren
+        try:
+            from generate_preview import create_highlighted_html
+            preview_filename = f"LVR_{pdf_name_clean}_Highlighted_Preview.html"
+            preview_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), preview_filename)
+            create_highlighted_html(out_file, raw_txt_file, preview_file)
+        except Exception as pe:
+            print(f"Fehler bei der Preview-Generierung: {pe}")
     else:
         print("⚠️ Keine Daten gefunden.")
 else:
