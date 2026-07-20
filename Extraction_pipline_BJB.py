@@ -34,15 +34,17 @@ if not pdf_path:
     pdf_path = os.path.join(pdf_base_dir, filename) # Fallback
 
 # API Key & Client Initialisierung
-GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY', 'AIzaSyBAmu9okr-Md7pjipEISUtbkth1wbEO2Jg')
+GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
 
 if not GOOGLE_API_KEY:
-    print("❌ Bitte API Key als Umgebungsvariable GOOGLE_API_KEY eintragen!")
+    print("❌ Bitte setzen Sie Ihren Google API Key als Umgebungsvariable 'GOOGLE_API_KEY'!")
+    print("Beispiel (PowerShell): $env:GOOGLE_API_KEY='IHR_KEY'")
 
 try:
-    client = genai.Client(api_key=GOOGLE_API_KEY)
+    client = genai.Client(api_key=GOOGLE_API_KEY) if GOOGLE_API_KEY else None
 except Exception as e:
     print(f"❌ Fehler bei der Initialisierung des GenAI Clients: {e}")
+    client = None
 
 MODEL_NAME = "gemini-2.5-flash-lite" # Standardisiert auf das aktuelle stabile Modell
 
@@ -135,8 +137,8 @@ def clean_text(text):
     for old, new in replacements.items(): text = text.replace(old, new)
     header_pattern = r'(Römische\s+Zeit\s+\d+)|(\d+\s+Römische\s+Zeit)'
     text = re.sub(header_pattern, '', text, flags=re.IGNORECASE)
-    # Entferne Abbildungsunterschriften (z.B. "22 Lechenich. ... - Mafistab 1 : 2.")
-    caption_pattern = r'(?:^|\n)\d+\s+[A-ZÄÖÜ][\s\S]{1,300}?Ma[ßf]i?-?stab\s*\d+\s*:\s*\d+\.?'
+    # Entferne Abbildungsunterschriften (z.B. "12 Haldern. Bronzezeitliches Gefafi. - Mahstab 1 : 2.")
+    caption_pattern = r'(?:^|\n)(?!\d+\s+Jahresbericht)\d{1,3}\s+[A-ZÄÖÜ][^\n]*?(?:\n[^\n]*?){0,3}?Ma[ßfhmalit-]{1,5}\s*stab\s*\d+\s*:\s*\d+\.?'
     text = re.sub(caption_pattern, '', text, flags=re.IGNORECASE)
     return text
 
