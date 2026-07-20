@@ -340,6 +340,47 @@ elif os.path.exists(txt_file):
 else:
     print("❌ Weder PDF noch Rohtext-Datei gefunden.")
     
+def write_live_progress(current_idx, total_pages, last_ort=""):
+    pct = (current_idx + 1) / total_pages * 100
+    progress_html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "progress.html")
+    html_content = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="refresh" content="3">
+    <title>Extraktions-Fortschritt ({pct:.1f}%)</title>
+    <style>
+        body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }}
+        .card {{ background: #1e293b; padding: 35px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 480px; text-align: center; border: 1px solid #334155; }}
+        h2 {{ margin-top: 0; color: #38bdf8; font-size: 22px; margin-bottom: 25px; }}
+        .progress-bg {{ background: #334155; height: 26px; border-radius: 13px; overflow: hidden; margin: 20px 0; border: 1px solid #475569; position: relative; }}
+        .progress-fill {{ background: linear-gradient(90deg, #3b82f6, #06b6d4); height: 100%; width: {pct:.1f}%; transition: width 0.4s ease-in-out; }}
+        .stats {{ display: flex; justify-content: space-between; font-weight: bold; font-size: 15px; color: #cbd5e1; margin-top: 10px; }}
+        .status-text {{ margin-top: 20px; font-size: 14px; color: #94a3b8; background: #0f172a; padding: 12px; border-radius: 8px; border: 1px solid #1e293b; }}
+        .badge-ort {{ color: #38bdf8; font-weight: bold; }}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>🚀 Extraktions-Fortschritt</h2>
+        <div class="progress-bg">
+            <div class="progress-fill"></div>
+        </div>
+        <div class="stats">
+            <span>Fortschritt: {pct:.1f}%</span>
+            <span>{current_idx + 1} / {total_pages} Seiten</span>
+        </div>
+        <div class="status-text">Zuletzt verarbeitet: <span class="badge-ort">{html.escape(last_ort or 'In Bearbeitung...')}</span></div>
+    </div>
+</body>
+</html>
+"""
+    try:
+        with open(progress_html_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
+    except Exception:
+        pass
+
 if text_pages:
     print(f"✅ {len(text_pages)} Seiten Text. Starte KI (Layout Jahr: {PUBLICATION_YEAR})...")
     system_prompt = get_system_prompt(PUBLICATION_YEAR, vocab_instruction)
@@ -353,7 +394,10 @@ if text_pages:
             context = current
 
         data = extract_data_with_gemini(context, system_prompt)
+        last_found_ort = ""
         if data and "eintraege" in data:
+            if data["eintraege"]:
+                last_found_ort = data["eintraege"][-1].get("ort", "")
             for item in data["eintraege"]:
                 mid = item.get('massnahme_id')
                 ort = item.get('ort')
@@ -388,6 +432,7 @@ if text_pages:
                                 existing[field] = f"{old_val}, {new_val}"
                 else:
                     all_records.append(item)
+        write_live_progress(i, len(text_pages), last_found_ort)
         time.sleep(1.0) # Etwas mehr Puffer für die Rate Limits
 
     df = pd.DataFrame(all_records)
@@ -411,7 +456,7 @@ if text_pages:
             from generate_preview import create_highlighted_html
             preview_filename = f"LVR_{pdf_name_clean}_Highlighted_Preview.html"
             preview_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), preview_filename)
-            create_highlighted_html(out_file, raw_txt_file, preview_file)
+            create_highlighted_html(out_file, txt_file, preview_file)
         except Exception as pe:
             print(f"Fehler bei der Preview-Generierung: {pe}")
     else:
