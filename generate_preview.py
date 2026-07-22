@@ -16,13 +16,65 @@ def create_highlighted_html(csv_path, raw_text_path, html_out_path):
     # Collect search fragments
     fragments = []
 
-    def add_fragment(val, category):
+    def parse_raw_fragments(val):
         if not isinstance(val, str) or not val.strip() or val.strip() in ["-", "nan", "None"]:
-            return
-        parts = val.split("|")
-        for part in parts:
-            clean = part.strip()
-            if len(clean) > 2 and clean not in ["None", "nan"]:
+            return []
+        cleaned_val = val.strip()
+        if cleaned_val.startswith("[") and cleaned_val.endswith("]"):
+            try:
+                import ast
+                parsed = ast.literal_eval(cleaned_val)
+                if isinstance(parsed, list):
+                    res = []
+                    for item in parsed:
+                        res.extend(parse_raw_fragments(str(item)))
+                    return res
+            except Exception:
+                pass
+        
+        parts = re.split(r'[,|;]', cleaned_val)
+        res = []
+        for p in parts:
+            clean = p.strip().strip("'\"[]")
+            clean = re.sub(r'\s*\(skos\)', '', clean, flags=re.IGNORECASE).strip()
+            if len(clean) > 1 and clean.lower() not in ["none", "nan", "-"]:
+                res.append(clean)
+        return res
+
+    EPOCH_ADJECTIVE_MAP = {
+        'hallstattzeitlich': 'Hallstattzeit', 'latènezeitlich': 'Latènezeit', 'merowingerzeitlich': 'Merowingerzeit',
+        'karolingerzeitlich': 'Karolingerzeit', 'völkerwanderungszeitlich': 'Völkerwanderungszeit',
+        'bronzezeitlich': 'Bronzezeit', 'eisenzeitlich': 'Eisenzeit', 'neolithisch': 'Neolithikum',
+        'mesolithisch': 'Mesolithikum', 'paläolithisch': 'Paläolithikum', 'bandkeramisch': 'Bandkeramik',
+        'schnurkeramisch': 'Schnurkeramik', 'römisch': 'Römische Zeit', 'spätrömisch': 'Spätrömische Zeit',
+        'frührömisch': 'Frührömische Zeit', 'kaiserzeitlich': 'Römische Kaiserzeit', 'mittelalterlich': 'Mittelalter',
+        'frühmittelalterlich': 'Frühmittelalter', 'hochmittelalterlich': 'Hochmittelalter',
+        'spätmittelalterlich': 'Spätmittelalter', 'ottonisch': 'Ottonenzeit', 'karolingisch': 'Karolingerzeit',
+        'merowingisch': 'Merowingerzeit'
+    }
+
+    def split_adjective_noun(term):
+        clean = re.sub(r'\s*\(skos\)', '', term, flags=re.IGNORECASE).strip()
+        words = clean.split()
+        if len(words) >= 2:
+            first_word = words[0].lower()
+            stemmed_adj = first_word
+            for end in ['en', 'er', 'es', 'em', 'e', 'n', 's']:
+                if stemmed_adj.endswith(end) and len(stemmed_adj) - len(end) >= 5:
+                    stemmed_adj = stemmed_adj[:-len(end)]
+                    break
+            if stemmed_adj in EPOCH_ADJECTIVE_MAP or stemmed_adj.endswith('zeitlich'):
+                return words[0], " ".join(words[1:])
+        return None, term
+
+    def add_fragment(val, category):
+        items = parse_raw_fragments(val)
+        for clean in items:
+            raw_adj, noun_rem = split_adjective_noun(clean)
+            if raw_adj and noun_rem:
+                fragments.append((raw_adj, 'datierung'))
+                fragments.append((noun_rem, category))
+            else:
                 fragments.append((clean, category))
 
     for idx, row in df.iterrows():
