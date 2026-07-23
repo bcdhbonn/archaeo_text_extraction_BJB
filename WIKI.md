@@ -62,7 +62,7 @@ sequenceDiagram
 
 ## 3. Knowledge Representation & SKOS RDF Ontology
 
-The normalization authority is governed exclusively by **`arch_vocab_rhineland.ttl`**, a W3C SKOS (Simple Knowledge Organization System) RDF Knowledge Graph serialized in Turtle format.
+The normalization authority is governed dynamically by **`arch_vocab_rhineland.ttl`**, sourced from the official **[BCDH HECTOR Editor SKOS Vocabularies Repository](https://github.com/bcdhbonn/hector-editor-skos)**. It represents a W3C SKOS (Simple Knowledge Organization System) RDF Knowledge Graph serialized in Turtle format.
 
 ### Concept Hierarchy Structure:
 - **`skos:ConceptScheme`**: Rhineland Archaeological Vocabulary
