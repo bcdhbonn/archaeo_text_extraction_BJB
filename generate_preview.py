@@ -85,18 +85,92 @@ def create_highlighted_html(csv_path, raw_text_path, html_out_path):
         add_fragment(str(row.get('ort', '')), 'ort')
         add_fragment(str(row.get('autor', '')), 'autor')
 
-    # 1. Locate all occurrences in raw_text
+    # Add Global Concept Scanner across full raw_text
+    GLOBAL_CONCEPT_PATTERNS = [
+        # Roman Emperors & Rulers (Datierung)
+        (r'Augustus', 'datierung'), (r'Tiberius', 'datierung'), (r'Caligula', 'datierung'),
+        (r'Claudius I\.|Claudius', 'datierung'), (r'Vespasian', 'datierung'), (r'Domitian', 'datierung'),
+        (r'Nerva', 'datierung'), (r'Trajan', 'datierung'), (r'Hadrian', 'datierung'),
+        (r'Antoninus Pius', 'datierung'), (r'Marc Aurel|Mark Aurel', 'datierung'), (r'Lucius Verus', 'datierung'),
+        (r'Commodus', 'datierung'), (r'Septimius Severus', 'datierung'), (r'Geta', 'datierung'),
+        (r'Julia Maesa', 'datierung'), (r'Gordian III\.|Gordian III', 'datierung'),
+        (r'Philippus I\.|Philippus Arabs', 'datierung'), (r'Constantin I\.|Konstantin I\.|Konstantin der Große', 'datierung'),
+        (r'Constantin II\.|Konstantin II\.', 'datierung'), (r'Crispina', 'datierung'), (r'Lucilla', 'datierung'),
+
+        # Archaeological Waterworks & Structures (Befund)
+        (r'Eifelwasserleitung|römische\s+Wasserleitung|Wasserleitung', 'befund'),
+        (r'Frischwasserkanäle|Kanal', 'befund'), (r'Fundamentplatte|Fundament', 'befund'),
+        (r'Materialentnahmegrube|Materialentnahmest\.|Materialentnahme', 'befund'),
+        (r'Grubenhaus', 'befund'), (r'Pfostengruben|Pfostengrube', 'befund'), (r'Pfostenbau', 'befund'),
+        (r'Kleinere\s+Gruben|Siedlungsgrube|Gruben|Grube', 'befund'),
+        (r'Brandgrab|Bestattungsplatz(?:es|en|e|s)?', 'befund'),
+        (r'Siedlungsbefund|Siedlungsplatz|Siedlung', 'befund'), (r'Villa rustica', 'befund'),
+        (r'Brunnenu\.|Brunnen', 'befund'), (r'Latrinenbefunden?|Latrine', 'befund'),
+        (r'Lagervorstadt|Vorstadt', 'befund'), (r'Töpferei', 'befund'), (r'Vicus', 'befund'),
+        (r'Retentura|Legionslager', 'befund'), (r'Aquädukt', 'befund'),
+
+        # Archaeological Vessels & Objects (Fund)
+        (r'Einhenkelkrüge|Einhenkelkrug', 'fund'), (r'Zweihenkelkrüge|Zweihenkelkrug', 'fund'),
+        (r'Glanztonwarebecher|Becher', 'fund'), (r'Terra\s+[Ss]igillata|Sigillaten', 'fund'),
+        (r'Schälchen|Schale', 'fund'), (r'Statuette(?:\s+des\s+Mars\s+Ultor)?', 'fund'), (r'Helm', 'fund'),
+        (r'Oberkörperpanzer|Lorica\s+segmentata|Panzerung', 'fund'), (r'Beinschienen|Beinschiene', 'fund'),
+        (r'Armbrustspiralfibel|Emailscheibenfibel|Scheibenfibel|Fibel', 'fund'),
+        (r'Sesterzen|Sesterz', 'fund'), (r'Denare|Denar|Denarius', 'fund'), (r'Dupondius|Dupondii', 'fund'),
+        (r'Aureus|Aurei', 'fund'), (r'Folles|Follis', 'fund'), (r'Münzen|Münze', 'fund'),
+        (r'Niederbieber\d*[a-z]?', 'fund'), (r'Gellep\d*', 'fund'), (r'RSNB\d*', 'fund'),
+        (r'Scherben?|Wandscherbe|Randscherbe', 'fund'),
+
+        # Century & Dating Expressions (Datierung)
+        (r'Ha\s+C|Hallstatt\s+C', 'datierung'), (r'Frühlat\.|Frühlatènezeit|frühlatènezeitl\.', 'datierung'),
+        # Century & Dating Expressions (Datierung)
+        (r'spätbronzezeitlich|spätbronze-', 'datierung'), (r'früheisenzeitlich|früheisenzeitl\.', 'datierung'),
+        (r'mittleren\s+Eisenzeit|mittlere\s+Eisenzeit', 'datierung'), (r'frühe\s+Eisenzeit', 'datierung'),
+        (r'neolithisch|neolith\.', 'datierung'), (r'metallzeitlich|metallzeitl\.', 'datierung'),
+        (r'frührömisch|frühröm\.', 'datierung'), (r'eisenzeitlich|eisenzeitl\.', 'datierung'),
+        (r'Ha\s+C|Hallstatt\s+C', 'datierung'), (r'Frühlat\.|Frühlatènezeit|frühlatènezeitl\.', 'datierung'),
+        (r'urnenfelder-(?:\s*bis\s*)?', 'datierung'), (r'jüngereisenzeitl\.|jüngereisenzeitlich', 'datierung'),
+        (r'früheneuzeitl\.|früheneuzeitlich|frühe\s+Neuzeit|frühen\s+Neuzeit', 'datierung'),
+        (r'mittelalterl\.|mittelalterlich', 'datierung'), (r'bandkeram\.|bandkeramisch', 'datierung'),
+        (r'zweite\s+Hälfte\s*\d+\.\s*–\s*Anfang\s*\d+\.\s*Jh\.', 'datierung'),
+        (r'\d+\.\s*/\s*\d+\.\s*Jh\.(?:\s*n\.\s*Chr\.)?', 'datierung'), (r'\d+\.\s*–\s*\d+\.\s*Jhs?\.', 'datierung'),
+        (r'\d+\.\s*Jh\.', 'datierung'), (r'frühröm\.|spätröm\.|römerzeitl\.|röm\.', 'datierung'),
+        (r'mittlere[rn]?\s+Kaiserzeit|spätere\s+Kaiserzeit|Kaiserzeit', 'datierung'),
+
+        # Additional Structures & Befunde
+        (r'Siedlung(?:sreste)?|Streugehöften|Gehöft', 'befund'), (r'Pfostengruben(?:verfüllungen)?|Pfostengrube', 'befund'),
+        (r'Gruben(?:verfüllungen)?|Grube', 'befund'), (r'Befundstreuung', 'befund'),
+        (r'röm\.\s+Straße|Straße|Via\s+Belgica', 'befund'), (r'Erdkeller', 'befund'), (r'Pfosten', 'befund'),
+        (r'Speicher', 'befund'), (r'Brennöfen|Brennofen|Ofen', 'befund'), (r'Werkhütten|Hütte', 'befund'),
+        (r'Werkplätze|Werkplatz', 'befund'), (r'Gräben|Graben', 'befund'),
+        (r'Materialentnahmebereiche|Materialentnahme', 'befund'), (r'Schützengraben', 'befund')
+    ]
+
     spans = []
     for frag_text, category in fragments:
-        pattern = re.escape(frag_text)
-        for match in re.finditer(pattern, raw_text):
+        clean_frag = frag_text.strip()
+        if len(clean_frag) < 3 and clean_frag != "As": continue
+        pattern = re.escape(clean_frag)
+        word_pattern = re.compile(r'(?<![a-zA-ZäöüÄÖÜß0-9])(?:' + pattern + r')', re.IGNORECASE)
+        for match in word_pattern.finditer(raw_text):
             start, end = match.span()
-            spans.append((start, end, category, frag_text))
+            if re.search(r'\b(keine|kein|ohne|keinerlei)\s+$', raw_text[:start], re.IGNORECASE):
+                continue
+            spans.append((start, end, category, clean_frag))
 
-    # 2. Sort spans by start, then length descending
-    spans.sort(key=lambda s: (s[0], -(s[1] - s[0])))
+    for pat_str, category in GLOBAL_CONCEPT_PATTERNS:
+        word_pattern = re.compile(r'(?<![a-zA-ZäöüÄÖÜß0-9])(?:' + pat_str + r')', re.IGNORECASE)
+        for match in word_pattern.finditer(raw_text):
+            start, end = match.span()
+            if re.search(r'\b(keine|kein|ohne|keinerlei)\s+$', raw_text[:start], re.IGNORECASE):
+                continue
+            spans.append((start, end, category, raw_text[start:end]))
 
-    # 3. Filter out overlapping spans
+    def span_priority(s):
+        cat_order = {'datierung': 5, 'befund': 4, 'fund': 3, 'aktivitaet': 2, 'ort': 1}
+        return (cat_order.get(s[2], 0), (s[1] - s[0]))
+
+    spans.sort(key=lambda s: (s[0], -span_priority(s)[0], -span_priority(s)[1]))
+
     filtered_spans = []
     last_end = 0
     for start, end, category, frag_text in spans:

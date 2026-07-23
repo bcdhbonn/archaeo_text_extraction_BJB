@@ -1,8 +1,6 @@
+google_API.txt
+*.key
+.env
 __pycache__/
-.agents/
-*.pdf
-.gemini/
-scratch/
-test_regex.py
-inspect_chars.py
-lookup_places.py
+*.log
+*.tmp

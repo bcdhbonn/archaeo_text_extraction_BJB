@@ -20,7 +20,10 @@ from rdflib import Graph, Namespace, RDF, SKOS
 
 # Lokale Pfade auf Ihrem Windows-System
 pdf_base_dir = r"D:\Sciebo\BCDH_Projektbox\Projekte\BonnerJahrbuecher_etxract_2026\BJB_PDF_1970_2014"
-filename = "1973.pdf"
+if len(sys.argv) > 1:
+    filename = sys.argv[1]
+else:
+    filename = "1984.pdf"
 
 # Vokabular-Verzeichnis (Suchpfad: Sciebo oder lokal im Workspace)
 vocab_base_dir = r"D:\Sciebo\BCDH_Projektbox\Projekte\BonnerJahrbuecher_etxract_2026\Vokabulare"
@@ -39,6 +42,14 @@ if not pdf_path and os.path.exists(pdf_base_dir):
 
 # API Key & Client Initialisierung
 GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY') or os.environ.get('GEMINI_API_KEY')
+key_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "google_API.txt")
+if not GOOGLE_API_KEY and os.path.exists(key_file_path):
+    try:
+        with open(key_file_path, "r", encoding="utf-8") as kf:
+            GOOGLE_API_KEY = kf.read().strip()
+            print("🔑 API Key aus google_API.txt erfolgreich geladen.")
+    except Exception as e:
+        print(f"⚠️ Fehler beim Lesen von google_API.txt: {e}")
 
 try:
     if GOOGLE_API_KEY:
@@ -52,9 +63,8 @@ except Exception as e:
 MODEL_NAME = "gemini-2.5-flash"
 
 # Seitenbereich (25 Seiten in der Mitte des Bandes)
-START_PAGE = 70
-END_PAGE = 94
-
+START_PAGE = 1
+END_PAGE = 400
 # Bestimme das Publikationsjahr aus dem PDF-Namen für die Layout-Auswahl
 try:
     year_match = re.search(r'\b(19\d{2}|20\d{2})\b', filename)
@@ -63,7 +73,7 @@ except Exception:
     PUBLICATION_YEAR = 2006
 
 # ==========================================
-# 2. SKOS PARSER FÜR DREI VOKABULARE
+# 2. SKOS PARSER FÜR DAS EINHEITLICHE VOKABULAR
 # ==========================================
 
 EPOCH_LOOKUP = {}
@@ -71,93 +81,131 @@ BEFUND_LOOKUP = {}
 FUND_LOOKUP = {}
 ALL_SKOS_LOOKUP = {}
 
-def parse_single_ttl(path, lookup_dict, category_name):
-    if not os.path.exists(path):
-        return []
-    print(f"📚 Lade Vokabular ({category_name}): {os.path.basename(path)}...")
+def load_arch_vocab_rhineland(base_dir):
+    ttl_path = os.path.join(base_dir, "arch_vocab_rhineland.ttl")
+    ws_dir = os.path.dirname(os.path.abspath(__file__))
+    if not os.path.exists(ttl_path):
+        ttl_path = os.path.join(ws_dir, "arch_vocab_rhineland.ttl")
+
+    if not os.path.exists(ttl_path):
+        print(f"⚠️ Vokabular-Datei nicht gefunden: {ttl_path}")
+        return ""
+
+    print(f"📚 Lade einheitliches Archäologie-Vokabular: {os.path.basename(ttl_path)}...")
     g = Graph()
     try:
-        g.parse(path, format="turtle")
+        g.parse(ttl_path, format="turtle")
     except Exception as e:
-        print(f"⚠️ Fehler beim Parsen von {os.path.basename(path)}: {e}")
-        return []
+        print(f"⚠️ Fehler beim Parsen von {os.path.basename(ttl_path)}: {e}")
+        return ""
 
-    prompt_lines = []
+    cat_map = {
+        'http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_4de8f3b0': 'Datierung',
+        'http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_4c5049c7': 'Befund',
+        'http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_e9dddde8': 'Fund'
+    }
+
+    memo = {}
+    def get_category(concept, visited=None):
+        c_str = str(concept)
+        if c_str in memo: return memo[c_str]
+        if visited is None: visited = set()
+        if concept in visited: return None
+        visited.add(concept)
+        
+        if c_str in cat_map:
+            return cat_map[c_str]
+        for b in g.objects(concept, SKOS.broader):
+            cat = get_category(b, visited)
+            if cat:
+                memo[c_str] = cat
+                return cat
+        memo[c_str] = None
+        return None
+
+    NUMISMATIC_STOPWORDS = {
+        'au', 'ar', 's', 'dp', 'fol', 'an', 'd', 'av', 'rv', 'ric', 'ric²', 'ric3', 'ric4', 'ric5',
+        'av.', 'rv.', 'g', 'mm', 'ca', 'v.', 'chr.', 'rom', 'typ', 'var', 'nr.', 'nr'
+    }
+
+    prompt_sections = {'Datierung': [], 'Befund': [], 'Fund': []}
+
     for concept in g.subjects(RDF.type, SKOS.Concept):
+        cat_name = get_category(concept)
+        if not cat_name:
+            continue
+
+        if cat_name == 'Datierung':
+            target_dict = EPOCH_LOOKUP
+        elif cat_name == 'Befund':
+            target_dict = BEFUND_LOOKUP
+        else:
+            target_dict = FUND_LOOKUP
+
         pref_labels = []
         for label in g.objects(concept, SKOS.prefLabel):
             lang = getattr(label, 'language', None)
-            if lang in [None, 'de', 'nl']:
-                term = str(label).strip()
-                if term:
-                    pref_labels.append(term)
+        all_labels = []
+        for label in list(g.objects(concept, SKOS.prefLabel)) + list(g.objects(concept, SKOS.altLabel)):
+            term = str(label).strip()
+            if term and term not in all_labels:
+                all_labels.append(term)
 
-        if pref_labels:
-            main_term = pref_labels[0]
-            lookup_dict[main_term.lower()] = main_term
-            if main_term.lower() not in ALL_SKOS_LOOKUP:
-                ALL_SKOS_LOOKUP[main_term.lower()] = (main_term, category_name)
+        if all_labels:
+            main_term = all_labels[0]
+            clean_main = re.sub(r'\s*\([^)]*\)', '', main_term).strip()
 
-            clean_base = re.sub(r'\s*\([^)]*\)', '', main_term).strip()
-            if clean_base and clean_base.lower() not in lookup_dict:
-                lookup_dict[clean_base.lower()] = main_term
-                if clean_base.lower() not in ALL_SKOS_LOOKUP:
-                    ALL_SKOS_LOOKUP[clean_base.lower()] = (main_term, category_name)
+            variants = []
+            for l in all_labels:
+                l_clean = re.sub(r'\s*\([^)]*\)', '', l).strip()
+                variants.extend([l, l_clean])
+                l_low = l.lower()
+                if 'konstantin der große' in l_low or 'constantine the great' in l_low:
+                    variants.extend(['Konstantin I.', 'Constantin I.', 'Konstantin I', 'Constantin I', 'Constantin'])
+                if 'philippus arabs' in l_low or 'philip the arab' in l_low:
+                    variants.extend(['Philippus I.', 'Philippus I'])
+                if 'mark aurel' in l_low or 'marcus aurelius' in l_low:
+                    variants.extend(['Marc Aurel', 'Marc Aurel f. Lucilla', 'Marc Aurel f. Lucius Verus'])
 
             alt_labels = []
-            for alt in g.objects(concept, SKOS.altLabel):
-                lang = getattr(alt, 'language', None)
-                if lang in [None, 'de', 'nl']:
-                    alt_str = str(alt).strip()
-                    if alt_str:
-                        lookup_dict[alt_str.lower()] = main_term
-                        if alt_str.lower() not in ALL_SKOS_LOOKUP:
-                            ALL_SKOS_LOOKUP[alt_str.lower()] = (main_term, category_name)
-                        alt_labels.append(alt_str)
+            for var in variants:
+                if not var: continue
+                var_str = str(var).strip()
+                v_low = var_str.lower()
+                if v_low not in NUMISMATIC_STOPWORDS and (len(v_low) >= 3 or var_str == "As"):
+                    target_dict[v_low] = main_term
+                    if v_low not in ALL_SKOS_LOOKUP:
+                        ALL_SKOS_LOOKUP[v_low] = (main_term, cat_name)
+
+                    if 'konstantin' in v_low:
+                        target_dict[v_low.replace('konstantin', 'constantin')] = main_term
+                        ALL_SKOS_LOOKUP[v_low.replace('konstantin', 'constantin')] = (main_term, cat_name)
+                    if 'mark aurel' in v_low:
+                        target_dict[v_low.replace('mark aurel', 'marc aurel')] = main_term
+                        ALL_SKOS_LOOKUP[v_low.replace('mark aurel', 'marc aurel')] = (main_term, cat_name)
+                    if v_low.endswith('.'):
+                        target_dict[v_low[:-1]] = main_term
+                        ALL_SKOS_LOOKUP[v_low[:-1]] = (main_term, cat_name)
+
+                    if var_str != main_term and var_str not in alt_labels:
+                        alt_labels.append(var_str)
 
             entry = f"- {main_term}"
-            if alt_labels: entry += f" (Syn: {', '.join(alt_labels[:2])})"
-            prompt_lines.append(entry)
+            if alt_labels:
+                entry += f" (Syn: {', '.join(alt_labels[:2])})"
+            prompt_sections[cat_name].append(entry)
 
-    return sorted(prompt_lines)
-
-def load_all_vocabularies(base_dir):
-    epoch_file = os.path.join(base_dir, "HECTOR_Epoch.ttl")
-    befund_file = os.path.join(base_dir, "LVR_Befundansprachen.ttl")
-    fund_file = os.path.join(base_dir, "LVR_Fundansprachen.ttl")
-
-    epoch_lines = parse_single_ttl(epoch_file, EPOCH_LOOKUP, "Datierung")
-    befund_lines = parse_single_ttl(befund_file, BEFUND_LOOKUP, "Befund")
-    fund_lines = parse_single_ttl(fund_file, FUND_LOOKUP, "Fund")
-
-    # Fallback auf Workspace-Ordner falls nicht in Sciebo
-    ws_dir = os.path.dirname(os.path.abspath(__file__))
-    if not epoch_lines and os.path.exists(os.path.join(ws_dir, "HECTOR_Epoch.ttl")):
-        epoch_lines = parse_single_ttl(os.path.join(ws_dir, "HECTOR_Epoch.ttl"), EPOCH_LOOKUP, "Datierung")
-    if not befund_lines and os.path.exists(os.path.join(ws_dir, "LVR_Befundansprachen.ttl")):
-        befund_lines = parse_single_ttl(os.path.join(ws_dir, "LVR_Befundansprachen.ttl"), BEFUND_LOOKUP, "Befund")
-    if not fund_lines and os.path.exists(os.path.join(ws_dir, "LVR_Fundansprachen.ttl")):
-        fund_lines = parse_single_ttl(os.path.join(ws_dir, "LVR_Fundansprachen.ttl"), FUND_LOOKUP, "Fund")
-
-    # Fallback auf alte archaevocabNLDE.ttl falls keine der 3 Dateien da ist
-    if not (epoch_lines or befund_lines or fund_lines):
-        old_file = os.path.join(ws_dir, "archaevocabNLDE.ttl")
-        fund_lines = parse_single_ttl(old_file, FUND_LOOKUP, "Fund")
-
-    instruction = "NUTZE DIESE BEGRIFFE ZUR NORMALISIERUNG UND KLASSENZUORDNUNG:\n\n"
-    if epoch_lines:
-        instruction += "=== DATIERUNG / EPOCHEN / ARCHÄOLOGISCHE KULTUREN ===\n"
-        instruction += "\n".join(epoch_lines[:250]) + "\n\n"
-    if befund_lines:
-        instruction += "=== BEFUNDE (Immobile / Ortsfeste Strukturen) ===\n"
-        instruction += "\n".join(befund_lines[:250]) + "\n\n"
-    if fund_lines:
-        instruction += "=== FUNDE (Mobile Objekte / Artefakte) ===\n"
-        instruction += "\n".join(fund_lines[:250]) + "\n"
+    instruction = "OFFIZIELLES SKOS-VOKABULAR (VERWENDE DIESE BEGRIFFE BEVORZUGT BEI DER EXTRAKTION UND NORMALISIERUNG):\n\n"
+    instruction += "=== 1. DATIERUNG / EPOCHEN / KAISER UND HERRSCHER ===\n"
+    instruction += "\n".join(sorted(prompt_sections['Datierung'])) + "\n\n"
+    instruction += "=== 2. BEFUNDE (Immobile / Ortsfeste Strukturen) ===\n"
+    instruction += "\n".join(sorted(prompt_sections['Befund'])) + "\n\n"
+    instruction += "=== 3. FUNDE (Mobile Objekte / Artefakte) ===\n"
+    instruction += "\n".join(sorted(prompt_sections['Fund'])) + "\n"
 
     return instruction
 
-vocab_instruction = load_all_vocabularies(vocab_base_dir)
+vocab_instruction = load_arch_vocab_rhineland(vocab_base_dir)
 
 # ==========================================
 # 3. VALIDIERUNG & DEDUPLIZIERUNG (POST-PROCESSING)
@@ -290,11 +338,33 @@ def normalize_items_list(text_value, primary_lookup=None):
                     if stem_german_word(key) == stemmed or (len(stemmed) >= 4 and stemmed in key):
                         std_term = val
                         break
-            if not std_term:
-                for key, (val, cat) in ALL_SKOS_LOOKUP.items():
-                    if stem_german_word(key) == stemmed or (len(stemmed) >= 4 and stemmed in key):
-                        std_term = val
-                        break
+        if not std_term:
+            COMPOUND_SUFFIX_MAP = {
+                'krug': 'Krug (Gefäß)',
+                'krüge': 'Krug (Gefäß)',
+                'einhenkelkrug': 'Krug (Gefäß)',
+                'zweihenkelkrug': 'Krug (Gefäß)',
+                'zweihenkelkrüge': 'Krug (Gefäß)',
+                'gefäß': 'Gefäß (Behälter)',
+                'gefäße': 'Gefäß (Behälter)',
+                'becher': 'Becher',
+                'teller': 'Teller (Essgeschirr)',
+                'topf': 'Topf (Behälter)',
+                'töpfe': 'Topf (Behälter)',
+                'schüssel': 'Schüssel (Gefäß)',
+                'schüsseln': 'Schüssel (Gefäß)',
+                'schale': 'Schale (Gefäß)',
+                'schalen': 'Schale (Gefäß)',
+                'urne': 'Aschenurne',
+                'urnen': 'Aschenurne',
+                'amphore': 'Amphore',
+                'amphoren': 'Amphore',
+                'dolium': 'Dolium'
+            }
+            for suf, target in COMPOUND_SUFFIX_MAP.items():
+                if clean_lower.endswith(suf):
+                    std_term = target
+                    break
         
         if std_term:
             final_str = f"{std_term} (SKOS)"
@@ -355,10 +425,63 @@ def postprocess_record(item):
     f_list = new_f_list
 
     # 4. Klassentrennung & Umgruppierung
+    NUMISMATIC_STOPWORDS = {
+        'au', 'ar', 's', 'dp', 'fol', 'an', 'd', 'av', 'rv', 'ric', 'ric²', 'ric3', 'ric4', 'ric5',
+        'av.', 'rv.', 'g', 'mm', 'ca', 'v.', 'chr.', 'rom', 'typ', 'var', 'nr.', 'nr'
+    }
+    
+    ROMAN_EMPERORS_DICT = {
+        "augustus": "Augustus",
+        "tiberius": "Tiberius",
+        "caligula": "Caligula",
+        "claudius": "Claudius",
+        "claudius i": "Claudius I.",
+        "vespasian": "Vespasian",
+        "titus": "Titus",
+        "domitian": "Domitian",
+        "nerva": "Nerva",
+        "trajan": "Trajan",
+        "hadrian": "Hadrian",
+        "antoninus pius": "Antoninus Pius",
+        "marc aurel": "Marc Aurel",
+        "lucius verus": "Lucius Verus",
+        "commodus": "Commodus",
+        "septimius severus": "Septimius Severus",
+        "caracalla": "Caracalla",
+        "geta": "Geta",
+        "elagabal": "Elagabal",
+        "severus alexander": "Severus Alexander",
+        "julia maesa": "Julia Maesa",
+        "gordian iii": "Gordian III.",
+        "gordian iii.": "Gordian III.",
+        "philippus i": "Philippus I.",
+        "philippus i.": "Philippus I.",
+        "decius": "Decius",
+        "valerian": "Valerian",
+        "gallienus": "Gallienus",
+        "probus": "Probus",
+        "diokletian": "Diokletian",
+        "maxentius": "Maxentius",
+        "constantin i": "Constantin I.",
+        "constantin i.": "Constantin I.",
+        "constantin ii": "Constantin II.",
+        "constantin ii.": "Constantin II.",
+        "constantius": "Constantius",
+        "crispina": "Crispina",
+        "lucilla": "Lucilla"
+    }
+
+    full_item_text = f"{item.get('datierung_roh', '')} {item.get('befunde_roh', '')} {item.get('funde_roh', '')} {item.get('massnahme_id', '')}"
+    for emp_key, emp_label in ROMAN_EMPERORS_DICT.items():
+        if re.search(r'\b' + re.escape(emp_key) + r'\b', full_item_text, re.IGNORECASE):
+            d_list.append(f"{emp_label} (SKOS)")
+
     final_f_list = []
     for f in f_list:
         clean_key = re.sub(r'\s*\(skos\)', '', f, flags=re.IGNORECASE).strip().lower()
-        if clean_key in EPOCH_LOOKUP or (clean_key in ALL_SKOS_LOOKUP and ALL_SKOS_LOOKUP[clean_key][1] == "Datierung"):
+        if clean_key in NUMISMATIC_STOPWORDS or (len(clean_key) < 3 and clean_key != "as"):
+            continue
+        if clean_key in EPOCH_LOOKUP or clean_key in ROMAN_EMPERORS_DICT or (clean_key in ALL_SKOS_LOOKUP and ALL_SKOS_LOOKUP[clean_key][1] == "Datierung"):
             d_list.append(f)
         elif clean_key in BEFUND_LOOKUP and clean_key not in FUND_LOOKUP:
             b_list.append(f)
@@ -369,7 +492,9 @@ def postprocess_record(item):
     final_b_list = []
     for b in b_list:
         clean_key = re.sub(r'\s*\(skos\)', '', b, flags=re.IGNORECASE).strip().lower()
-        if clean_key in EPOCH_LOOKUP or (clean_key in ALL_SKOS_LOOKUP and ALL_SKOS_LOOKUP[clean_key][1] == "Datierung"):
+        if clean_key in NUMISMATIC_STOPWORDS or (len(clean_key) < 3 and clean_key != "as"):
+            continue
+        if clean_key in EPOCH_LOOKUP or clean_key in ROMAN_EMPERORS_DICT or (clean_key in ALL_SKOS_LOOKUP and ALL_SKOS_LOOKUP[clean_key][1] == "Datierung"):
             d_list.append(b)
         elif clean_key in FUND_LOOKUP and clean_key not in BEFUND_LOOKUP:
             f_list.append(b)
@@ -381,6 +506,10 @@ def postprocess_record(item):
         seen = set()
         res = []
         for x in l:
+            clean_key = re.sub(r'\s*\(skos\)', '', str(x), flags=re.IGNORECASE).strip()
+            clean_lower = clean_key.lower()
+            if clean_lower in NUMISMATIC_STOPWORDS or (len(clean_key) < 3 and clean_key != "As"):
+                continue
             if x not in seen and x != "-":
                 seen.add(x)
                 res.append(x)
@@ -426,10 +555,20 @@ def clean_ocr_errors(text):
         (r'\bWandbrst\.\b', 'Wandbruchstück'),
         (r'\bRandbrst\.\b', 'Randbruchstück'),
         (r'\bAnschluB\b', 'Anschluss'),
-        (r'\bStraBe\b', 'Straße'),
+        (r'([a-zäöüß]+)\.oder([a-zäöüß]+)', r'\1. oder \2'),
+        (r'\b([A-Za-zäöüÄÖÜß]{3,})u\.\s+([A-ZÄÖÜa-zäöüß])', r'\1 u. \2'),
+        (r'([A-Z][a-zäöüß]+)f\.\s*([A-Z][a-zäöüß]+)', r'\1 f. \2'),
+        (r'([IVXLCDM]+)\.f\.\s*([A-Z][a-zäöüß]+)', r'\1. f. \2'),
+        (r'(\b[A-Za-zäöüÄÖÜß]+),dervorallemaus\b', r'\1, der vor allem aus'),
+        (r'(\b[A-Za-zäöüÄÖÜß]+)dermittleren\b', r'\1 der mittleren'),
+        (r'([a-zäöüß])-\s*\n\s*([a-zäöüß])', r'\1\2'),
+        (r'\b(RS|BS|WS|St|Nr)\.?([A-ZÄÖÜ][a-zäöüß]+)', r'\1 \2'),
+        (r'([a-zäöüß\.\)])([A-ZÄÖÜ])', r'\1 \2'),
+        (r'(\))([A-ZÄÖÜa-zäöüß])', r'\1 \2'),
+        (r'([a-zäöüß])(Abb\.|Bild)', r'\1 \2'),
     ]
     for pattern, replacement in ocr_fixes:
-        text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
+        text = re.sub(pattern, replacement, text)
     return text
 
 def clean_text(text):
@@ -439,15 +578,36 @@ def clean_text(text):
     text = clean_ocr_errors(text)
     header_pattern = r'(Römische\s+Zeit\s+\d+)|(\d+\s+Römische\s+Zeit)'
     text = re.sub(header_pattern, '', text, flags=re.IGNORECASE)
-    caption_pattern = r'(?:^|\n)(?!\d+\s+Jahresbericht)\d{1,3}\s+[A-ZÄÖÜ][^\n]*?(?:\n[^\n]*?){0,3}?Ma[ßfhmalit-]{1,5}\s*stab\s*\d+\s*:\s*\d+\.?'
-    text = re.sub(caption_pattern, '', text, flags=re.IGNORECASE)
+    text = re.sub(r'Abb\.\s*\d+[^\n]*?(?:\n[^\n]*?){0,2}?Ma[ßfhmalit-]{1,5}\s*stab\s*\d+\s*:\s*\d+\.?', '', text, flags=re.IGNORECASE)
+    text = re.sub(r'Abb\.\s*\d+\s+[A-ZÄÖÜ][^\n]+', '', text)
     return text
 
 def extract_page_text_lazy(pdf_path, page_idx):
     try:
         with pdfplumber.open(pdf_path) as pdf:
             if 0 <= page_idx < len(pdf.pages):
-                return clean_text(pdf.pages[page_idx].extract_text())
+                page = pdf.pages[page_idx]
+                width = page.width
+                height = page.height
+                
+                # Exclude top 3% (running headers) and bottom 3% (footers)
+                top_y = height * 0.03
+                bottom_y = height * 0.97
+                mid_x = width / 2
+                
+                left_crop = page.crop((0, top_y, mid_x, bottom_y))
+                right_crop = page.crop((mid_x, top_y, width, bottom_y))
+                
+                left_text = left_crop.extract_text() or ""
+                right_text = right_crop.extract_text() or ""
+                
+                if len(left_text.strip()) > 50 and len(right_text.strip()) > 50:
+                    combined_text = "--- LEFT COLUMN ---\n" + left_text.strip() + "\n\n--- RIGHT COLUMN ---\n" + right_text.strip()
+                else:
+                    full_crop = page.crop((0, top_y, width, bottom_y))
+                    combined_text = full_crop.extract_text() or ""
+                    
+                return clean_text(combined_text)
     except Exception as e:
         print(f"⚠️ Fehler beim Lesen der Seite {page_idx+1}: {e}")
     return None
@@ -457,10 +617,9 @@ def extract_page_text_lazy(pdf_path, page_idx):
 # ==========================================
 
 def get_system_prompt(year, vocab_instruction):
-    prompt_common = f"""
-Du bist ein hochspezialisierter Experte für die archäologische Datenerfassung der "Bonner Jahrbücher". Deine Aufgabe ist die präzise Extraktion von Fundstellen und den darunter erfolgten Maßnahmen in ein strukturiertes JSON-Format.
+    prompt_common = f"""{vocab_instruction}
 
-{vocab_instruction}
+Du bist ein hochspezialisierter Experte für die archäologische Datenerfassung der "Bonner Jahrbücher". Deine Aufgabe ist die präzise Extraktion von Fundstellen und den darunter erfolgten Maßnahmen in ein strukturiertes JSON-Format.
 
 ### KERN-AUFGABEN & STRIKTE KLASSENTRENNUNG:
 1. **ort** & **kreis**: Geografische Lage (Städte, Gemeinden, Kreise, Ortsteile, z. B. 'Jülich', 'Brühl', 'Haaren', 'Gressenich', 'Mausbach').
@@ -473,6 +632,11 @@ Du bist ein hochspezialisierter Experte für die archäologische Datenerfassung 
    - Beispiel: Grube, Pfostenloch, Ofen, Graben, Mauer, Gräberfeld, Grundriss, Siedlung, Villa rustica, Aquädukt, Torturm, Steinkastell, Lehmabdeckung, Fundament.
 5. **funde_norm** / **funde_roh**: Mobile Objekte, Artefakte & Gegenstände.
    - Beispiel: Keramik, Scherbe, Beil, Klinge, Axt, Pfeilspitze, Abschlag, Klopfer, Reiber, Münze, Fibeln, Schüssel, Krug, Gefäß, Ziegel, Nagel, Bauelemente.
+
+### VOLLSTÄNDIGKEIT BEI KAISERN, MÜNZEN, WASSERLEITUNGEN UND GEFÄSSEN:
+- **Römische Kaiser & Herrscher**: Erfasse ALLE im Text erwähnten römischen Kaiser (z. B. Augustus, Tiberius, Caligula, Claudius I., Vespasian, Domitian, Nerva, Trajan, Hadrian, Antoninus Pius, Marc Aurel, Lucius Verus, Commodus, Septimius Severus, Geta, Julia Maesa, Gordian III., Philippus I., Constantin I., Constantin II.) VOLLSTÄNDIG in `datierung_roh` und `datierung_norm`.
+- **Wasserleitungen & Bauwerke**: Erfasse 'Eifelwasserleitung', 'römische Wasserleitung', 'Wasserleitung', 'Kanal', 'Frischwasserkanäle', 'Sammler', 'Fundamentplatte' VOLLSTÄNDIG in `befunde_norm` (Wasserleitung, Kanal, Fundament).
+- **Gefäßformen & Funde**: Erfasse 'Einhenkelkrug', 'Einhenkelkrüge', 'Zweihenkelkrüge', 'Glanztonwarebecher', 'Terra sigillata: Schale', 'Statuette des Mars Ultor', 'Helm', 'Panzerung', 'Beinschienen' VOLLSTÄNDIG in `funde_norm`.
 
 ### STRIKTE TRENNUNG VON KOMBINIERTEN EIGENSCHAFTSWÖRTERN:
 - Wenn im Text 'römische Siedlungsstelle', 'römische Mauerfundamente' oder 'spätrömisches Gräberfeld' steht, TRENNEN:
@@ -731,15 +895,30 @@ def write_live_progress(current_idx, total_pages, last_ort="", phase="Extraktion
 def run_pipeline():
     text_pages = []
 
-    # Bestimme Dateinamen für Rohdaten und Pfad zum Rohtext
     pdf_name_clean = os.path.splitext(os.path.basename(pdf_path))[0] if pdf_path else "1970"
     txt_filename = f"LVR_{pdf_name_clean}_raw_text.txt"
-    txt_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), txt_filename)
+    cleaned_txt_filename = f"LVR_{pdf_name_clean}_cleaned_text.txt"
+    ws_dir = os.path.dirname(os.path.abspath(__file__))
+    txt_file = os.path.join(ws_dir, txt_filename)
+    cleaned_txt_file = os.path.join(ws_dir, cleaned_txt_filename)
 
-    if pdf_path and os.path.exists(pdf_path):
+    if os.path.exists(cleaned_txt_file):
+        print(f"📖 Lade vorbereiteten & geprüften OCR-Text aus: {os.path.basename(cleaned_txt_file)}...")
+        try:
+            with open(cleaned_txt_file, "r", encoding="utf-8") as f:
+                content = f.read()
+            pages_raw = re.split(r'--- SEITE \d+ ---\n', content)
+            for p in pages_raw[1:]:
+                pt = clean_text(p.strip())
+                if pt: text_pages.append(pt)
+            if not text_pages and content.strip():
+                text_pages.append(clean_text(content.strip()))
+            print(f"✅ {len(text_pages)} Seiten erfolgreich aus bereinigtem OCR-Text geladen.")
+        except Exception as e:
+            print(f"⚠️ Fehler beim Lesen von {cleaned_txt_file}: {e}")
+
+    if not text_pages and pdf_path and os.path.exists(pdf_path):
         print(f"📖 Lese PDF (S. {START_PAGE}-{END_PAGE})...")
-        
-        # Ermittle die Gesamtseitenzahl
         try:
             with pdfplumber.open(pdf_path) as pdf:
                 total_pages = len(pdf.pages)
@@ -763,14 +942,12 @@ def run_pipeline():
                 print(f"📄 Rohtext gespeichert unter: {txt_file}")
             except Exception as e:
                 print(f"⚠️ Fehler beim Speichern des Rohtextes: {e}")
-    elif os.path.exists(txt_file):
+    elif not text_pages and os.path.exists(txt_file):
         print(f"📖 PDF nicht gefunden, aber Rohtext-Datei {txt_file} existiert. Lade Seiten aus dem Rohtext...")
         try:
             with open(txt_file, "r", encoding="utf-8") as f:
                 content = f.read()
-            # Splitte an den Seitenmarkern
             pages_raw = re.split(r'--- SEITE \d+ ---\n', content)
-            # Das erste Element ist vor dem ersten Split leer
             for p in pages_raw[1:]:
                 pt = clean_text(p.strip())
                 if pt: text_pages.append(pt)
