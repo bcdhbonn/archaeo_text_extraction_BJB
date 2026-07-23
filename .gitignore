@@ -4,3 +4,13 @@ google_API.txt
 __pycache__/
 *.log
 *.tmp
+
+# Generated Extraction Results & Data Artifacts
+results/
+output/
+LVR_*_Split_Fixed.csv
+LVR_*_cleaned_text.txt
+LVR_*_raw_text.txt
+LVR_*_Highlighted_Preview.html
+OCR_Review_Preview.html
+progress.html
