@@ -20,57 +20,30 @@ from rdflib import Graph, Namespace, RDF, SKOS
 
 # Lokale Pfade auf Ihrem Windows-System
 pdf_base_dir = r"D:\Sciebo\BCDH_Projektbox\Projekte\BonnerJahrbuecher_etxract_2026\BJB_PDF_1970_2014"
-if len(sys.argv) > 1:
-    filename = sys.argv[1]
-else:
-    filename = "1984.pdf"
-
-# Vokabular-Verzeichnis (Suchpfad: Sciebo oder lokal im Workspace)
 vocab_base_dir = r"D:\Sciebo\BCDH_Projektbox\Projekte\BonnerJahrbuecher_etxract_2026\Vokabulare"
 if not os.path.exists(vocab_base_dir):
     vocab_base_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Automatische Suche im PDF-Verzeichnis (auch in Dekaden-Unterordnern)
-pdf_path = None
-if os.path.exists(pdf_base_dir):
-    for root, dirs, files in os.walk(pdf_base_dir):
-        if filename in files:
-            pdf_path = os.path.join(root, filename)
-            break
-if not pdf_path and os.path.exists(pdf_base_dir):
-    pdf_path = os.path.join(pdf_base_dir, filename)
-
-# API Key & Client Initialisierung
-GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY') or os.environ.get('GEMINI_API_KEY')
-key_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "google_API.txt")
-if not GOOGLE_API_KEY and os.path.exists(key_file_path):
-    try:
-        with open(key_file_path, "r", encoding="utf-8") as kf:
-            GOOGLE_API_KEY = kf.read().strip()
-            print("🔑 API Key aus google_API.txt erfolgreich geladen.")
-    except Exception as e:
-        print(f"⚠️ Fehler beim Lesen von google_API.txt: {e}")
-
-try:
-    if GOOGLE_API_KEY:
-        client = genai.Client(api_key=GOOGLE_API_KEY)
-    else:
-        client = genai.Client() # Versucht Umgebungsvariablen automatisch auszulesen
-except Exception as e:
-    print(f"⚠️ Hinweis bei GenAI Client Init: {e}")
-    client = None
-
 MODEL_NAME = "gemini-2.5-flash"
 
-# Seitenbereich (25 Seiten in der Mitte des Bandes)
-START_PAGE = 1
-END_PAGE = 400
-# Bestimme das Publikationsjahr aus dem PDF-Namen für die Layout-Auswahl
-try:
-    year_match = re.search(r'\b(19\d{2}|20\d{2})\b', filename)
-    PUBLICATION_YEAR = int(year_match.group(1)) if year_match else 2006
-except Exception:
-    PUBLICATION_YEAR = 2006
+# Helper for client init
+def get_genai_client():
+    GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY') or os.environ.get('GEMINI_API_KEY')
+    key_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "google_API.txt")
+    if not GOOGLE_API_KEY and os.path.exists(key_file_path):
+        try:
+            with open(key_file_path, "r", encoding="utf-8") as kf:
+                GOOGLE_API_KEY = kf.read().strip()
+                print("🔑 API Key aus google_API.txt erfolgreich geladen.")
+        except Exception as e:
+            print(f"⚠️ Fehler beim Lesen von google_API.txt: {e}")
+    try:
+        return genai.Client(api_key=GOOGLE_API_KEY) if GOOGLE_API_KEY else genai.Client()
+    except Exception as e:
+        print(f"⚠️ Hinweis bei GenAI Client Init: {e}")
+        return None
+
+client = None
 
 # ==========================================
 # 2. SKOS PARSER FÜR DAS EINHEITLICHE VOKABULAR
@@ -582,7 +555,7 @@ def clean_text(text):
     text = re.sub(r'Abb\.\s*\d+\s+[A-ZÄÖÜ][^\n]+', '', text)
     return text
 
-def extract_page_text_lazy(pdf_path, page_idx):
+def extract_page_text_lazy(pdf_path, page_idx, year=1984):
     try:
         with pdfplumber.open(pdf_path) as pdf:
             if 0 <= page_idx < len(pdf.pages):
@@ -593,8 +566,25 @@ def extract_page_text_lazy(pdf_path, page_idx):
                 # Exclude top 3% (running headers) and bottom 3% (footers)
                 top_y = height * 0.03
                 bottom_y = height * 0.97
-                mid_x = width / 2
                 
+                # Automatic 1-column vs 2-column layout detection
+                words = page.extract_words()
+                mid_x = width / 2
+                lines = {}
+                for w in words:
+                    top_key = round(w['top'], 0)
+                    lines.setdefault(top_key, []).append(w)
+                
+                crossing_lines = sum(1 for line_words in lines.values() if min(w['x0'] for w in line_words) < (mid_x - 50) and max(w['x1'] for w in line_words) > (mid_x + 50))
+                ratio = crossing_lines / len(lines) if lines else 0
+
+                is_single_column = (ratio > 0.25) or (year < 1990)
+                
+                if is_single_column:
+                    full_crop = page.crop((0, top_y, width, bottom_y))
+                    return clean_text(full_crop.extract_text() or "")
+                
+                # For 2-column volumes: 2-column layout extraction
                 left_crop = page.crop((0, top_y, mid_x, bottom_y))
                 right_crop = page.crop((mid_x, top_y, width, bottom_y))
                 
@@ -606,18 +596,17 @@ def extract_page_text_lazy(pdf_path, page_idx):
                 else:
                     full_crop = page.crop((0, top_y, width, bottom_y))
                     combined_text = full_crop.extract_text() or ""
-                    
                 return clean_text(combined_text)
     except Exception as e:
         print(f"⚠️ Fehler beim Lesen der Seite {page_idx+1}: {e}")
-    return None
+    return ""
 
 # ==========================================
 # 5. KI EXTRAKTION (MIGRATION AUF GOOGLE-GENAI)
 # ==========================================
 
 def get_system_prompt(year, vocab_instruction):
-    prompt_common = f"""{vocab_instruction}
+    prompt_common = vocab_instruction + """
 
 Du bist ein hochspezialisierter Experte für die archäologische Datenerfassung der "Bonner Jahrbücher". Deine Aufgabe ist die präzise Extraktion von Fundstellen und den darunter erfolgten Maßnahmen in ein strukturiertes JSON-Format.
 
@@ -625,126 +614,84 @@ Du bist ein hochspezialisierter Experte für die archäologische Datenerfassung 
 1. **ort** & **kreis**: Geografische Lage (Städte, Gemeinden, Kreise, Ortsteile, z. B. 'Jülich', 'Brühl', 'Haaren', 'Gressenich', 'Mausbach').
    - **SEHR WICHTIG**: Verwende NIEMALS Personalpronomen ("ich", "es", "wir"), Präpositionen ("im", "in", "am") oder Berichts-Füllwörter als Ortsnamen! Falls kein Ort vorhanden ist, verwende "-".
 2. **massnahme_id**:
-   - **WICHTIGE REGEL FÜR ÄLTERE BÄNDE**: Erfasse Koordinaten (z. B. '(r 3497, h 4084)', '(r 3497, h 4084 und r 3500, h 4097)'), TK-Angaben (z. B. '(TK 5004 Jülich: r 3497, h 4084)', '(TK 5107 Brühl: r 6303, h 3760)') sowie Grabbezeichnungen ('Grab 1', 'Grab 2') IMMER als `massnahme_id`!
-3. **datierung_norm** / **datierung_roh**: Zeitstellung, Epochen, Jahrhunderte (z. B. '71 n. Chr.', '2. Jh. n. Chr.', '5. Jh. n. Chr.', 'römisch') UND archäologische Kulturen (z. B. 'Michelsberger Kultur', 'Bandkeramik', 'Römerzeit', 'Neolithikum').
-   - **SEHR WICHTIG**: Archäologische Kulturen gehören IMMER zur Datierung und NIEMALS zu Funden oder Befunden!
+   - Erfasse Koordinaten oder Grabbezeichnungen ('Grab 1', 'Grab 2') als `massnahme_id`.
+3. **datierung_norm** / **datierung_roh**: Zeitstellung, Epochen, Jahrhunderte UND archäologische Kulturen.
 4. **befunde_norm** / **befunde_roh**: Immobile / ortsfeste Befunde & Strukturen.
-   - Beispiel: Grube, Pfostenloch, Ofen, Graben, Mauer, Gräberfeld, Grundriss, Siedlung, Villa rustica, Aquädukt, Torturm, Steinkastell, Lehmabdeckung, Fundament.
 5. **funde_norm** / **funde_roh**: Mobile Objekte, Artefakte & Gegenstände.
-   - Beispiel: Keramik, Scherbe, Beil, Klinge, Axt, Pfeilspitze, Abschlag, Klopfer, Reiber, Münze, Fibeln, Schüssel, Krug, Gefäß, Ziegel, Nagel, Bauelemente.
-
-### VOLLSTÄNDIGKEIT BEI KAISERN, MÜNZEN, WASSERLEITUNGEN UND GEFÄSSEN:
-- **Römische Kaiser & Herrscher**: Erfasse ALLE im Text erwähnten römischen Kaiser (z. B. Augustus, Tiberius, Caligula, Claudius I., Vespasian, Domitian, Nerva, Trajan, Hadrian, Antoninus Pius, Marc Aurel, Lucius Verus, Commodus, Septimius Severus, Geta, Julia Maesa, Gordian III., Philippus I., Constantin I., Constantin II.) VOLLSTÄNDIG in `datierung_roh` und `datierung_norm`.
-- **Wasserleitungen & Bauwerke**: Erfasse 'Eifelwasserleitung', 'römische Wasserleitung', 'Wasserleitung', 'Kanal', 'Frischwasserkanäle', 'Sammler', 'Fundamentplatte' VOLLSTÄNDIG in `befunde_norm` (Wasserleitung, Kanal, Fundament).
-- **Gefäßformen & Funde**: Erfasse 'Einhenkelkrug', 'Einhenkelkrüge', 'Zweihenkelkrüge', 'Glanztonwarebecher', 'Terra sigillata: Schale', 'Statuette des Mars Ultor', 'Helm', 'Panzerung', 'Beinschienen' VOLLSTÄNDIG in `funde_norm`.
-
-### STRIKTE TRENNUNG VON KOMBINIERTEN EIGENSCHAFTSWÖRTERN:
-- Wenn im Text 'römische Siedlungsstelle', 'römische Mauerfundamente' oder 'spätrömisches Gräberfeld' steht, TRENNEN:
-  - `datierung_norm`: Römische Zeit (oder römisch)
-  - `befunde_norm`: Siedlung, Mauer, Gräberfeld (ohne das Eigenschaftswort 'römisch')
-
-### DUPLIKAT-REGEL PRO AKTIVITÄT:
-- Nenne in `funde_norm`, `befunde_norm` und `datierung_norm` jeden eindeutigen Begriff pro Maßnahme **NUR EINMAL** (keine doppelten Nennungen).
 """
 
     if year < 1990:
-        # Prompt optimiert für das 1970er/1980er Layout (inline Ortsnamen, r/h Gauß-Krüger Koordinaten)
-        return prompt_common + f"""
-### SPECIFICS FÜR 1970er/1980er BÄNDE
-1. Zerlege den Text in einzelne Fundstellen/Maßnahmen.
-2. Identifiziere den Ort und Kreis.
-   WICHTIG: Ort und Kreis stehen in älteren Bänden meist am Anfang eines neuen Absatzes (z. B. "Neersen, Kr. Kempen-Krefeld (TK 4704 Viersen: r 3374, h 7956)." -> Ort: Neersen, Kreis: Kempen-Krefeld).
-   Der Ort gilt für alle folgenden Nummern (1., 2. usw.) unter diesem Absatz, bis ein neuer Ort im Text erscheint.
-3. Identifiziere die Maßnahmen. 
-   Diese sind in älteren Bänden oft NICHT durchnummeriert (d. h. es gibt keine Nummern wie 1., 2. usw., da pro Ort oft nur ein Bericht vorliegt).
-   Falls Koordinaten vorhanden sind (z. B. "(TK 4704 Viersen: r 3374, h 7956)"), verwende diese als `massnahme_id` (z. B. "(r 3374, h 7956)").
-   Falls durchnummeriert, verwende die Nummer (z. B. "1. (r 18341, h 38336)").
-   Falls weder eine Nummerierung noch Koordinaten vorhanden sind, setze `massnahme_id` auf "None". 
-   WICHTIG: Verwende niemals beschreibende Fließtexte oder Einleitungssätze als `massnahme_id`!
-   WICHTIG: Abbildungen und Bildunterschriften (z.B. beginnend mit "Bild ..." oder "Abb. ..." oder einer einfachen Nummer) dürfen nicht als eigene Maßnahme oder als `massnahme_id` klassifiziert werden. Diese dienen lediglich als Objektreferenzen von Funden/Befunden innerhalb der übergeordneten Fundstelle.
-
-### REGELN FÜR SEITENÜBERGÄNGE & DUPLIKATE (STRENGSTENS EINHALTEN)
-- Der Text enthält Marker wie "--- SEITENWECHSEL ---".
-- Wenn eine `massnahme_id` bereits vor dem Seitenwechsel begonnen hat und danach fortgesetzt wird:
-  - Erstelle **KEINEN** neuen Eintrag.
-  - Fasse alle Informationen (auch den Text der Folgeseite) in **EINEM** JSON-Objekt zusammen.
-  - Ergänze Felder wie 'funde_roh' oder 'befunde_roh' um die neuen Details der Folgeseite.
-- Jede eindeutige Nummer (z.B. 1., 2., 3.) innerhalb eines Ortes entspricht einer Maßnahme und soll zu einem Array zusammengefasst werden.
-
-### EXTRAKTIONS-GUIDE
-- **massnahme_id**: Die Nummer und/oder Koordinaten (z. B. "1. (r 18341, h 38336)" oder "(r 3374, h 7956)"). Falls beides fehlt, verwende "None". Keine Fließtexte oder Bild-/Abbildungsnummern (wie "(Bild 22,5)")!
-- **_roh Felder**: Kopiere den Text wortwörtlich aus dem PDF. Nicht zusammenfassen. Behalte eventuelle Objektreferenzen wie "(Bild 22,5)" im Originaltext bei.
-- **_norm Felder**: Nutze ausschließlich Begriffe aus den bereitgestellten Vokabularen zur Normalisierung.
-- **autor**: Der Name am Ende eines Abschnitts oder am Ende der Fundstelle (oft in Klammern am Ende des Textblocks, z. B. "(H. Waffenschmidt)").
+        prompt_1984 = """
+### SPECIFICS FÜR 1984ER BAND (EINSPALTIGES LAYOUT)
+1. **Das Dokument ist EINSPALTIG**.
+2. **Ort und Kreis erkennen**:
+   - Jeder Bericht/Eintrag beginnt am Anfang eines neuen Eintrags mit einem **ORTSNAMEN**, dem DIREKT (ohne Klammern) die Angaben zum **Landkreis, Kreis oder der Stadt** folgen.
+   - Beispiele aus dem Text:
+     - "Alfter, Rhein-Sieg-Kreis." -> ort: "Alfter", kreis: "Rhein-Sieg-Kreis"
+     - "Viersen, Kr. Viersen." -> ort: "Viersen", kreis: "Viersen"
+     - "Geldern, Kr. Kleve." -> ort: "Geldern", kreis: "Kleve"
+     - "Elsdorf, Erftkreis." -> ort: "Elsdorf", kreis: "Erftkreis"
+3. **STRIKTE REGEL: KEINE TERRA SIGILLATA MANUFAKTUREN ALS ORT!**:
+   - Namen wie "La Graufesenque", "Rheinzabern", "Sinzig", "Heihgenberg", "Blickweiler", "Lezoux", "Trier", "Westerndorf", "La Madeleine" in Keramik-Katalogtexten sind **Töpferei-Manufakturen / Herkunftsorte von Terra Sigillata**!
+   - Sie sind NIEMALS der Fundort/Ort des Berichts! Extrahiere sie NIEMALS als `ort`.
+4. **IGNORIERE BILDUNTERSCHRIFTEN / ABBILDUNGSUNTERSCHRIFTEN**:
+   - Zeilen wie "15 Bergheim, Terra sigillata. — Maßstab 1 : 2", "17 Elsdorf, Terra sigillata...", "18 Elsdorf, Endbeschlag aus Bronze...", "19 Erftstadt-Friesheim, Matronenaltar." sind reine Bildunterschriften von Abbildungen.
+   - Extrahiere aus Bildunterschriften MIT Maßstabsangaben ("Maßstab 1 : 2") KEINE eigenen Einträge!
+5. **Aktivitätsnummern & Vererbung**:
+   - Falls unter einer Ortsüberschrift (z. B. "Elsdorf, Erftkreis") mehrere Maßnahmen stehen ("1.", "2.", "3.", "4."), behalten ALLE Maßnahmen diesen Ortsnamen ("Elsdorf") und Kreis ("Erftkreis").
+6. **Keine TK-Kartenblatt-Angaben**:
+   - In diesem 1984er Layout gibt es keine Aktivitätsnummern (wie "1. (TK 4605)").
+   - Setze `massnahme_id` auf "None" (oder verwende Unter-Nummerierungen wie "1.", "2.", falls mehrere Einzelfundstellen unter demselben Ort aufgelistet sind).
 
 ### AUSGABE-FORMAT (NUR REINES JSON)
-{{
+{
   "eintraege": [
-    {{
-      "Seitenzahl": "531",
+    {
+      "Seitenzahl": "573",
       "bundesland": "NRW",
-      "ort": "Niedermerz",
-      "kreis": "Jülich",
-      "massnahme_id": "1. (r 18341, h 38336)",
-      "datierung_roh": "Originaltext zur Zeitstellung (z. B. römisch)",
-      "datierung_norm": "Normalisierter Begriff (z. B. Michelsberger Kultur)",
-      "befunde_roh": "Originaltext zu Befunden (z. B. ovaler Ring aus rötlich verziegeltem Lehm, römischer Ofen)",
-      "befunde_norm": "Normalisierte Begriffe",
-      "funde_roh": "Originaltext zu Funden (z. B. Ziegelbruchstücke, verziegelte Lehmbröckchen)",
-      "funde_norm": "Normalisierte Begriffe",
-      "autor": "Name des Berichterstatters"
-    }}
-  ]
-}}
-"""
-    else:
-        # Prompt optimiert für das 1990er/2000er Layout
-        return prompt_common + f"""
-### SPECIFICS FÜR 1990er/2000er BÄNDE
-1. Zerlege den Text in einzelne Fundstellen/Maßnahmen.
-2. Identifiziere den Ort und Kreis aus den (meist fettgedruckten) Überschriften.
-   WICHTIG: Ein Ort gilt für alle folgenden Nummern, bis ein neuer Ort im Text erscheint.
-   MASSNAHMEN: sind immer in mehreren Klammern, meist mit einer anführenden Nummer (1.,2.) formatiert.
-   Beispiele wären: (z.B. 1218/056 - (1168/014) (HA125) - (1114/017) (HA 132) - (1057/019, 027 und 1006/031; 1057/028) - (1005/036) (WW96/158) - (1214/027) (HA96/226) - (0902/018) (NW96/0125 und 0126))
-   Auf einigen Seiten existieren Abbildungen mit einer Nummerierung. Diese dürfen nicht als Maßnahme klassifiziert werden.
-   (Beispiel: 24 Niederzier-Elsdorf. Villa rustica und Glashütte Fiambach 132: Spätrömisches Gräberfeld und östlicher Umfassungsgraben. Unterschiedliche Plana. Brandgräber gerastert. - Maßstab 1:400.)
-   Hinter den Nummern kommt keine Maßnahme in Klammern, darum sollten sie ignoriert werden
-
-### REGELN FÜR SEITENÜBERGÄNGE & DUPLIKATE (STRENGSTENS EINHALTEN)
-- Der Text enthält Marker wie "--- SEITENWECHSEL ---".
-- Wenn eine `massnahme_id` bereits vor dem Seitenwechsel begonnen hat und danach fortgesetzt wird:
-  - Erstelle **KEINEN** neuen Eintrag.
-  - Fasse alle Informationen (auch den Text der Folgeseite) in **EINEM** JSON-Objekt zusammen.
-  - Ergänze Felder wie 'funde_roh' oder 'befunde_roh' um die neuen Details der Folgeseite.
-- Jede eindeutige Nummer (z.B. 1., 2., 3.) innerhalb eines Ortes entspricht einer Maßnahme und soll zu einem Array zusammengefasst werden
-
-### EXTRAKTIONS-GUIDE
-- **massnahme_id**: Die Nummer im Format "1. (1234/567)".
-- **_roh Felder**: Kopiere den Text wortwörtlich aus dem PDF. Nicht zusammenfassen.
-- **_norm Felder**: Nutze ausschließlich Begriffe aus den bereitgestellten Vokabularen zur Normalisierung.
-- **autor**: Der Name am Ende eines Abschnitts (oft abgekürzt, z.B. "M. Gechter").
-
-## Seitenzahlen sind folgendermaßen formtiert 404 Ausgrabungen, Funde und Befunde 1996 auf den geraden Seiten und Römische Zeit 405 auf den ungeraden Seiten
-### AUSGABE-FORMAT (NUR REINES JSON)
-{{
-  "eintraege": [
-    {{
-      "Seitenzahl": "404",
-      "bundesland": "NRW",
-      "ort": "Exakter Ortsname",
-      "kreis": "Zugehöriger Kreis",
-      "massnahme_id": "Nummer inkl. Klammerzusatz",
+      "ort": "Alfter",
+      "kreis": "Rhein-Sieg-Kreis",
+      "massnahme_id": "None",
       "datierung_roh": "Originaltext zur Zeitstellung",
       "datierung_norm": "Normalisierter Begriff",
-      "befunde_roh": "Originaltext zu Befunden (Mauern, Gruben etc.)",
+      "befunde_roh": "Originaltext zu Befunden",
       "befunde_norm": "Normalisierte Begriffe",
-      "funde_roh": "Originaltext zu Funden (Keramik, Münzen etc.)",
+      "funde_roh": "Originaltext zu Funden",
       "funde_norm": "Normalisierte Begriffe",
       "autor": "Name des Berichterstatters"
-    }}
+    }
   ]
-}}
+}
 """
+        return prompt_common + prompt_1984
+    else:
+        prompt_2000 = """
+### SPECIFICS FÜR 1990er/2000er BÄNDE
+1. Zerlege den Text in einzelne Fundstellen/Maßnahmen.
+2. Identifiziere Ort und Kreis aus den Überschriften.
+3. **massnahme_id**: Die Aktivitätsnummer / Maßnahme-ID im Format "1. (1161/187)", "(1161/187)", "(NW97/1025)", "(0587/013, 012)" oder "1.".
+
+### AUSGABE-FORMAT (NUR REINES JSON)
+{
+  "eintraege": [
+    {
+      "Seitenzahl": "404",
+      "bundesland": "NRW",
+      "ort": "Niederzier",
+      "kreis": "Düren",
+      "massnahme_id": "1. (1218/056)",
+      "datierung_roh": "Spätrömisch",
+      "datierung_norm": "Spätrömisches Gräberfeld",
+      "befunde_roh": "Umfassungsgraben",
+      "befunde_norm": "Graben",
+      "funde_roh": "Brandgräber",
+      "funde_norm": "Grab",
+      "autor": "M. Gechter"
+    }
+  ]
+}
+"""
+        return prompt_common + prompt_2000
 
 def extract_data_with_gemini(text_chunk, system_prompt):
     if client is None:
@@ -771,58 +718,8 @@ def extract_data_with_gemini(text_chunk, system_prompt):
     return {"eintraege": []}
 
 # ==========================================
-# 6. WORKFLOW
+# 5. LIVE PROGRESS GENERATOR
 # ==========================================
-
-text_pages = []
-
-# Bestimme Dateinamen für Rohdaten und Pfad zum Rohtext
-pdf_name_clean = os.path.splitext(os.path.basename(pdf_path))[0] if pdf_path else "1970"
-txt_filename = f"LVR_{pdf_name_clean}_raw_text.txt"
-txt_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), txt_filename)
-
-if pdf_path and os.path.exists(pdf_path):
-    print(f"📖 Lese PDF (S. {START_PAGE}-{END_PAGE})...")
-    
-    # Ermittle die Gesamtseitenzahl
-    try:
-        with pdfplumber.open(pdf_path) as pdf:
-            total_pages = len(pdf.pages)
-    except Exception as e:
-        print(f"❌ Fehler beim Öffnen der PDF-Datei: {e}")
-        total_pages = 0
-
-    real_end = min(END_PAGE, total_pages)
-    for i in tqdm(range(START_PAGE - 1, real_end), desc="Einlesen"):
-        pt = extract_page_text_lazy(pdf_path, i)
-        if pt: text_pages.append(pt)
-
-    if text_pages:
-        try:
-            with open(txt_file, "w", encoding="utf-8") as f:
-                for idx, page_text in enumerate(text_pages):
-                    f.write(f"--- SEITE {START_PAGE + idx} ---\n")
-                    f.write(page_text)
-                    f.write("\n\n")
-            print(f"📄 Rohtext gespeichert unter: {txt_file}")
-        except Exception as e:
-            print(f"⚠️ Fehler beim Speichern des Rohtextes: {e}")
-elif os.path.exists(txt_file):
-    print(f"📖 PDF nicht gefunden, aber Rohtext-Datei {txt_file} existiert. Lade Seiten aus dem Rohtext...")
-    try:
-        with open(txt_file, "r", encoding="utf-8") as f:
-            content = f.read()
-        # Splitte an den Seitenmarkern
-        pages_raw = re.split(r'--- SEITE \d+ ---\n', content)
-        # Das erste Element ist vor dem ersten Split leer
-        for p in pages_raw[1:]:
-            pt = clean_text(p.strip())
-            if pt: text_pages.append(pt)
-        print(f"✅ {len(text_pages)} Seiten erfolgreich aus Rohtext geladen.")
-    except Exception as e:
-        print(f"❌ Fehler beim Lesen der Rohtext-Datei: {e}")
-else:
-    print("❌ Weder PDF noch Rohtext-Datei gefunden.")
     
 def write_live_progress(current_idx, total_pages, last_ort="", phase="Extraktion", preview_file=""):
     raw_pct = (current_idx + 1) / total_pages * 100 if total_pages > 0 else 0
@@ -890,9 +787,36 @@ def write_live_progress(current_idx, total_pages, last_ort="", phase="Extraktion
 
 # ==========================================
 # 6. WORKFLOW
-# ==========================================
-
 def run_pipeline():
+    global client
+    if not client:
+        client = get_genai_client()
+
+    filename = sys.argv[1] if len(sys.argv) > 1 else "1984.pdf"
+
+    pdf_path = None
+    if os.path.exists(pdf_base_dir):
+        for root, dirs, files in os.walk(pdf_base_dir):
+            if filename in files:
+                pdf_path = os.path.join(root, filename)
+                break
+    if not pdf_path and os.path.exists(pdf_base_dir):
+        pdf_path = os.path.join(pdf_base_dir, filename)
+
+    if len(sys.argv) > 3:
+        START_PAGE = int(sys.argv[2])
+        END_PAGE = int(sys.argv[3])
+        print(f"📄 Manuelle Seitenauswahl: Seiten {START_PAGE} bis {END_PAGE}")
+    else:
+        START_PAGE = 1
+        END_PAGE = 400
+
+    try:
+        year_match = re.search(r'\b(19\d{2}|20\d{2})\b', filename)
+        PUBLICATION_YEAR = int(year_match.group(1)) if year_match else 2006
+    except Exception:
+        PUBLICATION_YEAR = 2006
+
     text_pages = []
 
     pdf_name_clean = os.path.splitext(os.path.basename(pdf_path))[0] if pdf_path else "1970"
@@ -902,7 +826,10 @@ def run_pipeline():
     txt_file = os.path.join(ws_dir, txt_filename)
     cleaned_txt_file = os.path.join(ws_dir, cleaned_txt_filename)
 
-    if os.path.exists(cleaned_txt_file):
+    # Lade Textseiten (falls custom START_PAGE/END_PAGE übergeben wurde, lese immer frisch aus dem PDF)
+    custom_pages = len(sys.argv) > 3
+
+    if not custom_pages and os.path.exists(cleaned_txt_file):
         print(f"📖 Lade vorbereiteten & geprüften OCR-Text aus: {os.path.basename(cleaned_txt_file)}...")
         try:
             with open(cleaned_txt_file, "r", encoding="utf-8") as f:
@@ -917,7 +844,8 @@ def run_pipeline():
         except Exception as e:
             print(f"⚠️ Fehler beim Lesen von {cleaned_txt_file}: {e}")
 
-    if not text_pages and pdf_path and os.path.exists(pdf_path):
+    if (not text_pages or custom_pages) and pdf_path and os.path.exists(pdf_path):
+        text_pages = [] # Reset text_pages for fresh custom page reading
         print(f"📖 Lese PDF (S. {START_PAGE}-{END_PAGE})...")
         try:
             with pdfplumber.open(pdf_path) as pdf:
@@ -928,7 +856,7 @@ def run_pipeline():
 
         real_end = min(END_PAGE, total_pages)
         for i in tqdm(range(START_PAGE - 1, real_end), desc="Einlesen"):
-            pt = extract_page_text_lazy(pdf_path, i)
+            pt = extract_page_text_lazy(pdf_path, i, year=PUBLICATION_YEAR)
             if pt: text_pages.append(pt)
             write_live_progress(len(text_pages) - 1, (real_end - START_PAGE + 1), phase="PDF Einlesen")
 
@@ -942,20 +870,6 @@ def run_pipeline():
                 print(f"📄 Rohtext gespeichert unter: {txt_file}")
             except Exception as e:
                 print(f"⚠️ Fehler beim Speichern des Rohtextes: {e}")
-    elif not text_pages and os.path.exists(txt_file):
-        print(f"📖 PDF nicht gefunden, aber Rohtext-Datei {txt_file} existiert. Lade Seiten aus dem Rohtext...")
-        try:
-            with open(txt_file, "r", encoding="utf-8") as f:
-                content = f.read()
-            pages_raw = re.split(r'--- SEITE \d+ ---\n', content)
-            for p in pages_raw[1:]:
-                pt = clean_text(p.strip())
-                if pt: text_pages.append(pt)
-            print(f"✅ {len(text_pages)} Seiten erfolgreich aus Rohtext geladen.")
-        except Exception as e:
-            print(f"❌ Fehler beim Lesen der Rohtext-Datei: {e}")
-    else:
-        print("❌ Weder PDF noch Rohtext-Datei gefunden.")
 
     if text_pages:
         print(f"✅ {len(text_pages)} Seiten Text. Starte KI (Layout Jahr: {PUBLICATION_YEAR})...")

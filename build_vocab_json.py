@@ -83,7 +83,8 @@ if os.path.exists(vocab_file):
                 data[cat_name].append({
                     "term": main_term,
                     "alt": alt_labels[:5],
-                    "category": cat_name
+                    "category": cat_name,
+                    "uri": str(concept)
                 })
     except Exception as e:
         print(f"⚠️ Error parsing {vocab_file}: {e}")
