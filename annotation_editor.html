@@ -9,6 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>if (typeof pdfjsLib !== 'undefined') { pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; }</script>
+    <!-- Leaflet GIS Map Library -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         :root {
             --bg-body: #f8fafc;
@@ -1207,6 +1210,14 @@
                             <div style="font-size:11px; color:var(--text-muted);">Mit Strg+V in Excel einfügen</div>
                         </div>
                     </button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="closeAllDropdowns(); exportQgisGeoJSON();">
+                        <span>🗺️</span>
+                        <div>
+                            <strong>QGIS GeoJSON Export (.geojson)</strong>
+                            <div style="font-size:11px; color:var(--text-muted);">Georeferenzierte Fundstellen (ETRS89 / WGS84)</div>
+                        </div>
+                    </button>
                 </div>
             </div>
 
@@ -1289,7 +1300,10 @@
         <div class="pane-sidebar" id="paneSidebar">
             <div class="sidebar-tabs">
                 <div class="tab-btn active" id="tabBtnTable" onclick="switchSidebarTab('table')">
-                    📊 Extraktions-Tabelle (<span id="rowCountDisplay">0</span>)
+                    📊 Tabelle (<span id="rowCountDisplay">0</span>)
+                </div>
+                <div class="tab-btn" id="tabBtnMap" onclick="switchSidebarTab('map')" style="color: #059669;">
+                    🗺️ GIS-Karte (<span id="mapPointCountDisplay">0</span>)
                 </div>
                 <div class="tab-btn" id="tabBtnCandidates" onclick="switchSidebarTab('candidates')" style="color:#7e22ce;">
                     🟣 Neue Begriffe (<span id="candidateCountDisplay">0</span>)
@@ -1323,6 +1337,31 @@
                             <!-- Populated with rows -->
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- Tab 4: 3-Tier GIS Map Verification & QGIS Integration -->
+            <div class="tab-content" id="tabContentMap" style="display: none; flex-direction: column; height: 100%;">
+                <div class="map-toolbar" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--bg-card-subtle); border-bottom: 1px solid var(--border-color); gap: 8px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600;">
+                        <span>🗺️ 3-Tier GIS:</span>
+                        <span class="badge-tag" style="background:#dcfce7; color:#166534; font-size:11px;" id="tier1BadgeCount" title="Auto-verifiziert aus Rheinland-Gazetteer">🟢 0 Auto</span>
+                        <span class="badge-tag" style="background:#fef9c3; color:#854d0e; font-size:11px;" id="tier2BadgeCount" title="GeoNames / Nominatim Treffer">🟡 0 GeoNames</span>
+                        <span class="badge-tag" style="background:#ffedd5; color:#c2410c; font-size:11px;" id="tier3BadgeCount" title="Gemini KI / Flurnamen (drag-and-drop)">🟠 0 KI/Flur</span>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                        <button type="button" class="btn-outline" onclick="centerMapOnRhineland()" style="font-size: 11px; padding: 3px 8px;" title="Rheinland zentrieren">🔍 Übersicht</button>
+                        <button type="button" class="btn-primary" onclick="exportQgisGeoJSON()" style="font-size: 11px; padding: 3px 10px; background: #059669; border-color: #047857; font-weight: 700;" title="GeoJSON Layer herunterladen">📥 QGIS Export</button>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 6px; padding: 6px 12px; background: var(--bg-card); border-bottom: 1px solid var(--border-color); align-items: center;">
+                    <input type="text" class="search-box-input" id="mapSearchInput" placeholder="🔍 Ort / Flurname suchen (z. B. Merzenicher Heide)..." onkeydown="if(event.key==='Enter') searchLocationNominatim(this.value)" style="margin: 0; font-size: 12px; padding: 4px 8px;">
+                    <button type="button" class="btn-outline" onclick="searchLocationNominatim(document.getElementById('mapSearchInput').value)" style="font-size: 11px; padding: 4px 8px; white-space: nowrap;">Suchen</button>
+                </div>
+                <div id="leafletMapContainer" style="flex: 1; min-height: 480px; width: 100%; z-index: 10;"></div>
+                <div style="padding: 6px 12px; font-size: 11px; color: var(--text-muted); background: var(--bg-card-subtle); border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                    <span>📍 <em>Pinpoint:</em> Marker können per Drag-and-Drop direkt auf die Grabung verschoben werden.</span>
+                    <span id="mapSelectedCoordsDisplay" style="font-family: monospace; font-size: 10.5px;"></span>
                 </div>
             </div>
 
@@ -1419,41 +1458,62 @@
         </div>
     </div>
 
-    <!-- Modal: Neuer Begriff ohne SKOS -->
+    <!-- Modal: Neuer Begriff & 1-Klick SKOS Konzept-Vorschlag -->
     <div class="modal-backdrop" id="nonSkosModal">
-        <div class="modal-content" style="max-width: 460px;">
+        <div class="modal-content" style="max-width: 490px;">
             <div class="modal-header" style="background:#faf5ff; border-bottom:1px solid #e9d5ff;">
                 <h3 style="color:#6b21a8; margin:0; font-size:15px; display:flex; align-items:center; gap:6px;">
-                    <span>🟣</span> Neuer Begriff (ohne SKOS)
+                    <span>📖</span> 1-Klick SKOS Konzept-Vorschlag
                 </h3>
                 <button class="btn-icon" onclick="closeNonSkosModal()">✕</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Begriff im Text:</label>
-                    <input type="text" class="form-input" id="nonSkosTermInput">
+                    <label>Begriff im Text (<code style="color:#7e22ce;">skos:prefLabel</code>):</label>
+                    <input type="text" class="form-input" id="nonSkosTermInput" oninput="updateProposalLabel(this.value)">
                 </div>
                 <div class="form-group">
                     <label>Archäologische Kategorie:</label>
                     <div style="display:flex; gap:10px; margin-top:5px; font-size:12.5px;">
-                        <label style="cursor:pointer; display:flex; align-items:center; gap:4px;"><input type="radio" name="nonSkosCat" value="Befund" checked> 🟥 Befund</label>
-                        <label style="cursor:pointer; display:flex; align-items:center; gap:4px;"><input type="radio" name="nonSkosCat" value="Fund"> 🟩 Fund</label>
-                        <label style="cursor:pointer; display:flex; align-items:center; gap:4px;"><input type="radio" name="nonSkosCat" value="Datierung"> 🟨 Datierung</label>
-                        <label style="cursor:pointer; display:flex; align-items:center; gap:4px;"><input type="radio" name="nonSkosCat" value="Sonstiges"> 🪨 Sonstiges</label>
+                        <label style="cursor:pointer; display:flex; align-items:center; gap:4px;"><input type="radio" name="nonSkosCat" value="Befund" checked onchange="updateBroaderSuggestions()"> 🟥 Befund</label>
+                        <label style="cursor:pointer; display:flex; align-items:center; gap:4px;"><input type="radio" name="nonSkosCat" value="Fund" onchange="updateBroaderSuggestions()"> 🟩 Fund</label>
+                        <label style="cursor:pointer; display:flex; align-items:center; gap:4px;"><input type="radio" name="nonSkosCat" value="Datierung" onchange="updateBroaderSuggestions()"> 🟨 Datierung</label>
                     </div>
+                </div>
+                <div class="form-group">
+                    <label style="display:flex; justify-content:space-between;">
+                        <span>Übergeordnetes SKOS-Konzept (<code style="color:#7e22ce;">skos:broader</code>):</span>
+                        <span style="font-size:11px; color:var(--text-muted);">Empfohlen</span>
+                    </label>
+                    <input type="text" class="form-input" id="nonSkosBroaderInput" list="broaderConceptList" placeholder="z. B. Grube, Keramik, Eisenzeit, Gebäude...">
+                    <datalist id="broaderConceptList"></datalist>
                 </div>
                 <div class="form-group">
                     <label>Zugeordnete Maßnahme:</label>
                     <input type="text" class="form-input" id="nonSkosMeasureDisplay" readonly style="background:var(--bg-card-subtle); color:var(--text-muted);">
                 </div>
-                <div class="form-group">
-                    <label>Notiz / Vorschlag für Vokabular (optional):</label>
-                    <input type="text" class="form-input" id="nonSkosNoteInput" placeholder="z. B. Brandsohle, Holzkohleband, neuer Mühlsteintyp...">
+                <div class="form-group" style="background:var(--bg-card-subtle); padding:10px; border-radius:6px; border:1px solid var(--border-color);">
+                    <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-weight:600; font-size:12px; margin:0;">
+                        <input type="checkbox" id="chkAutoRescanDocument" checked style="margin-top:2px;">
+                        <div>
+                            <span>🔄 Gesamtes Dokument sofort nach diesem Begriff durchsuchen</span>
+                            <div style="font-weight:400; font-size:11px; color:var(--text-muted); margin-top:2px;">
+                                Findet alle weiteren Stellen im Bericht und annotiert sie automatisch.
+                            </div>
+                        </div>
+                    </label>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>Notiz / Begründung (optional):</label>
+                    <input type="text" class="form-input" id="nonSkosNoteInput" placeholder="z. B. Neuer Typus, Lokale Ausprägung...">
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn-outline" onclick="closeNonSkosModal()">Abbrechen</button>
-                <button class="btn-primary" onclick="confirmSaveNonSkosCandidate()" style="background:#7e22ce; border-color:#6b21a8;">💾 In Liste eintragen & im Text markieren</button>
+            <div class="modal-footer" style="justify-content: space-between; gap: 8px;">
+                <button type="button" class="btn-outline" onclick="closeNonSkosModal()">Abbrechen</button>
+                <div style="display: flex; gap: 6px;">
+                    <button type="button" class="btn-outline" onclick="confirmSaveNonSkosCandidate(false)" title="Nur in Kandidatenliste vormerken">🟣 Als Kandidat</button>
+                    <button type="button" class="btn-primary" onclick="confirmSaveNonSkosCandidate(true)" style="background:#7e22ce; border-color:#6b21a8; font-weight:700;">💡 In SKOS aufnehmen & Scannen</button>
+                </div>
             </div>
         </div>
     </div>
@@ -4662,10 +4722,44 @@ REGELN:
         // NON-SKOS CANDIDATES MANAGEMENT (LISTE NEUER BEGRIFFE)
         // =====================================================================
 
+        function updateProposalLabel(val) {
+            const lbl = document.getElementById('labelTermToRescan');
+            if (lbl) lbl.innerText = val || 'Begriff';
+        }
+
+        function updateBroaderSuggestions() {
+            const catRadio = document.querySelector('input[name="nonSkosCat"]:checked');
+            const cat = catRadio ? catRadio.value : 'Befund';
+            const dl = document.getElementById('broaderConceptList');
+            if (!dl) return;
+            dl.innerHTML = '';
+
+            const matching = currentSkosConcepts.filter(c => c.category === cat);
+            matching.sort((a, b) => a.prefLabel.localeCompare(b.prefLabel, 'de'));
+
+            const defaultBroaders = {
+                'Befund': ['Grube', 'Gebäude', 'Siedlung', 'Gräberfeld', 'Grab', 'Wallanlage', 'Pfostengrube', 'Graben', 'Ofen', 'Estrich', 'Keller'],
+                'Fund': ['Keramik', 'Gefäß', 'Fibel', 'Münze', 'Waffe', 'Werkzeug', 'Schmuck', 'Glas', 'Silex', 'Knochen', 'Schlacke'],
+                'Datierung': ['Eisenzeit', 'Römische Zeit', 'Bronzezeit', 'Neolithikum', 'Mittelalter', 'Frühe Neuzeit', 'Kaiserzeit', 'Latènezeit']
+            };
+
+            const broadersSet = new Set(defaultBroaders[cat] || []);
+            matching.forEach(c => {
+                if (c.prefLabel && c.prefLabel.length < 25) broadersSet.add(c.prefLabel);
+            });
+
+            broadersSet.forEach(term => {
+                const opt = document.createElement('option');
+                opt.value = term;
+                dl.appendChild(opt);
+            });
+        }
+
         function openNonSkosModalForSelection() {
             closeSuggestionPopover();
             const term = currentSelectedText.trim();
             document.getElementById('nonSkosTermInput').value = term;
+            updateProposalLabel(term);
 
             const docData = EMBEDDED_DOCS[activeDocKey];
             const activeRows = (currentAnnotationMode === 'manual') ? docData?.manual_table_rows : docData?.table_rows;
@@ -4674,6 +4768,8 @@ REGELN:
 
             document.getElementById('nonSkosMeasureDisplay').value = row ? `${row.ort || '-'} (${row.massnahme || '-'})` : 'Keine Maßnahme';
             document.getElementById('nonSkosNoteInput').value = '';
+            document.getElementById('nonSkosBroaderInput').value = '';
+            updateBroaderSuggestions();
             document.getElementById('nonSkosModal').style.display = 'flex';
             document.getElementById('nonSkosTermInput').focus();
         }
@@ -4682,7 +4778,7 @@ REGELN:
             document.getElementById('nonSkosModal').style.display = 'none';
         }
 
-        function confirmSaveNonSkosCandidate() {
+        function confirmSaveNonSkosCandidate(integrateIntoSkos = false) {
             const term = document.getElementById('nonSkosTermInput').value.trim();
             if (!term) {
                 alert("Bitte einen Begriff eingeben!");
@@ -4690,7 +4786,9 @@ REGELN:
             }
             const catRadio = document.querySelector('input[name="nonSkosCat"]:checked');
             const cat = catRadio ? catRadio.value : 'Befund';
+            const broaderTerm = (document.getElementById('nonSkosBroaderInput')?.value || '').trim();
             const note = document.getElementById('nonSkosNoteInput').value.trim();
+            const rescan = document.getElementById('chkAutoRescanDocument')?.checked ?? true;
 
             const docData = EMBEDDED_DOCS[activeDocKey];
             if (!docData) return;
@@ -4705,6 +4803,7 @@ REGELN:
                 id: candidateId,
                 term: term,
                 category: cat,
+                broader: broaderTerm,
                 rowId: row ? row.id : '',
                 ort: row ? row.ort : '-',
                 massnahme: row ? row.massnahme : '-',
@@ -4715,7 +4814,68 @@ REGELN:
 
             docData.non_skos_candidates.push(cand);
 
-            // Wrap selection in purple mark in text
+            if (integrateIntoSkos) {
+                // 1-Click SKOS Proposal: Add concept to active vocabulary
+                const newConcept = {
+                    prefLabel: term,
+                    altLabel: [],
+                    category: cat,
+                    broader: broaderTerm || null,
+                    uri: `http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_user_${Date.now()}`
+                };
+                currentSkosConcepts.push(newConcept);
+
+                // Save to localStorage
+                try {
+                    const customList = JSON.parse(localStorage.getItem('custom_skos_concepts') || '[]');
+                    customList.push(newConcept);
+                    localStorage.setItem('custom_skos_concepts', JSON.stringify(customList));
+                } catch(e) {}
+
+                // Wrap selection in standard category mark
+                const catClass = cat.toLowerCase();
+                if (currentSelectionRange) {
+                    const mark = document.createElement('mark');
+                    mark.className = `${catClass} has-skos-direct`;
+                    mark.title = `${cat}: ${term} [Überbegriff: ${broaderTerm || 'Wurzel'}]`;
+                    mark.setAttribute('data-concept', term);
+                    mark.setAttribute('data-category', catClass);
+                    try {
+                        currentSelectionRange.surroundContents(mark);
+                    } catch(e) {
+                        const frag = currentSelectionRange.extractContents();
+                        mark.appendChild(frag);
+                        currentSelectionRange.insertNode(mark);
+                    }
+                }
+
+                // Add term to active row's entity array
+                if (row) {
+                    const fieldMap = { 'Befund': 'befunde', 'Fund': 'funde', 'Datierung': 'datierung' };
+                    const field = fieldMap[cat];
+                    if (field && Array.isArray(row[field]) && !row[field].includes(term)) {
+                        row[field].push(term);
+                    }
+                }
+
+                let scanMatches = 1;
+                if (rescan) {
+                    scanMatches = scanDocumentForNewConcept(term, cat, broaderTerm);
+                }
+
+                closeNonSkosModal();
+                if (window.getSelection()) window.getSelection().removeAllRanges();
+
+                renderCandidatesTable();
+                renderPipelineTable();
+                renderVocabExplorer('');
+                saveManualState();
+
+                showToast(`💡 Begriff «${term}» (Überbegriff: ${broaderTerm || 'Wurzel'}) in SKOS übernommen & ${scanMatches} Stelle(n) annotiert!`, 'success');
+                return;
+            }
+
+            // Normal candidate logging without immediate SKOS integration
             if (currentSelectionRange) {
                 const mark = document.createElement('mark');
                 mark.id = candidateId;
@@ -4740,6 +4900,86 @@ REGELN:
             saveManualState();
 
             showToast(`🟣 Begriff «${term}» in Liste für neue Begriffe eingetragen!`, 'success');
+        }
+
+        function scanDocumentForNewConcept(term, cat, broaderTerm) {
+            const textBody = document.getElementById('textBody');
+            if (!textBody) return 1;
+
+            const catClass = cat.toLowerCase();
+            const fieldMap = { 'Befund': 'befunde', 'Fund': 'funde', 'Datierung': 'datierung' };
+            const field = fieldMap[cat];
+
+            const regex = new RegExp(`\\b(${escapeRegExp(term)})\\b`, 'gi');
+            let matchCount = 0;
+
+            const paras = textBody.querySelectorAll('.reading-para, p');
+            paras.forEach(para => {
+                const walker = document.createTreeWalker(para, NodeFilter.SHOW_TEXT, null, false);
+                const nodesToReplace = [];
+                let node;
+                while (node = walker.nextNode()) {
+                    if (node.parentNode && node.parentNode.tagName === 'MARK') continue;
+                    if (regex.test(node.nodeValue)) {
+                        nodesToReplace.push(node);
+                    }
+                }
+
+                nodesToReplace.forEach(textNode => {
+                    const parent = textNode.parentNode;
+                    const text = textNode.nodeValue;
+                    const frag = document.createDocumentFragment();
+                    let lastIdx = 0;
+                    let m;
+                    regex.lastIndex = 0;
+                    while ((m = regex.exec(text)) !== null) {
+                        matchCount++;
+                        if (m.index > lastIdx) {
+                            frag.appendChild(document.createTextNode(text.substring(lastIdx, m.index)));
+                        }
+                        const mark = document.createElement('mark');
+                        mark.className = `${catClass} has-skos-direct`;
+                        mark.title = `${cat}: ${term} [Überbegriff: ${broaderTerm || 'Wurzel'}]`;
+                        mark.setAttribute('data-concept', term);
+                        mark.setAttribute('data-category', catClass);
+                        mark.appendChild(document.createTextNode(m[0]));
+                        frag.appendChild(mark);
+                        lastIdx = regex.lastIndex;
+
+                        const prevBanner = findPrecedingMeasureBanner(mark);
+                        if (prevBanner) {
+                            const rowId = prevBanner.getAttribute('data-row-id');
+                            const docData = EMBEDDED_DOCS[activeDocKey];
+                            const activeRows = (currentAnnotationMode === 'manual') ? (docData?.manual_table_rows || []) : (docData?.table_rows || []);
+                            const r = activeRows.find(x => x.id === rowId);
+                            if (r && field && Array.isArray(r[field]) && !r[field].includes(term)) {
+                                r[field].push(term);
+                            }
+                        }
+                    }
+                    if (lastIdx < text.length) {
+                        frag.appendChild(document.createTextNode(text.substring(lastIdx)));
+                    }
+                    parent.replaceChild(frag, textNode);
+                });
+            });
+
+            return Math.max(1, matchCount);
+        }
+
+        function findPrecedingMeasureBanner(node) {
+            let cur = node;
+            while (cur && cur.id !== 'textBody') {
+                let prev = cur.previousElementSibling;
+                while (prev) {
+                    if (prev.classList && prev.classList.contains('measure-banner')) return prev;
+                    const sub = prev.querySelector && prev.querySelector('.measure-banner');
+                    if (sub) return sub;
+                    prev = prev.previousElementSibling;
+                }
+                cur = cur.parentElement;
+            }
+            return null;
         }
 
         function deleteCandidate(candId, evt) {
@@ -5640,6 +5880,14 @@ REGELN:
             if (tabKey === 'table') {
                 document.getElementById('tabBtnTable').classList.add('active');
                 document.getElementById('tabContentTable').classList.add('active');
+            } else if (tabKey === 'map') {
+                document.getElementById('tabBtnMap').classList.add('active');
+                document.getElementById('tabContentMap').classList.add('active');
+                setTimeout(() => {
+                    initLeafletMap();
+                    renderGisMarkers();
+                    if (leafletMapInstance) leafletMapInstance.invalidateSize();
+                }, 100);
             } else if (tabKey === 'candidates') {
                 document.getElementById('tabBtnCandidates').classList.add('active');
                 document.getElementById('tabContentCandidates').classList.add('active');
@@ -5649,6 +5897,357 @@ REGELN:
                 document.getElementById('tabContentVocab').classList.add('active');
                 renderVocabExplorer('');
             }
+        }
+
+        // =====================================================================
+        // 3-TIER GIS MAP VERIFICATION & QGIS GEOJSON EXPORT
+        // =====================================================================
+
+        let leafletMapInstance = null;
+        let leafletMarkersLayer = null;
+        let candidateNominatimMarker = null;
+
+        function initLeafletMap() {
+            if (typeof L === 'undefined') {
+                console.warn("Leaflet.js is not loaded.");
+                return;
+            }
+            const mapContainer = document.getElementById('leafletMapContainer');
+            if (!mapContainer) return;
+
+            if (!leafletMapInstance) {
+                // Center on Rhineland (Cologne / Bonn / Aachen / Niederrhein region)
+                leafletMapInstance = L.map('leafletMapContainer', {
+                    center: [50.9375, 6.9603],
+                    zoom: 9,
+                    zoomControl: true
+                });
+
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(leafletMapInstance);
+
+                leafletMarkersLayer = L.layerGroup().addTo(leafletMapInstance);
+            }
+        }
+
+        function centerMapOnRhineland() {
+            if (leafletMapInstance) {
+                if (leafletMarkersLayer && leafletMarkersLayer.getLayers().length > 0) {
+                    const group = L.featureGroup(leafletMarkersLayer.getLayers());
+                    leafletMapInstance.fitBounds(group.getBounds().pad(0.1));
+                } else {
+                    leafletMapInstance.setView([50.9375, 6.9603], 9);
+                }
+            }
+        }
+
+        function createPinIcon(tier, labelText) {
+            let bg = '#10b981';
+            let symbol = '🟢';
+            if (tier === 2) { bg = '#f59e0b'; symbol = '🟡'; }
+            else if (tier === 3) { bg = '#ea580c'; symbol = '🟠'; }
+
+            return L.divIcon({
+                className: 'custom-gis-pin',
+                html: `<div style="background:${bg}; width:24px; height:24px; border-radius:50%; border:2px solid #ffffff; box-shadow:0 2px 6px rgba(0,0,0,0.35); display:flex; align-items:center; justify-content:center; font-size:11px; cursor:pointer;" title="${labelText}">${symbol}</div>`,
+                iconSize: [24, 24],
+                iconAnchor: [12, 12],
+                popupAnchor: [0, -14]
+            });
+        }
+
+        function renderGisMarkers() {
+            initLeafletMap();
+            if (!leafletMarkersLayer) return;
+            leafletMarkersLayer.clearLayers();
+
+            const docData = EMBEDDED_DOCS[activeDocKey];
+            if (!docData) return;
+            const activeRows = (currentAnnotationMode === 'manual') ? (docData.manual_table_rows || []) : (docData.table_rows || []);
+
+            let t1Count = 0;
+            let t2Count = 0;
+            let t3Count = 0;
+            const validMarkerBounds = [];
+
+            activeRows.forEach((row, idx) => {
+                let lat = null;
+                let lon = null;
+                let tier = 1;
+                let tierDesc = 'Tier 1 (Gazetteer)';
+
+                // 1. Check if row already has coordinates
+                if (row.lat && row.lon) {
+                    lat = parseFloat(row.lat);
+                    lon = parseFloat(row.lon);
+                    tier = row.coord_tier_num || (row.coord_tier?.includes('2') ? 2 : row.coord_tier?.includes('3') ? 3 : 1);
+                    tierDesc = row.coord_tier || (tier === 1 ? 'Tier 1 (Gazetteer)' : tier === 2 ? 'Tier 2 (GeoNames)' : 'Tier 3 (KI/Flur)');
+                } else if (row.ort && typeof GAZETTEER_DATA !== 'undefined') {
+                    // Match against Rhineland Gazetteer
+                    const normOrt = row.ort.toLowerCase().trim().replace(/^(bad|sankt|st\.)\s+/i, '');
+                    const entry = GAZETTEER_DATA[row.ort.toLowerCase().trim()] || GAZETTEER_DATA[normOrt];
+                    if (entry && entry.lat && entry.lon) {
+                        lat = parseFloat(entry.lat);
+                        lon = parseFloat(entry.lon);
+                        tier = 1;
+                        tierDesc = 'Tier 1 (Gazetteer: ' + entry.place + ')';
+                        row.lat = lat;
+                        row.lon = lon;
+                        row.coord_tier = tierDesc;
+                        row.coord_tier_num = 1;
+                    }
+                }
+
+                if (lat !== null && lon !== null && !isNaN(lat) && !isNaN(lon)) {
+                    if (tier === 1) t1Count++;
+                    else if (tier === 2) t2Count++;
+                    else t3Count++;
+
+                    const marker = L.marker([lat, lon], {
+                        icon: createPinIcon(tier, `${row.ort} (${row.massnahme})`),
+                        draggable: true
+                    });
+
+                    marker.rowRef = row;
+
+                    // Drag end: Pinpoint relocation
+                    marker.on('dragend', function(e) {
+                        const newPos = e.target.getLatLng();
+                        row.lat = Number(newPos.lat.toFixed(6));
+                        row.lon = Number(newPos.lng.toFixed(6));
+                        row.coord_tier = 'Tier 1 (Manuell per Drag&Drop verifiziert)';
+                        row.coord_tier_num = 1;
+                        saveManualState();
+                        showToast(`📍 Grabungsstelle für «${row.ort}» präzisiert: ${row.lat}, ${row.lon}`, 'success');
+                        const coordDisplay = document.getElementById('mapSelectedCoordsDisplay');
+                        if (coordDisplay) coordDisplay.innerText = `${row.lat}, ${row.lon}`;
+                    });
+
+                    // Popup
+                    const popupHtml = `
+                        <div class="gis-popup-content" style="min-width: 200px; font-family:'Inter',sans-serif;">
+                            <div class="gis-popup-header" style="font-weight:700; font-size:13.5px; color:#0369a1; display:flex; justify-content:space-between; align-items:center;">
+                                <span>📍 ${escapeHtml(row.ort || '-')}</span>
+                                <span style="font-size:10px; padding:1px 6px; border-radius:10px; background:${tier===1?'#dcfce7':tier===2?'#fef9c3':'#ffedd5'}; color:${tier===1?'#166534':tier===2?'#854d0e':'#c2410c'}; font-weight:700;">${tier===1?'🟢 Tier 1':tier===2?'🟡 Tier 2':'🟠 Tier 3'}</span>
+                            </div>
+                            <div style="font-size:11px; color:#64748b; margin-bottom:4px;">
+                                Maßnahme: <strong>${escapeHtml(row.massnahme || '-')}</strong> ${row.kreis && row.kreis !== '-' ? `• ${escapeHtml(row.kreis)}` : ''} • Seite ${escapeHtml(row.page || '-')}
+                            </div>
+                            <div style="font-size:11.5px; margin-top:4px;">
+                                ${row.datierung && row.datierung.length ? `<div><strong>Datierung:</strong> ${row.datierung.map(d=>`<span style="background:#fef9c3; color:#854d0e; padding:0 4px; border-radius:3px;">${escapeHtml(d)}</span>`).join(' ')}</div>` : ''}
+                                ${row.befunde && row.befunde.length ? `<div style="margin-top:2px;"><strong>Befund:</strong> ${row.befunde.map(b=>`<span style="background:#fee2e2; color:#991b1b; padding:0 4px; border-radius:3px;">${escapeHtml(b)}</span>`).join(' ')}</div>` : ''}
+                                ${row.funde && row.funde.length ? `<div style="margin-top:2px;"><strong>Fund:</strong> ${row.funde.map(f=>`<span style="background:#dcfce7; color:#166534; padding:0 4px; border-radius:3px;">${escapeHtml(f)}</span>`).join(' ')}</div>` : ''}
+                            </div>
+                            <div style="margin-top:8px; display:flex; gap:6px; border-top:1px solid #e2e8f0; padding-top:6px;">
+                                <button onclick="focusRowFromMap('${row.id}')" style="font-size:10.5px; padding:3px 6px; background:#0284c7; color:white; border:none; border-radius:4px; cursor:pointer;">📊 In Tabelle</button>
+                                <button onclick="focusTextFromMap('${row.id}')" style="font-size:10.5px; padding:3px 6px; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;">📄 Zum Text</button>
+                            </div>
+                        </div>
+                    `;
+                    marker.bindPopup(popupHtml);
+                    leafletMarkersLayer.addLayer(marker);
+                    validMarkerBounds.push([lat, lon]);
+                }
+            });
+
+            // Update badge counters
+            const t1Badge = document.getElementById('tier1BadgeCount');
+            if (t1Badge) t1Badge.innerText = `🟢 ${t1Count} Auto`;
+            const t2Badge = document.getElementById('tier2BadgeCount');
+            if (t2Badge) t2Badge.innerText = `🟡 ${t2Count} GeoNames`;
+            const t3Badge = document.getElementById('tier3BadgeCount');
+            if (t3Badge) t3Badge.innerText = `🟠 ${t3Count} KI/Flur`;
+            const mapCount = document.getElementById('mapPointCountDisplay');
+            if (mapCount) mapCount.innerText = `${t1Count + t2Count + t3Count}`;
+
+            if (validMarkerBounds.length > 0 && leafletMapInstance) {
+                leafletMapInstance.fitBounds(validMarkerBounds, { padding: [30, 30], maxZoom: 13 });
+            }
+        }
+
+        function focusRowFromMap(rowId) {
+            switchSidebarTab('table');
+            setTimeout(() => {
+                selectActiveRow(rowId);
+                const el = document.getElementById(rowId);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+
+        function focusTextFromMap(rowId) {
+            const banner = document.querySelector(`.measure-banner[data-row-id="${rowId}"]`);
+            if (banner) {
+                banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                banner.classList.add('flash-glow');
+                setTimeout(() => banner.classList.remove('flash-glow'), 1500);
+            }
+        }
+
+        async function searchLocationNominatim(query) {
+            if (!query || !query.trim()) return;
+            const q = query.trim();
+            const coordDisplay = document.getElementById('mapSelectedCoordsDisplay');
+            if (coordDisplay) coordDisplay.innerText = `Suche «${q}» via Nominatim...`;
+
+            try {
+                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q + ', Nordrhein-Westfalen')}&limit=1`;
+                const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                const data = await res.json();
+
+                if (!data || data.length === 0) {
+                    const url2 = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`;
+                    const res2 = await fetch(url2, { headers: { 'Accept': 'application/json' } });
+                    const data2 = await res2.json();
+                    if (!data2 || data2.length === 0) {
+                        alert(`Keine Koordinaten für «${q}» gefunden.`);
+                        if (coordDisplay) coordDisplay.innerText = '';
+                        return;
+                    }
+                    handleNominatimResult(data2[0], q);
+                } else {
+                    handleNominatimResult(data[0], q);
+                }
+            } catch (err) {
+                alert(`Fehler bei der Geokodierung: ${err.message}`);
+                if (coordDisplay) coordDisplay.innerText = '';
+            }
+        }
+
+        function handleNominatimResult(result, query) {
+            const lat = parseFloat(result.lat);
+            const lon = parseFloat(result.lon);
+
+            if (leafletMapInstance) {
+                leafletMapInstance.setView([lat, lon], 14);
+
+                if (candidateNominatimMarker) {
+                    leafletMapInstance.removeLayer(candidateNominatimMarker);
+                }
+
+                candidateNominatimMarker = L.marker([lat, lon], {
+                    icon: createPinIcon(2, query),
+                    draggable: true
+                }).addTo(leafletMapInstance);
+
+                const docData = EMBEDDED_DOCS[activeDocKey];
+                const activeRows = (currentAnnotationMode === 'manual') ? (docData?.manual_table_rows || []) : (docData?.table_rows || []);
+                const curRow = activeRows.find(r => r.id === currentActiveRowId) || activeRows[0];
+
+                const popupHtml = `
+                    <div style="font-size:12px; font-family:'Inter',sans-serif;">
+                        <strong style="color:#d97706;">🟡 Tier 2 Treffer: ${escapeHtml(result.display_name.split(',')[0])}</strong>
+                        <div style="font-size:11px; color:#64748b; margin-top:2px;">${lat.toFixed(5)}, ${lon.toFixed(5)}</div>
+                        <div style="margin-top:8px;">
+                            <button onclick="applyCandidateCoordsToMeasure(${lat}, ${lon}, '${curRow ? curRow.id : ''}')" style="background:#10b981; color:white; border:none; padding:4px 8px; border-radius:4px; font-weight:700; cursor:pointer; font-size:11px;">
+                                ✅ Zu aktiver Maßnahme zuordnen
+                            </button>
+                        </div>
+                    </div>
+                `;
+                candidateNominatimMarker.bindPopup(popupHtml).openPopup();
+                const coordDisplay = document.getElementById('mapSelectedCoordsDisplay');
+                if (coordDisplay) coordDisplay.innerText = `Treffer: ${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+            }
+        }
+
+        function applyCandidateCoordsToMeasure(lat, lon, rowId) {
+            const docData = EMBEDDED_DOCS[activeDocKey];
+            if (!docData) return;
+            const activeRows = (currentAnnotationMode === 'manual') ? (docData.manual_table_rows || []) : (docData.table_rows || []);
+            const row = activeRows.find(r => r.id === (rowId || currentActiveRowId)) || activeRows[0];
+            if (row) {
+                row.lat = Number(lat.toFixed(6));
+                row.lon = Number(lon.toFixed(6));
+                row.coord_tier = 'Tier 2 (GeoNames / Nominatim verifiziert)';
+                row.coord_tier_num = 2;
+                saveManualState();
+                renderGisMarkers();
+                showToast(`✅ Koordinaten für «${row.ort}» übernommen!`, 'success');
+            }
+        }
+
+        // =====================================================================
+        // QGIS GEOJSON EXPORT
+        // =====================================================================
+
+        function exportQgisGeoJSON() {
+            const docData = EMBEDDED_DOCS[activeDocKey];
+            if (!docData) {
+                alert("Kein Dokument geöffnet!");
+                return;
+            }
+            const activeRows = (currentAnnotationMode === 'manual') ? (docData.manual_table_rows || []) : (docData.table_rows || []);
+
+            const features = [];
+
+            activeRows.forEach(row => {
+                let lat = row.lat;
+                let lon = row.lon;
+                let tierDesc = row.coord_tier || 'Tier 1 (Gazetteer)';
+
+                if ((!lat || !lon) && row.ort && typeof GAZETTEER_DATA !== 'undefined') {
+                    const normOrt = row.ort.toLowerCase().trim().replace(/^(bad|sankt|st\.)\s+/i, '');
+                    const entry = GAZETTEER_DATA[row.ort.toLowerCase().trim()] || GAZETTEER_DATA[normOrt];
+                    if (entry && entry.lat && entry.lon) {
+                        lat = entry.lat;
+                        lon = entry.lon;
+                        tierDesc = 'Tier 1 (Gazetteer: ' + entry.place + ')';
+                    }
+                }
+
+                if (lat && lon && !isNaN(lat) && !isNaN(lon)) {
+                    features.push({
+                        type: "Feature",
+                        geometry: {
+                            type: "Point",
+                            coordinates: [parseFloat(lon), parseFloat(lat)]
+                        },
+                        properties: {
+                            id: row.id,
+                            ort: row.ort || "",
+                            kreis: row.kreis || "",
+                            massnahme: row.massnahme || "",
+                            page: row.page || "",
+                            tier: tierDesc,
+                            datierung: (row.datierung || []).join("; "),
+                            befunde: (row.befunde || []).join("; "),
+                            funde: (row.funde || []).join("; "),
+                            autor: row.autor || "",
+                            dokument: activeDocKey
+                        }
+                    });
+                }
+            });
+
+            if (features.length === 0) {
+                alert("Keine Fundstellen mit verifizierten Koordinaten vorhanden.\nNutzen Sie die GIS-Karte, um Orte per Gazetteer oder Suche zu georeferenzieren.");
+                return;
+            }
+
+            const geojson = {
+                type: "FeatureCollection",
+                name: `LVR_Ausgrabungen_${activeDocKey.replace(/[^a-zA-Z0-9_]/g, '_')}`,
+                crs: {
+                    type: "name",
+                    properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" }
+                },
+                features: features
+            };
+
+            const jsonStr = JSON.stringify(geojson, null, 2);
+            const blob = new Blob([jsonStr], { type: "application/geo+json;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `LVR_${activeDocKey.replace(/[^a-zA-Z0-9_]/g, '_')}_QGIS.geojson`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showToast(`🗺️ QGIS Layer mit ${features.length} georeferenzierten Fundstellen exportiert!`, 'success');
         }
 
         // Vocab filter
