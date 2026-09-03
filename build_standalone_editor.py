@@ -270,6 +270,67 @@ def pair_raw_and_skos(raw_val_str, skos_val_str):
         paired.append((raw, matched_skos))
     return paired
 
+def clean_and_reflow_text(text):
+    if not text:
+        return ''
+    # 1. Punctuation spacing
+    text = re.sub(r'([a-zäöüß0-9]{2,})([.!?])([A-ZÄÖÜ])', r'\1\2 \3', text)
+    text = re.sub(r'([a-zäöüß0-9])([,;:])([A-ZÄÖÜa-zäöüß0-9])', r'\1\2 \3', text)
+    text = re.sub(r'([a-zäöüß0-9])([–—])([A-ZÄÖÜa-zäöüß])', r'\1 \2 \3', text)
+    
+    # 2. Run-together prepositions and abbreviations
+    prep_pat = r'([a-zäöüß]{3,})(bei|auf|in|im|aus|nach|vor|unter|über|vom|von|mit|durch|zu|zur|zum|und|oder)\s+([A-ZÄÖÜ])'
+    text = re.sub(prep_pat, r'\1 \2 \3', text)
+    text = re.sub(r'([a-zäöüß]{3,})(s\.o\.|s\.u\.|vgl\.)', r'\1 \2', text)
+    text = re.sub(r'\bs\.o\.', 's. o.', text)
+    text = re.sub(r'\bs\.u\.', 's. u.', text)
+    text = re.sub(r'\bd\.h\.', 'd. h.', text)
+    text = re.sub(r'(\b[A-Za-zäöüÄÖÜß]+)\.(\d+)', r'\1. \2', text)
+    text = re.sub(r'([a-zäöüß]{3,})([A-ZÄÖÜ][a-zäöüß]{2,})', r'\1 \2', text)
+    text = re.sub(r'[ \t]{2,}', ' ', text)
+    
+    # 3. De-hyphenate line endings
+    text = re.sub(r'(\b[\wöäüß]+)-[­]?\s*\n\s*([\wöäüß]+)', r'\1\2', text)
+    
+    # 4. Reflow lines into flowing paragraphs
+    lines = text.split('\n')
+    out_paras = []
+    cur_para = ''
+    
+    for l in lines:
+        l = l.strip()
+        if not l:
+            if cur_para:
+                out_paras.append(cur_para)
+                cur_para = ''
+            continue
+        if re.match(r'^---\s*SEITE\s*\d+\s*---$', l, re.IGNORECASE) or re.match(r'^---\s*(?:LEFT|RIGHT)\s*COLUMN\s*---$', l, re.IGNORECASE):
+            if cur_para:
+                out_paras.append(cur_para)
+                cur_para = ''
+            out_paras.append(l)
+            continue
+        if not cur_para:
+            cur_para = l
+        else:
+            prev_ends_punct = bool(re.search(r'[.!?]$', cur_para))
+            next_is_measure = bool(re.match(r'^\d+\.\s+[A-ZÄÖÜ]', l))
+            next_is_loc = bool(re.match(r'^[A-ZÄÖÜ][a-zäöüß]+,\s+[A-ZÄÖÜ]', l))
+            next_is_verbleib = bool(re.match(r'^Verbleib:', l, re.IGNORECASE))
+            
+            if prev_ends_punct and (next_is_measure or next_is_loc or next_is_verbleib):
+                out_paras.append(cur_para)
+                cur_para = l
+            elif next_is_measure or next_is_loc:
+                out_paras.append(cur_para)
+                cur_para = l
+            else:
+                cur_para += ' ' + l
+    if cur_para:
+        out_paras.append(cur_para)
+        
+    return '\n\n'.join(out_paras)
+
 # 2. Process documents (1973 and 1970)
 docs_data = {}
 
@@ -283,7 +344,7 @@ def process_document(csv_fname, txt_fname, doc_key, doc_title=None):
     import pandas as pd
     df = pd.read_csv(csv_path, sep=";")
     with open(txt_path, "r", encoding="utf-8") as f:
-        raw_text = f.read()
+        raw_text = clean_and_reflow_text(f.read())
 
     # Filter out standalone figure caption rows that lack massnahme_id and distort text sections
     df = df[~((df['massnahme_id'].isna() | (df['massnahme_id'] == 'None') | (df['massnahme_id'] == 'nan')) & df['ort'].astype(str).str.contains('Auxiliarlager|Matronenaltar|Terra sigillata', case=False, na=False))].copy()
@@ -591,6 +652,11 @@ docs_json_str = json.dumps(docs_data, ensure_ascii=False)
 gazetteer_json_str = json.dumps(gazetteer_data, ensure_ascii=False)
 
 
+# Default API keys are kept empty in generated HTML to prevent secret leakage to Git.
+# Users configure their API keys securely in the browser UI, stored in browser localStorage.
+default_gemini_key = ""
+default_claude_key = ""
+
 template_path = os.path.join(root_dir, 'editor_template.html')
 with open(template_path, 'r', encoding='utf-8') as f:
     template_content = f.read()
@@ -600,6 +666,8 @@ html_content = (
     .replace('__VOCAB_JSON__', vocab_json_str)
     .replace('__DOCS_JSON__', docs_json_str)
     .replace('__GAZETTEER_JSON__', gazetteer_json_str)
+    .replace('__DEFAULT_GEMINI_KEY__', json.dumps(default_gemini_key))
+    .replace('__DEFAULT_CLAUDE_KEY__', json.dumps(default_claude_key))
 )
 
 editor_path = os.path.join(root_dir, 'annotation_editor.html')

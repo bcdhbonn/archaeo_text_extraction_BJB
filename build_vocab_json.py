@@ -5,15 +5,13 @@ if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 from rdflib import Graph, RDF, SKOS
 
-vocab_dir = r"D:\Sciebo\BCDH_Projektbox\Projekte\BonnerJahrbuecher_etxract_2026\Vokabulare"
-if not os.path.exists(vocab_dir):
-    vocab_dir = os.path.dirname(os.path.abspath(__file__))
+vocab_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "arch_vocab_rhineland.ttl")
+if not os.path.exists(vocab_file):
+    sciebo_path = r"D:\Sciebo\BCDH_Projektbox\Projekte\BonnerJahrbuecher_etxract_2026\Vokabulare\arch_vocab_rhineland.ttl"
+    if os.path.exists(sciebo_path):
+        vocab_file = sciebo_path
 
 output_json = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vocabularies.json")
-
-vocab_file = os.path.join(vocab_dir, "arch_vocab_rhineland.ttl")
-if not os.path.exists(vocab_file):
-    vocab_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "arch_vocab_rhineland.ttl")
 
 data = {
     "Datierung": [],
@@ -82,7 +80,7 @@ if os.path.exists(vocab_file):
 
                 data[cat_name].append({
                     "term": main_term,
-                    "alt": alt_labels[:5],
+                    "alt": alt_labels,
                     "category": cat_name,
                     "uri": str(concept)
                 })

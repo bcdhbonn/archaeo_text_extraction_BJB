@@ -6,7 +6,7 @@
     <title>Archäologischer Pipeline & SKOS Annotations-Editor</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>if (typeof pdfjsLib !== 'undefined') { pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; }</script>
     <style>
@@ -96,58 +96,150 @@
             transition: background 0.2s ease, color 0.2s ease;
         }
 
-        /* Header Navigation */
+        /* Header Navigation (UX Redesign: Grouped & Spacious) */
         header {
             background: var(--bg-card);
-            padding: 10px 20px;
+            padding: 8px 24px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            z-index: 30;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            z-index: 40;
             gap: 16px;
+            height: 54px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-shrink: 0;
         }
 
         .header-title {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
         .header-title h1 {
             margin: 0;
-            font-size: 16.5px;
+            font-size: 15.5px;
             font-weight: 700;
             color: var(--primary);
+            letter-spacing: -0.2px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         .header-title span.tag {
             background: var(--primary-light);
             color: var(--primary);
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 20px;
+            padding: 2px 7px;
+            border-radius: 12px;
             text-transform: uppercase;
         }
 
-        .header-controls {
+        .header-doc-picker select {
+            background: var(--bg-card-subtle);
+            color: var(--text-main);
+            border: 1px solid var(--border-strong);
+            padding: 6px 12px;
+            border-radius: 7px;
+            font-weight: 600;
+            font-size: 12.5px;
+            cursor: pointer;
+            outline: none;
+            max-width: 220px;
+        }
+        .header-doc-picker select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-right {
             display: flex;
             align-items: center;
             gap: 8px;
-            flex-wrap: wrap;
+            flex-shrink: 0;
         }
 
+        /* Modern Dropdown Menus */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .btn-dropdown {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            min-width: 230px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.12), 0 8px 10px -6px rgba(0,0,0,0.08);
+            padding: 6px;
+            display: none;
+            flex-direction: column;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+        }
+        .dropdown.open .dropdown-menu {
+            display: flex;
+            animation: dropdown-fade-in 0.15s ease-out;
+        }
+        @keyframes dropdown-fade-in {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .dropdown-item {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12.5px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.12s ease;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-family: inherit;
+        }
+        .dropdown-item:hover {
+            background: var(--bg-card-subtle);
+            color: var(--primary);
+        }
+        .dropdown-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 4px 0;
+        }
+
+        /* Buttons & Controls */
         select, button, .btn {
             background: var(--bg-card-subtle);
             color: var(--text-main);
             border: 1px solid var(--border-strong);
-            padding: 7px 13px;
-            border-radius: 6px;
+            padding: 6px 12px;
+            border-radius: 7px;
             font-weight: 600;
-            font-size: 12.5px;
+            font-size: 12px;
             cursor: pointer;
             transition: all 0.15s ease;
             display: inline-flex;
@@ -170,17 +262,29 @@
         button.btn-danger { background: var(--danger); color: white; border-color: var(--danger-hover); }
         button.btn-danger:hover { background: var(--danger-hover); }
 
+        button.btn-outline {
+            background: transparent;
+            border-color: var(--border-color);
+            color: var(--text-main);
+        }
+        button.btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--bg-card-subtle);
+        }
+
         /* Subheader Bar: Active Measure Ribbon */
         .subheader-bar {
             background: var(--bg-card);
-            padding: 8px 20px;
+            padding: 7px 24px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 12.5px;
+            font-size: 12px;
             z-index: 25;
-            gap: 16px;
+            gap: 14px;
+            min-height: 42px;
         }
 
         .active-measure-indicator {
@@ -199,24 +303,30 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .active-measure-pill:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(2, 132, 199, 0.2);
         }
 
         .category-legend {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
         .cat-pill {
-            padding: 4px 10px;
-            border-radius: 16px;
-            font-size: 11.5px;
+            padding: 3px 9px;
+            border-radius: 14px;
+            font-size: 11px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.15s ease;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             user-select: none;
             border: 1px solid transparent;
         }
@@ -230,6 +340,18 @@
         .cat-pill.cat-ort { background: var(--cat-ort-bg); color: var(--cat-ort-text); border-color: var(--cat-ort-border); }
         .cat-pill.cat-aktivitaet { background: var(--cat-aktivitaet-bg); color: var(--cat-aktivitaet-text); border-color: var(--cat-aktivitaet-border); }
 
+        .key-hint {
+            display: inline-block;
+            padding: 1px 4px;
+            background: rgba(0,0,0,0.08);
+            border-radius: 3px;
+            font-size: 9.5px;
+            font-family: monospace;
+            opacity: 0.8;
+            margin-left: 2px;
+        }
+        body.dark-theme .key-hint { background: rgba(255,255,255,0.12); }
+
         /* Mode Switcher Buttons */
         .mode-toggle-group {
             display: inline-flex;
@@ -242,7 +364,7 @@
         .mode-btn {
             border: none;
             background: transparent;
-            padding: 5px 11px;
+            padding: 4px 11px;
             font-size: 11.5px;
             font-weight: 700;
             border-radius: 6px;
@@ -255,6 +377,79 @@
             background: var(--primary);
             color: white;
             box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+        .mode-btn.active-server {
+            background: #0284c7 !important;
+            color: white !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+        .mode-btn.active-local {
+            background: #10b981 !important;
+            color: white !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+
+        /* SKOS Source Cards in Settings Modal */
+        .skos-option-card {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--bg-card);
+        }
+        .skos-option-card:hover {
+            border-color: var(--primary) !important;
+        }
+        .skos-option-card.selected {
+            border-color: var(--primary) !important;
+            background: #f0f9ff !important;
+        }
+        body.dark-theme .skos-option-card.selected {
+            background: rgba(2, 132, 199, 0.15) !important;
+        }
+        /* SKOS Pulse */
+        .skos-status-pulse {
+            animation: skos-dot-pulse 2s infinite ease-in-out;
+        }
+        @keyframes skos-dot-pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.18); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        /* PDF Page Tiles */
+        .page-tile {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 34px;
+            height: 28px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-muted);
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+        .page-tile:hover {
+            border-color: var(--primary);
+            color: var(--text-main);
+        }
+        .page-tile.selected {
+            background: #e0f2fe !important;
+            color: #0369a1 !important;
+            border-color: #38bdf8 !important;
+            font-weight: 700;
+        }
+        body.dark-theme .page-tile.selected {
+            background: rgba(2, 132, 199, 0.25) !important;
+            color: #38bdf8 !important;
+            border-color: #0284c7 !important;
         }
 
         /* Main Workspace Split Layout */
@@ -278,34 +473,125 @@
         }
 
         .pane-header {
-            padding: 10px 18px;
+            padding: 8px 20px;
             background: var(--bg-card-subtle);
             border-bottom: 1px solid var(--border-color);
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12.5px;
             color: var(--text-muted);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            min-height: 44px;
+            gap: 12px;
+        }
+
+        /* Reading Toolbar Controls */
+        .reading-tools-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .tool-btn-group {
+            display: inline-flex;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 2px;
+            gap: 2px;
+        }
+        .tool-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.12s ease;
+        }
+        .tool-btn:hover {
+            color: var(--text-main);
+            background: var(--bg-card-subtle);
+        }
+        .tool-btn.active {
+            background: var(--primary);
+            color: white !important;
         }
 
         .text-body-wrapper {
             flex: 1;
             overflow-y: auto;
-            padding: 20px 32px 80px 32px;
+            padding: 28px 40px 100px 40px;
             position: relative;
+            scroll-behavior: smooth;
         }
 
         .text-body {
-            font-family: 'Lora', Georgia, serif;
+            font-family: 'Newsreader', 'Lora', Georgia, serif;
             font-size: 16.5px;
-            line-height: 1.88;
+            line-height: 1.84;
             color: var(--text-main);
             white-space: pre-wrap;
-            word-break: break-word;
-            max-width: 900px;
+            word-break: normal;
+            overflow-wrap: break-word;
+            max-width: 820px;
             margin: 0 auto;
             user-select: text;
+            transition: max-width 0.2s ease, font-size 0.15s ease, line-height 0.15s ease;
+        }
+        .text-body.font-sans {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+            line-height: 1.74 !important;
+        }
+        .text-body.spacing-compact {
+            line-height: 1.62 !important;
+        }
+        .text-body.width-full {
+            max-width: 100% !important;
+        }
+
+        /* Page Dividers in Text */
+        .page-divider {
+            display: flex;
+            align-items: center;
+            margin: 36px 0 26px 0;
+            text-align: center;
+            position: relative;
+            user-select: none;
+        }
+        .page-divider::before,
+        .page-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px dashed var(--border-strong);
+        }
+        .page-divider-pill {
+            padding: 4px 14px;
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin: 0 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        body.dark-theme .page-divider-pill {
+            background: var(--bg-card);
+            border-color: var(--border-strong);
+            color: var(--text-main);
+        }
+
+        /* Reading Paragraphs */
+        .reading-para {
+            margin: 0 0 1.3em 0;
+            text-align: justify;
+            text-justify: inter-word;
         }
 
         /* Measure Section Banners inside text */
@@ -824,57 +1110,134 @@
 </head>
 <body>
 
-    <!-- Header Navigation -->
+    <!-- Header Navigation (UX Redesign: Clean, Grouped & Intuitive) -->
     <header>
-        <div class="header-title">
-            <h1>🏛️ Archäologische Extraktions-Tabelle & SKOS-Annotator</h1>
-            <span class="tag">Pipeline-Format</span>
+        <div class="header-left">
+            <div class="header-title">
+                <h1>🏛️ Archäologischer BJB Editor</h1>
+                <span class="tag">Pipeline 2.0</span>
+            </div>
+            
+            <div class="header-doc-picker">
+                <select id="docSelect" onchange="loadSelectedDocument(this.value)" title="Dokument auswählen">
+                    <option value="">Lade Dokumente...</option>
+                </select>
+            </div>
         </div>
-        <div class="header-controls">
-            <select id="docSelect" onchange="loadSelectedDocument(this.value)" title="Dokument auswählen">
-                <option value="">Lade Dokumente...</option>
-            </select>
-            <button onclick="openPasteTextModal()" title="Text direkt aus Zwischenablage einfügen" style="background:#e0f2fe; color:#0369a1; border-color:#7dd3fc; font-weight:700;">📋 Text einfügen</button>
-            <button onclick="document.getElementById('fileUploadInput').click()" title="Lokale .txt oder .pdf Datei öffnen">📂 Datei / PDF öffnen</button>
-            <input type="file" id="fileUploadInput" accept=".txt,.pdf" style="display:none" onchange="handleLocalFileOpen(event)">
+
+        <div class="header-center">
+            <!-- Mode Switcher -->
             <div class="mode-toggle-group" title="Modus wählen: Leere Hand-Annotation (Ground Truth) oder automatische Pipeline-Vorschau">
-                <button class="mode-btn active" id="btnModeManual" onclick="setAnnotationMode('manual')">✍️ Hand-Annotation (Leer)</button>
+                <button class="mode-btn active" id="btnModeManual" onclick="setAnnotationMode('manual')">✍️ Hand-Annotation</button>
                 <button class="mode-btn" id="btnModePipeline" onclick="setAnnotationMode('pipeline')">🤖 Pipeline-Vorschau</button>
             </div>
 
-            <div style="width: 1px; height: 22px; background: var(--border-color); margin: 0 4px;"></div>
-            
-            <button class="btn-success" onclick="exportPipelineTableCSV()" title="Tabelle als CSV (wie pipeline Split_Fixed.csv) herunterladen">📥 Tabelle CSV Export</button>
-            <button class="btn-primary" onclick="exportPipelineTableJSON()" title="Tabelle als JSON exportieren">📄 JSON Export</button>
-            <button onclick="copyPipelineTableTSV()" title="In Zwischenablage kopieren (direkt mit Strg+V in Excel)">📋 TSV Kopieren</button>
-            <button class="btn-outline" onclick="toggleTheme()" id="themeToggleBtn" title="Theme wechseln">🌗 Dark/Light</button>
+            <!-- Document Actions Dropdown -->
+            <div class="dropdown" id="dropdownDocMenu">
+                <button class="btn btn-dropdown" onclick="toggleDropdown('dropdownDocMenu')" title="Dokument oder PDF öffnen">
+                    <span>📂 Dokument</span>
+                    <span style="font-size: 9px; opacity: 0.7;">▼</span>
+                </button>
+                <div class="dropdown-menu">
+                    <button class="dropdown-item" onclick="closeAllDropdowns(); openPdfProcessingModal();">
+                        <span>📄</span>
+                        <div>
+                            <strong>PDF im Browser verarbeiten & KI</strong>
+                            <div style="font-size:11px; color:var(--text-muted);">Seiten wählen, Spalten-Erkennung, KI</div>
+                        </div>
+                    </button>
+                    <button class="dropdown-item" onclick="closeAllDropdowns(); openPasteTextModal();">
+                        <span>📋</span>
+                        <div>
+                            <strong>Text einfügen</strong>
+                            <div style="font-size:11px; color:var(--text-muted);">Direkt aus Zwischenablage</div>
+                        </div>
+                    </button>
+                    <button class="dropdown-item" onclick="closeAllDropdowns(); document.getElementById('fileUploadInput').click();">
+                        <span>📁</span>
+                        <div>
+                            <strong>Textdatei (.txt) öffnen</strong>
+                            <div style="font-size:11px; color:var(--text-muted);">Lokale Datei von Festplatte</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <input type="file" id="fileUploadInput" accept=".txt,.pdf" style="display:none" onchange="handleLocalFileOpen(event)">
+        </div>
+
+        <div class="header-right">
+            <!-- SKOS Source Button -->
+            <button class="btn-outline" id="headerSkosBtn" onclick="openSkosSourceModal()" title="Vokabular-Quelle umschalten (Lokale Datei / Server)">
+                <span id="skosStatusDot" class="skos-status-pulse" style="width:8px; height:8px; border-radius:50%; background:#10b981; display:inline-block;"></span>
+                <span id="skosStatusLabel" style="font-size:11.5px; font-weight:600;">📁 SKOS: Lokal</span>
+            </button>
+
+            <!-- LLM Settings Button -->
+            <button class="btn-outline" id="headerLlmBtn" onclick="openLlmSettingsModal()" title="KI-Modell & API-Keys (Claude / Gemini) verwalten">
+                <span id="llmModelDot" style="width:8px; height:8px; border-radius:50%; background:#0284c7; display:inline-block;"></span>
+                <span id="llmModelLabel" style="font-size:11.5px; font-weight:600;">🤖 Gemini 3.8</span>
+            </button>
+
+            <!-- Export Dropdown -->
+            <div class="dropdown" id="dropdownExportMenu">
+                <button class="btn btn-dropdown btn-success" onclick="toggleDropdown('dropdownExportMenu')" title="Tabelle exportieren">
+                    <span>📥 Export</span>
+                    <span style="font-size: 9px; opacity: 0.8;">▼</span>
+                </button>
+                <div class="dropdown-menu" style="right: 0; left: auto;">
+                    <button class="dropdown-item" onclick="closeAllDropdowns(); exportPipelineTableCSV();">
+                        <span>📊</span>
+                        <div>
+                            <strong>Tabelle als CSV</strong>
+                            <div style="font-size:11px; color:var(--text-muted);">Split_Fixed.csv Format für Pipeline</div>
+                        </div>
+                    </button>
+                    <button class="dropdown-item" onclick="closeAllDropdowns(); exportPipelineTableJSON();">
+                        <span>📄</span>
+                        <div>
+                            <strong>Tabelle als JSON</strong>
+                            <div style="font-size:11px; color:var(--text-muted);">Strukturierte Rohdaten</div>
+                        </div>
+                    </button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="closeAllDropdowns(); copyPipelineTableTSV();">
+                        <span>📋</span>
+                        <div>
+                            <strong>Für Excel kopieren (TSV)</strong>
+                            <div style="font-size:11px; color:var(--text-muted);">Mit Strg+V in Excel einfügen</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <button class="btn-icon" onclick="toggleTheme()" id="themeToggleBtn" title="Design wechseln (Dark/Light)">🌗</button>
         </div>
     </header>
 
-    <!-- Subheader Bar: Active Measure Tracker -->
+    <!-- Subheader Bar: Active Measure Workflow -->
     <div class="subheader-bar">
         <div class="active-measure-indicator">
-            <span style="color: var(--text-muted);">Aktive Zuordnung:</span>
-            <div class="active-measure-pill" id="activeMeasureDisplay">
+            <span style="color: var(--text-muted); font-size: 12px;">Aktive Zuordnung:</span>
+            <div class="active-measure-pill" id="activeMeasureDisplay" onclick="openNewMeasureModal()" title="Aktive Maßnahme anpassen">
                 <span>📍</span>
                 <span id="activeMeasureLabel">Maßnahme wählen...</span>
             </div>
-            <button onclick="openNewMeasureModal()" style="font-size: 11.5px; padding: 4px 10px;" title="Neue Maßnahme anlegen">➕ Neue Maßnahme</button>
-            <button onclick="handleDirectMatchButtonClick()" style="font-size: 11.5px; padding: 4px 10px; background: #0284c7; color:#fff; border-color:#0369a1; font-weight:700;" title="Direkte 1:1 Entsprechungen im Thesaurus für die aktive Maßnahme erkennen">⚡ Direkte Treffer erkennen</button>
-            <button onclick="closeLastMeasure()" style="font-size: 11.5px; padding: 4px 10px; background: #d97706; color:#fff; border-color:#b45309; font-weight:700;" title="Letzte Maßnahme abschließen und alle ausstehenden Begriffe in die Tabelle übernehmen">✅ Letzte Maßnahme</button>
-            <label style="display:inline-flex; align-items:center; gap:5px; font-size:11.5px; color:var(--text-muted); cursor:pointer; margin-left:4px;" title="Direkte 1:1 Thesaurus-Begriffe automatisch beim Anlegen der Maßnahme erkennen">
-                <input type="checkbox" id="chkAutoDirect" checked onchange="toggleAutoDirectMatch(this.checked)"> Auto-Direkttreffer
+            <button class="btn-primary" onclick="openNewMeasureModal()" style="font-size: 11.5px; padding: 4px 10px;" title="Neue Maßnahme anlegen">➕ Neu</button>
+            <button onclick="handleDirectMatchButtonClick()" style="font-size: 11.5px; padding: 4px 10px; background: #0284c7; color:#fff; border-color:#0369a1; font-weight:700;" title="Direkte 1:1 Thesaurus-Entsprechungen automatisch erkennen">⚡ Direkttreffer</button>
+            <button onclick="closeLastMeasure()" style="font-size: 11.5px; padding: 4px 10px; background: #d97706; color:#fff; border-color:#b45309; font-weight:700;" title="Maßnahme abschließen">✅ Abschließen</button>
+            <label style="display:inline-flex; align-items:center; gap:5px; font-size:11.5px; color:var(--text-muted); cursor:pointer;" title="1:1 Begriffe automatisch hervorheben">
+                <input type="checkbox" id="chkAutoDirect" checked onchange="toggleAutoDirectMatch(this.checked)"> Auto-Direkt
             </label>
-            <button class="btn-danger" onclick="resetManualAnnotations()" style="font-size: 11px; padding: 3px 8px; margin-left: 6px;" title="Alle selbst gesetzten Annotationen zurücksetzen">🗑️ Zurücksetzen</button>
+            <button class="btn-danger" onclick="resetManualAnnotations()" style="font-size: 11px; padding: 3px 8px;" title="Alle Annotationen zurücksetzen">🗑️ Reset</button>
         </div>
 
         <div class="category-legend">
             <span style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">Kategorien:</span>
-            <div class="cat-pill cat-datierung" onclick="setWorkingCategory('datierung')">🟨 Datierung</div>
-            <div class="cat-pill cat-befund" onclick="setWorkingCategory('befund')">🟥 Befund</div>
-            <div class="cat-pill cat-fund" onclick="setWorkingCategory('fund')">🟩 Fund</div>
-            <div class="cat-pill cat-ort" onclick="setWorkingCategory('ort')">🪨 Ort / Kreis</div>
-            <div class="cat-pill cat-aktivitaet" onclick="setWorkingCategory('aktivitaet')">🟦 Maßnahme</div>
+            <div class="cat-pill cat-datierung" onclick="setWorkingCategory('datierung')" title="Taste 1">🟨 Datierung <span class="key-hint">1</span></div>
+            <div class="cat-pill cat-befund" onclick="setWorkingCategory('befund')" title="Taste 2">🟥 Befund <span class="key-hint">2</span></div>
+            <div class="cat-pill cat-fund" onclick="setWorkingCategory('fund')" title="Taste 3">🟩 Fund <span class="key-hint">3</span></div>
+            <div class="cat-pill cat-ort" onclick="setWorkingCategory('ort')" title="Taste 4">🪨 Ort / Kreis <span class="key-hint">4</span></div>
+            <div class="cat-pill cat-aktivitaet" onclick="setWorkingCategory('aktivitaet')" title="Taste 5">🟦 Maßnahme <span class="key-hint">5</span></div>
         </div>
     </div>
 
@@ -883,19 +1246,39 @@
         
         <!-- Left Pane: Document Text View with Precise In-DOM Highlights -->
         <div class="pane-text" id="paneText">
-            <div class="pane-header">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span id="docTitleDisplay" style="font-weight: 700; color: var(--text-main);">Dokument</span>
-                    <span id="docStatsDisplay" style="font-size: 11.5px; color: var(--text-muted);">(0 Wörter)</span>
+            <div class="pane-header reading-toolbar">
+                <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
+                    <span id="docTitleDisplay" style="font-weight: 700; color: var(--text-main); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">Dokument</span>
+                    <span id="docStatsDisplay" style="font-size: 11.5px; color: var(--text-muted); white-space: nowrap;">(0 Wörter)</span>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <button class="btn-icon" onclick="adjustFontSize(-1)" title="Schrift verkleinern">A-</button>
-                    <button class="btn-icon" onclick="adjustFontSize(1)" title="Schrift vergrößern">A+</button>
+
+                <div class="reading-tools-group">
+                    <!-- Typography Font Switcher -->
+                    <div class="tool-btn-group" title="Schriftart wählen (Serif für wissenschaftliche Texte, Sans für OCR-Prüfung)">
+                        <button class="tool-btn active" id="btnFontSerif" onclick="setReadingFont('serif')">Serif</button>
+                        <button class="tool-btn" id="btnFontSans" onclick="setReadingFont('sans')">Sans</button>
+                    </div>
+
+                    <!-- Font Size Controls -->
+                    <div class="tool-btn-group">
+                        <button class="tool-btn" onclick="adjustFontSize(-1)" title="Schrift verkleinern">A−</button>
+                        <span id="fontSizeDisplay" style="font-size: 11px; padding: 0 4px; font-weight: 700; min-width: 24px; text-align: center;">16.5px</span>
+                        <button class="tool-btn" onclick="adjustFontSize(1)" title="Schrift vergrößern">A+</button>
+                    </div>
+
+                    <!-- Line Spacing Toggle -->
+                    <button class="tool-btn" id="btnLineSpacing" onclick="toggleLineSpacing()" title="Zeilenabstand umschalten (Komfort 1.84 / Kompakt 1.62)">↕️ Abstand</button>
+
+                    <!-- Reading Measure Width Toggle -->
+                    <button class="tool-btn" id="btnReadingWidth" onclick="toggleReadingWidth()" title="Lesebreite umschalten (Fokus 820px / 100% Vollbreite)">↔️ Breite</button>
+
+                    <!-- Clean & Reflow Button -->
+                    <button class="tool-btn" onclick="reflowCurrentDocumentText()" title="Text neu glätten, Absätze formatieren & Wörter trennen" style="color: var(--primary);">✨ Glätten</button>
                 </div>
             </div>
 
             <div class="text-body-wrapper" id="textBodyWrapper">
-                <div class="text-body" id="textBody" onmouseup="handleDocumentTextSelection(event)"></div>
+                <div class="text-body font-serif" id="textBody" onmouseup="handleDocumentTextSelection(event)"></div>
             </div>
         </div>
 
@@ -975,6 +1358,18 @@
 
             <!-- Tab 2: SKOS Vocab Explorer -->
             <div class="tab-content" id="tabContentVocab">
+                <!-- Source Info Bar -->
+                <div class="vocab-source-bar" style="display:flex; align-items:center; justify-content:space-between; padding:6px 10px; background:var(--bg-card-subtle); border:1px solid var(--border-color); border-radius:6px; font-size:11.5px; margin-bottom:8px;">
+                    <div style="display:flex; align-items:center; gap:6px; overflow:hidden;">
+                        <span id="tabVocabSourceDot" style="width:8px; height:8px; border-radius:50%; background:#10b981; flex-shrink:0;"></span>
+                        <strong id="tabVocabSourceTitle" style="white-space:nowrap;">📁 Lokale Datei</strong>
+                        <span id="tabVocabSourceSub" style="color:var(--text-muted); font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">(arch_vocab_rhineland.ttl)</span>
+                    </div>
+                    <div style="display:flex; gap:5px; flex-shrink:0;">
+                        <button type="button" class="btn-outline" onclick="openSkosSourceModal()" style="font-size:11px; padding:2px 8px;">⚙️ Quelle anpassen</button>
+                    </div>
+                </div>
+
                 <div style="display: flex; gap: 8px;">
                     <input type="text" class="search-box-input" id="vocabSearchInput" placeholder="🔍 SKOS-Vokabular durchsuchen..." oninput="renderVocabExplorer(this.value)">
                 </div>
@@ -1119,6 +1514,328 @@
         </div>
     </div>
 
+    <!-- Hidden File Input for Custom Local SKOS Vocab (.json or .ttl) -->
+    <input type="file" id="vocabFileInput" accept=".json,.ttl,.txt" style="display:none" onchange="handleLocalVocabFileLoad(event)">
+
+    <!-- Modal: SKOS Source / Server Settings Modal -->
+    <div class="modal-backdrop" id="skosSourceModal">
+        <div class="modal-content" style="width: 600px;">
+            <div class="modal-header">
+                <h3>⚙️ SKOS-Vokabular Quelle & Server-Einstellungen</h3>
+                <button class="btn-icon" onclick="closeSkosSourceModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin-bottom: 6px;">
+                    Wählen Sie aus, woher der Editor die kontrollierten archäologischen Vokabulare bezieht. Wenn der Server nicht erreichbar oder noch nicht aktualisiert ist, nutzen Sie einfach die lokale Datei.
+                </div>
+
+                <!-- Option 1: Local File -->
+                <div class="skos-option-card selected" id="cardOptionLocal" onclick="selectSkosSourceRadio('local')">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13.5px; cursor: pointer;">
+                            <input type="radio" name="skosSourceRadio" id="radioSkosLocal" value="local" checked onchange="selectSkosSourceRadio('local')">
+                            📁 Lokale Vokabular-Datei (Offline / Manuell)
+                        </label>
+                        <span class="badge-tag" id="badgeLocalStatus" style="font-size: 11px; background:#dcfce7; color:#166534;">Aktiv</span>
+                    </div>
+                    <div style="margin-left: 24px; margin-top: 6px; font-size: 12px; color: var(--text-muted);">
+                        Nutzt die lokale Datei <code id="localFileNameDisplay" style="background:var(--bg-card-subtle); padding:2px 5px; border-radius:4px;">arch_vocab_rhineland.ttl / vocabularies.json</code> (<span id="localConceptCountDisplay">0</span> Begriffe). Vollständig offline und sofort verfügbar.
+                    </div>
+                    <div style="margin-left: 24px; margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button type="button" class="btn-primary" onclick="event.stopPropagation(); document.getElementById('vocabFileInput').click();" style="font-size: 11.5px; padding: 4px 10px;">
+                            📂 Eigene Vokabular-Datei laden (.ttl / .json)
+                        </button>
+                        <button type="button" class="btn-outline" onclick="event.stopPropagation(); resetToDefaultLocalVocab();" style="font-size: 11.5px; padding: 4px 10px;" title="Zurück zum eingebetteten Standard">
+                            🔄 Auf Standard zurücksetzen
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Option 2: SKOSMOS Server -->
+                <div class="skos-option-card" id="cardOptionServer" onclick="selectSkosSourceRadio('server')" style="margin-top: 10px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13.5px; cursor: pointer;">
+                            <input type="radio" name="skosSourceRadio" id="radioSkosServer" value="server" onchange="selectSkosSourceRadio('server')">
+                            🌐 SKOSMOS Server (Online REST API)
+                        </label>
+                        <span class="badge-tag" id="badgeServerStatus" style="font-size: 11px; background: #e0f2fe; color: #0369a1;">Online</span>
+                    </div>
+                    <div style="margin-left: 24px; margin-top: 6px; font-size: 12px; color: var(--text-muted);">
+                        Sucht live im BCDH Skosmos-Thesaurus über die REST-API.
+                    </div>
+                    <div style="margin-left: 24px; margin-top: 10px;">
+                        <label style="font-size: 11.5px; font-weight: 600; display: block; margin-bottom: 4px;">Server REST-Endpoint URL:</label>
+                        <div style="display: flex; gap: 6px;">
+                            <input type="text" class="form-input" id="skosServerUrlInput" value="https://vocabs.bcdh.uni-bonn.de/rest/v1/LVR_Fundansprachen" style="font-family: monospace; font-size: 11.5px;" onclick="event.stopPropagation()">
+                            <button type="button" class="btn-outline" onclick="event.stopPropagation(); testServerConnection();" style="white-space: nowrap; font-size: 11.5px;">🔌 Testen</button>
+                        </div>
+                        <div id="serverTestFeedback" style="font-size: 11.5px; margin-top: 6px; padding: 6px 10px; border-radius: 4px; display: none;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="justify-content: flex-end;">
+                <button type="button" class="btn-primary" onclick="closeSkosSourceModal()">Fertig</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: PDF Processing & Ingestion Modal -->
+    <div class="modal-backdrop" id="pdfProcessingModal">
+        <div class="modal-content" style="width: 700px; max-height: 90vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <h3>📄 PDF im Browser verarbeiten & analysieren</h3>
+                <button class="btn-icon" onclick="closePdfProcessingModal()">✕</button>
+            </div>
+            <div class="modal-body" style="overflow-y: auto; max-height: calc(90vh - 130px); gap: 14px;">
+                
+                <!-- PDF File Selector -->
+                <div style="padding: 12px; border: 2px dashed var(--border-strong); border-radius: 8px; background: var(--bg-card-subtle); display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                    <div>
+                        <div style="font-weight: 700; font-size: 13.5px;" id="pdfModalFileName">Keine PDF-Datei ausgewählt</div>
+                        <div style="font-size: 11.5px; color: var(--text-muted);" id="pdfModalFileInfo">Wählen Sie eine PDF aus (z. B. BJB Jahresbericht)</div>
+                    </div>
+                    <button type="button" class="btn-primary" onclick="document.getElementById('pdfModalFileInput').click()" style="font-size: 12px; padding: 6px 14px; white-space: nowrap;">
+                        📂 PDF auswählen
+                    </button>
+                    <input type="file" id="pdfModalFileInput" accept=".pdf" style="display:none" onchange="handlePdfSelectedForModal(event)">
+                </div>
+
+                <!-- Section: Page Selection ("Seiten markieren") -->
+                <div class="form-group" id="pdfPageSelectionGroup" style="display: none;">
+                    <label style="font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: space-between;">
+                        <span>📑 Seiten markieren / auswählen:</span>
+                        <span style="font-weight: 400; font-size: 11px; color: var(--text-muted);" id="pdfSelectedPageCountLabel">0 Seiten gewählt</span>
+                    </label>
+                    <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
+                        <input type="text" class="form-input" id="pdfPageRangeInput" placeholder="z. B. 1-10 oder Buchseiten wie 598-620" value="1-10" oninput="handlePdfRangeInput(this.value)" style="flex: 1; font-family: monospace; font-size: 12.5px;">
+                        <button type="button" class="btn-outline" onclick="setPdfRangePreset('all')" style="font-size: 11px; padding: 4px 8px;">Alle</button>
+                        <button type="button" class="btn-outline" onclick="setPdfRangePreset('1-5')" style="font-size: 11px; padding: 4px 8px;">1-5</button>
+                        <button type="button" class="btn-outline" onclick="setPdfRangePreset('1-10')" style="font-size: 11px; padding: 4px 8px;">1-10</button>
+                        <button type="button" class="btn-outline" onclick="setPdfRangePreset('1-20')" style="font-size: 11px; padding: 4px 8px;">1-20</button>
+                    </div>
+
+                    <div style="margin-top: 6px; display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-muted);">
+                        <label style="display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
+                            <input type="checkbox" id="chkDetectBookPages" checked onchange="updatePdfPageSelectionFromRange()">
+                            📖 Buchseitenzahlen (z. B. 598) automatisch auf PDF-Seiten umrechnen
+                        </label>
+                    </div>
+
+                    <!-- Visual Tile Checklist for Pages -->
+                    <div style="margin-top: 8px;">
+                        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Klicken zum An-/Abwählen einzelner Seiten:</div>
+                        <div id="pdfPageTilesGrid" style="display: flex; flex-wrap: wrap; gap: 5px; max-height: 120px; overflow-y: auto; padding: 6px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px;">
+                            <!-- Populated with page badges -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Column Layout ("Ein- und zweispaltig") -->
+                <div class="form-group" id="pdfColumnLayoutGroup" style="display: none;">
+                    <label style="font-weight: 700; font-size: 13px;">📐 Spalten-Layout der PDF:</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 6px;">
+                        <div class="skos-option-card selected" id="cardColLayoutAuto" onclick="setPdfColumnLayout('auto')">
+                            <div style="font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 5px;">
+                                <input type="radio" name="pdfColRadio" id="radioColAuto" value="auto" checked onchange="setPdfColumnLayout('auto')">
+                                ⚡ Auto (Empfohlen)
+                            </div>
+                            <div style="font-size: 10.5px; color: var(--text-muted); margin-left: 18px; margin-top: 3px; line-height: 1.35;">
+                                Erkennt Spaltenschnitt automatisch. Verhindert das Zerschneiden von Wörtern.
+                            </div>
+                        </div>
+
+                        <div class="skos-option-card" id="cardColLayout2" onclick="setPdfColumnLayout('2col')">
+                            <div style="font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 5px;">
+                                <input type="radio" name="pdfColRadio" id="radioCol2" value="2col" onchange="setPdfColumnLayout('2col')">
+                                📑 2-spaltig
+                            </div>
+                            <div style="font-size: 10.5px; color: var(--text-muted); margin-left: 18px; margin-top: 3px; line-height: 1.35;">
+                                Liest Spalte links vor Spalte rechts (Standard für 2-spaltige Fundchroniken).
+                            </div>
+                        </div>
+
+                        <div class="skos-option-card" id="cardColLayout1" onclick="setPdfColumnLayout('1col')">
+                            <div style="font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 5px;">
+                                <input type="radio" name="pdfColRadio" id="radioCol1" value="1col" onchange="setPdfColumnLayout('1col')">
+                                📄 1-spaltig
+                            </div>
+                            <div style="font-size: 10.5px; color: var(--text-muted); margin-left: 18px; margin-top: 3px; line-height: 1.35;">
+                                Für seitenbreite Texte (z. B. BJB 1984 oder Einzelberichte).
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 8px;">
+                        <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-muted); cursor: pointer;">
+                            <input type="checkbox" id="chkPdfDehyphenate" checked>
+                            ✂️ Silbentrennung am Zeilenende zusammenfügen (z. B. <code>röm-\nisch</code> → <code>römisch</code>)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Section: Action Mode (Text Only vs AI Extraction) -->
+                <div class="form-group" id="pdfActionModeGroup" style="display: none; border-top: 1px solid var(--border-color); padding-top: 10px;">
+                    <label style="font-weight: 700; font-size: 13px;">🤖 Verarbeitungsmethode:</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px;">
+                        <div class="skos-option-card selected" id="cardActionTextOnly" onclick="setPdfActionMode('text')">
+                            <div style="font-weight: 700; font-size: 12.5px; display: flex; align-items: center; gap: 6px;">
+                                <input type="radio" name="pdfActionRadio" id="radioActionText" value="text" checked onchange="setPdfActionMode('text')">
+                                📖 Nur Text laden
+                            </div>
+                            <div style="font-size: 11px; color: var(--text-muted); margin-left: 20px; margin-top: 4px;">
+                                Extrahiert den reinen bereinigten Text sofort in den Editor (sekundenschnell, ohne KI/API-Key).
+                            </div>
+                        </div>
+
+                        <div class="skos-option-card" id="cardActionAi" onclick="setPdfActionMode('ai')">
+                            <div style="font-weight: 700; font-size: 12.5px; display: flex; align-items: center; gap: 6px;">
+                                <input type="radio" name="pdfActionRadio" id="radioActionAi" value="ai" onchange="setPdfActionMode('ai')">
+                                🤖 KI-Extraktion starten
+                            </div>
+                            <div style="font-size: 11px; color: var(--text-muted); margin-left: 20px; margin-top: 4px;">
+                                Extrahiert Maßnahmen, Befunde, Funde & Datierungen mit <strong id="pdfActiveModelNameDisplay">Gemini 3.8 Flash</strong> direkt in die Tabelle.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer" style="justify-content: space-between;">
+                <button class="btn-outline" onclick="closePdfProcessingModal()">Abbrechen</button>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-primary" id="btnRunPdfExtraction" onclick="runPdfProcessing()" disabled style="font-weight: 700;">
+                        🚀 Ausführen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: LLM API Keys & Model Settings Modal -->
+    <div class="modal-backdrop" id="llmSettingsModal">
+        <div class="modal-content" style="width: 650px;">
+            <div class="modal-header">
+                <h3>🔑 KI-Modelle & API-Keys (Claude & Gemini)</h3>
+                <button class="btn-icon" onclick="closeLlmSettingsModal()">✕</button>
+            </div>
+            <div class="modal-body" style="gap: 14px;">
+                <div style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;">
+                    Wählen Sie aus, welche KI zur automatischen Erkennung archäologischer Fundstellen und SKOS-Annotationen verwendet werden soll. Die API-Keys werden lokal und persistent in Ihrem Browser gespeichert.
+                </div>
+
+                <!-- Provider Selector Cards -->
+                <div style="display: flex; gap: 10px;">
+                    <div class="skos-option-card selected" id="cardProviderGemini" onclick="selectLlmProvider('gemini')" style="flex: 1;">
+                        <div style="font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: space-between;">
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <input type="radio" name="providerRadio" id="radioProviderGemini" value="gemini" checked onchange="selectLlmProvider('gemini')">
+                                🔷 Google Gemini
+                            </label>
+                            <span class="badge-tag" id="geminiKeyStatusBadge" style="font-size: 10px;">Geprüft</span>
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-left: 20px; margin-top: 3px;">
+                            Sehr schnell, Standard mit Gemini 3.8 Flash.
+                        </div>
+                    </div>
+
+                    <div class="skos-option-card" id="cardProviderClaude" onclick="selectLlmProvider('claude')" style="flex: 1;">
+                        <div style="font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: space-between;">
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <input type="radio" name="providerRadio" id="radioProviderClaude" value="claude" onchange="selectLlmProvider('claude')">
+                                🔶 Anthropic Claude
+                            </label>
+                            <span class="badge-tag" id="claudeKeyStatusBadge" style="font-size: 10px;">Fehlt</span>
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-left: 20px; margin-top: 3px;">
+                            Claude 3.5 Sonnet: Hohe Textgenauigkeit.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Google Gemini Settings Box -->
+                <div id="geminiSettingsBox" style="padding: 12px; background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: 8px;">
+                    <div style="font-weight: 700; font-size: 12.5px; margin-bottom: 8px; color: #0284c7;">
+                        🔷 Google Gemini Konfiguration
+                    </div>
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <label style="font-size: 11.5px; font-weight: 600;">Modell:</label>
+                        <select class="form-input" id="selGeminiModel">
+                            <option value="gemini-3.8-flash">gemini-3.8-flash (Standard - Schnell & aktuell)</option>
+                            <option value="gemini-2.5-flash">gemini-2.5-flash (Bewährt & stabil)</option>
+                            <option value="gemini-2.5-pro">gemini-2.5-pro (Starkes Reasoning für schwierige Altberichte)</option>
+                            <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 11.5px; font-weight: 600;">Google Gemini API-Key:</label>
+                        <div style="display: flex; gap: 6px;">
+                            <input type="password" class="form-input" id="inputGeminiApiKey" placeholder="AIzaSy... oder aus google_API.txt" style="font-family: monospace; font-size: 12px;">
+                            <button type="button" class="btn-outline" onclick="togglePasswordVisibility('inputGeminiApiKey')" title="Ein-/Ausblenden">👁️</button>
+                            <button type="button" class="btn-primary" onclick="testGeminiApiKey()" style="white-space: nowrap; font-size: 11.5px;">🔌 Testen</button>
+                        </div>
+                        <div id="geminiTestFeedback" style="font-size: 11px; margin-top: 4px; display: none;"></div>
+                    </div>
+                </div>
+
+                <!-- Anthropic Claude Settings Box -->
+                <div id="claudeSettingsBox" style="padding: 12px; background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: 8px; display: none;">
+                    <div style="font-weight: 700; font-size: 12.5px; margin-bottom: 8px; color: #d97706;">
+                        🔶 Anthropic Claude Konfiguration
+                    </div>
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <label style="font-size: 11.5px; font-weight: 600;">Modell:</label>
+                        <select class="form-input" id="selClaudeModel">
+                            <option value="claude-3-5-sonnet-20241022">claude-3-5-sonnet-20241022 (Beste Textanalyse & Struktur)</option>
+                            <option value="claude-3-5-haiku-20241022">claude-3-5-haiku-20241022 (Sehr schnell & kostengünstig)</option>
+                            <option value="claude-3-opus-20240229">claude-3-opus-20240229</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 11.5px; font-weight: 600;">Anthropic Claude API-Key:</label>
+                        <div style="display: flex; gap: 6px;">
+                            <input type="password" class="form-input" id="inputClaudeApiKey" placeholder="sk-ant-api03-..." style="font-family: monospace; font-size: 12px;">
+                            <button type="button" class="btn-outline" onclick="togglePasswordVisibility('inputClaudeApiKey')" title="Ein-/Ausblenden">👁️</button>
+                            <button type="button" class="btn-primary" onclick="testClaudeApiKey()" style="white-space: nowrap; font-size: 11.5px;">🔌 Testen</button>
+                        </div>
+                        <div id="claudeTestFeedback" style="font-size: 11px; margin-top: 4px; display: none;"></div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline" onclick="closeLlmSettingsModal()">Abbrechen</button>
+                <button class="btn-primary" onclick="saveLlmSettings()">💾 Einstellungen speichern</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: AI Extraction Live Progress -->
+    <div class="modal-backdrop" id="aiProgressModal">
+        <div class="modal-content" style="width: 540px; text-align: center;">
+            <div class="modal-header" style="justify-content: center;">
+                <h3 id="aiProgressTitle">🤖 KI-Extraktion läuft...</h3>
+            </div>
+            <div class="modal-body" style="gap: 12px; padding: 20px;">
+                <div id="aiProgressStatusText" style="font-size: 13.5px; font-weight: 600; color: var(--text-main);">
+                    Initialisiere KI-Modell...
+                </div>
+                <!-- Progress Bar -->
+                <div style="width: 100%; height: 14px; background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden;">
+                    <div id="aiProgressBarFill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #0284c7, #8b5cf6); transition: width 0.3s ease;"></div>
+                </div>
+                <div id="aiProgressCounter" style="font-size: 12px; color: var(--text-muted);">
+                    Seite 0 von 0 verarbeitet
+                </div>
+                <div id="aiProgressLog" style="max-height: 120px; overflow-y: auto; font-family: monospace; font-size: 11.5px; background: var(--bg-body); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; text-align: left;">
+                    <!-- Live progress entries -->
+                </div>
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button class="btn-danger" onclick="cancelAiExtraction()">✕ Abbrechen</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div class="toast" id="appToast">Meldung</div>
 
@@ -1128,6 +1845,8 @@
         const EMBEDDED_VOCAB = __VOCAB_JSON__;
         const EMBEDDED_DOCS = __DOCS_JSON__;
         const GAZETTEER_DATA = __GAZETTEER_JSON__;
+        const INJECTED_DEFAULT_GEMINI_KEY = __DEFAULT_GEMINI_KEY__;
+        const INJECTED_DEFAULT_CLAUDE_KEY = __DEFAULT_CLAUDE_KEY__;
 
         // State
         let activeDocKey = '';
@@ -1141,14 +1860,22 @@
         let currentSuggestions = [];
         let activeSuggestionIndex = 0;
 
+        // SKOS Source & Vocab State
+        let skosSourceMode = localStorage.getItem('skos_source_mode') || 'local'; // 'local' | 'server'
+        let skosServerEndpoint = localStorage.getItem('skos_server_endpoint') || 'https://vocabs.bcdh.uni-bonn.de/rest/v1/LVR_Fundansprachen';
+        let activeLocalVocab = EMBEDDED_VOCAB;
+        let currentVocabFileName = localStorage.getItem('skos_local_file_name') || 'arch_vocab_rhineland.ttl (Standard)';
+        let popoverServerDebounceTimer = null;
+        let serverConnectionStatus = 'unknown'; // 'unknown' | 'online' | 'error'
+
         // Flattened Vocab Array
         let ALL_VOCAB_ITEMS = [];
         let DIRECT_THESAURUS_CONCEPTS = [];
 
         function initVocabIndex() {
             ALL_VOCAB_ITEMS = [];
-            for (let cat in EMBEDDED_VOCAB) {
-                for (let item of EMBEDDED_VOCAB[cat]) {
+            for (let cat in activeLocalVocab) {
+                for (let item of activeLocalVocab[cat]) {
                     ALL_VOCAB_ITEMS.push({
                         term: item.term,
                         alt: item.alt || [],
@@ -1159,8 +1886,1540 @@
                     });
                 }
             }
-            document.getElementById('vocabTotalCount').innerText = ALL_VOCAB_ITEMS.length;
+            const countEl = document.getElementById('vocabTotalCount');
+            if (countEl) countEl.innerText = ALL_VOCAB_ITEMS.length;
+            const localCountEl = document.getElementById('localConceptCountDisplay');
+            if (localCountEl) localCountEl.innerText = ALL_VOCAB_ITEMS.length;
             initDirectThesaurusConcepts();
+        }
+
+        // =====================================================================
+        // SKOS SOURCE SWITCHING & SERVER INTEGRATION
+        // =====================================================================
+
+        function initSkosSource() {
+            // Restore saved source mode or default to local
+            skosSourceMode = localStorage.getItem('skos_source_mode') || 'local';
+            skosServerEndpoint = localStorage.getItem('skos_server_endpoint') || 'https://vocabs.bcdh.uni-bonn.de/rest/v1/LVR_Fundansprachen';
+            currentVocabFileName = localStorage.getItem('skos_local_file_name') || 'arch_vocab_rhineland.ttl (Standard)';
+            
+            // Check if user has a custom cached local vocab in localStorage
+            try {
+                const savedCustom = localStorage.getItem('custom_local_vocab_data');
+                if (savedCustom) {
+                    const parsed = JSON.parse(savedCustom);
+                    // Check for flawed legacy classification (e.g. Grube or Mauer in Fund):
+                    const hasFlawedFund = (parsed.Fund || []).some(item => {
+                        const t = (item.term || '').toLowerCase();
+                        return t === 'grube' || t === 'mauer' || t === 'siedlung' || t === 'pfostengrube' || t === 'befund';
+                    });
+                    if (hasFlawedFund) {
+                        console.warn('Alte fehlerhafte Vokabular-Zwischenspeicherung erkannt (Grube im Fund). Setze auf sauberes Original-Vokabular zurück.');
+                        localStorage.removeItem('custom_local_vocab_data');
+                        currentVocabFileName = 'arch_vocab_rhineland.ttl (Standard)';
+                        localStorage.setItem('skos_local_file_name', currentVocabFileName);
+                        activeLocalVocab = EMBEDDED_VOCAB;
+                    } else {
+                        activeLocalVocab = parsed;
+                    }
+                    initVocabIndex();
+                } else {
+                    activeLocalVocab = EMBEDDED_VOCAB;
+                    initVocabIndex();
+                }
+            } catch(e) {
+                console.warn('Could not restore custom vocab from localStorage:', e);
+                activeLocalVocab = EMBEDDED_VOCAB;
+                initVocabIndex();
+            }
+
+            const inputEl = document.getElementById('skosServerUrlInput');
+            if (inputEl) inputEl.value = skosServerEndpoint;
+            const fnameEl = document.getElementById('localFileNameDisplay');
+            if (fnameEl) fnameEl.innerText = currentVocabFileName;
+
+            updateSkosUiState();
+            if (skosSourceMode === 'server') {
+                testServerConnection(false); // passive background ping
+            }
+        }
+
+        // Switch between 'local' and 'server'
+        function switchSkosSource(mode, notify = true) {
+            if (mode !== 'local' && mode !== 'server') return;
+            skosSourceMode = mode;
+            localStorage.setItem('skos_source_mode', mode);
+
+            updateSkosUiState();
+
+            if (mode === 'server') {
+                if (notify) showToast(`🌐 SKOSMOS Server aktiv: ${skosServerEndpoint.split('/').slice(-1)[0]}`, 'info');
+                testServerConnection(false);
+            } else {
+                if (notify) showToast(`📁 Lokale Vokabular-Datei aktiv (${ALL_VOCAB_ITEMS.length} Begriffe geladen)`, 'success');
+            }
+
+            // Re-render Vocab tab if active
+            const vocabTab = document.getElementById('tabContentVocab');
+            if (vocabTab && vocabTab.classList.contains('active')) {
+                renderVocabExplorer(document.getElementById('vocabSearchInput').value || '');
+            }
+        }
+
+        function updateSkosUiState() {
+            const isServer = (skosSourceMode === 'server');
+
+            // Header Switcher Buttons
+            const btnLocal = document.getElementById('btnSkosLocal');
+            const btnServer = document.getElementById('btnSkosServer');
+            if (btnLocal && btnServer) {
+                btnLocal.classList.toggle('active', !isServer);
+                btnLocal.classList.toggle('active-local', !isServer);
+                btnServer.classList.toggle('active', isServer);
+                btnServer.classList.toggle('active-server', isServer);
+            }
+
+            // Subheader Bar Badge
+            const dot = document.getElementById('skosStatusDot');
+            const label = document.getElementById('skosStatusLabel');
+            if (dot && label) {
+                if (isServer) {
+                    dot.style.background = (serverConnectionStatus === 'error') ? '#ef4444' : '#0284c7';
+                    label.innerText = (serverConnectionStatus === 'error') ? '⚠️ SKOS: Server-Fehler' : '🌐 SKOS: SKOSMOS Server';
+                } else {
+                    dot.style.background = '#10b981';
+                    label.innerText = `📁 SKOS: Lokale Datei (${ALL_VOCAB_ITEMS.length})`;
+                }
+            }
+
+            // Vocab Tab Header
+            const tabDot = document.getElementById('tabVocabSourceDot');
+            const tabTitle = document.getElementById('tabVocabSourceTitle');
+            const tabSub = document.getElementById('tabVocabSourceSub');
+            if (tabDot && tabTitle && tabSub) {
+                if (isServer) {
+                    tabDot.style.background = (serverConnectionStatus === 'error') ? '#ef4444' : '#0284c7';
+                    tabTitle.innerText = '🌐 SKOSMOS Server (Online)';
+                    tabSub.innerText = `${skosServerEndpoint}`;
+                } else {
+                    tabDot.style.background = '#10b981';
+                    tabTitle.innerText = '📁 Lokale Datei (Offline)';
+                    tabSub.innerText = `${currentVocabFileName} (${ALL_VOCAB_ITEMS.length} Begriffe)`;
+                }
+            }
+
+            // Radio inside Settings Modal
+            const rLocal = document.getElementById('radioSkosLocal');
+            const rServer = document.getElementById('radioSkosServer');
+            if (rLocal && rServer) {
+                rLocal.checked = !isServer;
+                rServer.checked = isServer;
+            }
+            const cardLocal = document.getElementById('cardOptionLocal');
+            const cardServer = document.getElementById('cardOptionServer');
+            if (cardLocal && cardServer) {
+                cardLocal.classList.toggle('selected', !isServer);
+                cardServer.classList.toggle('selected', isServer);
+            }
+            const badgeLocal = document.getElementById('badgeLocalStatus');
+            const badgeServer = document.getElementById('badgeServerStatus');
+            if (badgeLocal && badgeServer) {
+                badgeLocal.style.display = !isServer ? 'inline-block' : 'none';
+                badgeServer.style.display = isServer ? 'inline-block' : 'none';
+            }
+        }
+
+        // Modal Controls
+        function openSkosSourceModal() {
+            selectSkosSourceRadio(skosSourceMode);
+            const inputEl = document.getElementById('skosServerUrlInput');
+            if (inputEl) inputEl.value = skosServerEndpoint;
+            const fnameEl = document.getElementById('localFileNameDisplay');
+            if (fnameEl) fnameEl.innerText = currentVocabFileName;
+            const countEl = document.getElementById('localConceptCountDisplay');
+            if (countEl) countEl.innerText = ALL_VOCAB_ITEMS.length;
+
+            document.getElementById('skosSourceModal').style.display = 'flex';
+        }
+
+        function closeSkosSourceModal() {
+            document.getElementById('skosSourceModal').style.display = 'none';
+        }
+
+        function selectSkosSourceRadio(mode) {
+            const isServer = (mode === 'server');
+            const rLocal = document.getElementById('radioSkosLocal');
+            const rServer = document.getElementById('radioSkosServer');
+            if (rLocal && rServer) {
+                rLocal.checked = !isServer;
+                rServer.checked = isServer;
+            }
+            const cardLocal = document.getElementById('cardOptionLocal');
+            const cardServer = document.getElementById('cardOptionServer');
+            if (cardLocal && cardServer) {
+                cardLocal.classList.toggle('selected', !isServer);
+                cardServer.classList.toggle('selected', isServer);
+            }
+        }
+
+        function confirmSkosSourceChange() {
+            const rServer = document.getElementById('radioSkosServer');
+            const newMode = (rServer && rServer.checked) ? 'server' : 'local';
+            const urlInput = document.getElementById('skosServerUrlInput');
+            if (urlInput && urlInput.value.trim()) {
+                skosServerEndpoint = urlInput.value.trim().replace(/\/+$/, '');
+                localStorage.setItem('skos_server_endpoint', skosServerEndpoint);
+            }
+            switchSkosSource(newMode, true);
+            closeSkosSourceModal();
+        }
+
+        // Test Skosmos Connection
+        async function testServerConnection(showFeedback = true) {
+            const feedbackEl = document.getElementById('serverTestFeedback');
+            const urlInput = document.getElementById('skosServerUrlInput');
+            const endpoint = (urlInput && urlInput.value.trim()) ? urlInput.value.trim().replace(/\/+$/, '') : skosServerEndpoint;
+
+            if (showFeedback && feedbackEl) {
+                feedbackEl.style.display = 'block';
+                feedbackEl.style.background = '#e0f2fe';
+                feedbackEl.style.color = '#0369a1';
+                feedbackEl.innerHTML = '⏳ Teste Verbindung zu SKOSMOS Server...';
+            }
+
+            const startTime = performance.now();
+            try {
+                const testUrl = `${endpoint}/search?query=mauer&maxhits=3`;
+                const resp = await fetch(testUrl, { headers: { 'Accept': 'application/json' } });
+                const elapsed = Math.round(performance.now() - startTime);
+
+                if (resp.ok) {
+                    serverConnectionStatus = 'online';
+                    if (showFeedback && feedbackEl) {
+                        feedbackEl.style.background = '#dcfce7';
+                        feedbackEl.style.color = '#166534';
+                        feedbackEl.innerHTML = `✅ Server erreichbar (${elapsed} ms)! REST-API antwortet einwandfrei.`;
+                    }
+                } else {
+                    serverConnectionStatus = 'error';
+                    if (showFeedback && feedbackEl) {
+                        feedbackEl.style.background = '#fee2e2';
+                        feedbackEl.style.color = '#991b1b';
+                        feedbackEl.innerHTML = `⚠️ Server antwortet mit Status HTTP ${resp.status} (${resp.statusText}). Tipp: Nutzen Sie die lokale Datei.`;
+                    }
+                }
+            } catch (err) {
+                serverConnectionStatus = 'error';
+                if (showFeedback && feedbackEl) {
+                    feedbackEl.style.background = '#fee2e2';
+                    feedbackEl.style.color = '#991b1b';
+                    feedbackEl.innerHTML = `❌ Verbindung fehlgeschlagen: ${err.message}. Prüfen Sie URL oder CORS. Schalten Sie auf die lokale Datei um.`;
+                }
+            }
+            updateSkosUiState();
+        }
+
+        // Reset to embedded default local vocabulary
+        function resetToDefaultLocalVocab() {
+            activeLocalVocab = EMBEDDED_VOCAB;
+            currentVocabFileName = 'arch_vocab_rhineland.ttl (Standard)';
+            localStorage.removeItem('custom_local_vocab_data');
+            localStorage.setItem('skos_local_file_name', currentVocabFileName);
+            initVocabIndex();
+            updateSkosUiState();
+            showToast(`🔄 Standard-Vokabular wiederhergestellt (${ALL_VOCAB_ITEMS.length} Begriffe)`, 'info');
+            const fnameEl = document.getElementById('localFileNameDisplay');
+            if (fnameEl) fnameEl.innerText = currentVocabFileName;
+        }
+
+        // Local Vocab File Loader (.json or .ttl)
+        function handleLocalVocabFileLoad(evt) {
+            const file = evt.target.files[0];
+            if (!file) return;
+
+            const fname = file.name;
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const content = e.target.result;
+                try {
+                    let parsedData = null;
+                    if (fname.toLowerCase().endsWith('.json')) {
+                        const parsed = JSON.parse(content);
+                        if (parsed.Datierung || parsed.Befund || parsed.Fund) {
+                            parsedData = parsed;
+                        } else if (Array.isArray(parsed)) {
+                            parsedData = { 'Datierung': [], 'Befund': [], 'Fund': [] };
+                            for (let item of parsed) {
+                                const cat = item.category || 'Fund';
+                                if (!parsedData[cat]) parsedData[cat] = [];
+                                parsedData[cat].push(item);
+                            }
+                        } else {
+                            throw new Error('JSON enthält keine bekannten Kategorien (Datierung, Befund, Fund).');
+                        }
+                    } else if (fname.toLowerCase().endsWith('.ttl') || fname.toLowerCase().endsWith('.txt')) {
+                        parsedData = parseTurtleVocab(content);
+                    } else {
+                        throw new Error('Nicht unterstütztes Format. Bitte .json oder .ttl wählen.');
+                    }
+
+                    activeLocalVocab = parsedData;
+                    currentVocabFileName = fname;
+                    localStorage.setItem('skos_local_file_name', fname);
+                    try {
+                        localStorage.setItem('custom_local_vocab_data', JSON.stringify(parsedData));
+                    } catch(quotaErr) {
+                        console.warn('Vocab too large for localStorage, kept in memory session.');
+                    }
+
+                    initVocabIndex();
+                    switchSkosSource('local', false);
+                    showToast(`✅ Vokabular aus ${fname} erfolgreich geladen (${ALL_VOCAB_ITEMS.length} Begriffe)!`, 'success');
+                    
+                    const fnameEl = document.getElementById('localFileNameDisplay');
+                    if (fnameEl) fnameEl.innerText = currentVocabFileName;
+                    const countEl = document.getElementById('localConceptCountDisplay');
+                    if (countEl) countEl.innerText = ALL_VOCAB_ITEMS.length;
+                } catch(err) {
+                    alert(`Fehler beim Laden des Vokabulars: ${err.message}`);
+                }
+            };
+
+            reader.readAsText(file, 'utf-8');
+            evt.target.value = '';
+        }
+
+        // Client-side SKOS Turtle Parser for local .ttl files with broader hierarchy traversal
+        function parseTurtleVocab(ttlText) {
+            const concepts = [];
+            const broaderMap = new Map();
+            const conceptBlocks = ttlText.split(/(?=\n<[^\n>]+>\s+a\s+skos:Concept)/g);
+
+            const ROOT_CATEGORIES = {
+                'concept_4de8f3b0': 'Datierung',
+                'concept_4c5049c7': 'Befund',
+                'concept_e9dddde8': 'Fund'
+            };
+
+            for (const block of conceptBlocks) {
+                if (!block.includes('skos:Concept')) continue;
+                const uriM = block.match(/<([^>]+)>\s+a\s+skos:Concept/);
+                if (!uriM) continue;
+                const uri = uriM[1];
+
+                const prefM = block.match(/skos:prefLabel\s+"([^"]+)"/);
+                if (!prefM) continue;
+                const term = prefM[1];
+
+                const altMatches = [...block.matchAll(/skos:altLabel\s+"([^"]+)"/g)];
+                const alt = altMatches.map(m => m[1]);
+
+                const broaders = [];
+                const broaderMatches = [...block.matchAll(/skos:broader\s+<([^>]+)>/g)];
+                for (const bm of broaderMatches) {
+                    broaders.push(bm[1]);
+                }
+                broaderMap.set(uri, broaders);
+
+                concepts.push({ uri, term, alt, broaders });
+            }
+
+            // Category resolution by walking broader concepts up to root
+            const catMemo = new Map();
+            function resolveCategory(uri, visited = new Set()) {
+                if (catMemo.has(uri)) return catMemo.get(uri);
+                if (visited.has(uri)) return null;
+                visited.add(uri);
+
+                for (const [code, cat] of Object.entries(ROOT_CATEGORIES)) {
+                    if (uri.includes(code)) {
+                        catMemo.set(uri, cat);
+                        return cat;
+                    }
+                }
+
+                const broaders = broaderMap.get(uri) || [];
+                for (const bUri of broaders) {
+                    const cat = resolveCategory(bUri, visited);
+                    if (cat) {
+                        catMemo.set(uri, cat);
+                        return cat;
+                    }
+                }
+                return null;
+            }
+
+            const data = { 'Datierung': [], 'Befund': [], 'Fund': [] };
+            for (const c of concepts) {
+                let category = resolveCategory(c.uri);
+                if (!category) {
+                    const tLow = c.term.toLowerCase();
+                    if (ALL_SKOS_CAT_MAP[tLow]) {
+                        category = ALL_SKOS_CAT_MAP[tLow];
+                    } else if (/zeit|alter|jahrhundert|\bjh\b|epoche|kaiserzeit|latène|hallstatt|neolith|bronzezeit|eisenzeit|frühgeschichte/i.test(tLow)) {
+                        category = 'Datierung';
+                    } else if (/grube|mauer|graben|befund|anlage|bau|ofen|kanal|straße|haus|keller|spuren|platz|friedhof|siedlung|turm|tor|lager|kastell/i.test(tLow)) {
+                        category = 'Befund';
+                    } else {
+                        category = 'Fund';
+                    }
+                }
+
+                data[category].push({
+                    term: c.term,
+                    alt: c.alt,
+                    category: category,
+                    uri: c.uri
+                });
+            }
+
+            return data;
+        }
+
+        // Live Search Query against SKOSMOS REST API
+        async function querySkosmosServer(query, maxhits = 15) {
+            if (!query || !query.trim()) return [];
+            const cleanQ = query.trim();
+            const url = `${skosServerEndpoint}/search?query=${encodeURIComponent(cleanQ)}*&lang=de&maxhits=${maxhits}`;
+            
+            try {
+                const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const data = await resp.json();
+                const list = data.results || [];
+
+                return list.map(item => {
+                    const term = item.prefLabel || cleanQ;
+                    const uri = item.uri || '';
+                    let cat = 'Fund';
+                    const termLow = term.toLowerCase();
+
+                    if (ALL_SKOS_CAT_MAP[termLow]) {
+                        cat = ALL_SKOS_CAT_MAP[termLow];
+                    } else if (uri.includes('Datierung') || uri.includes('concept_4de8f3b0') || /\b\d+\.?\s*jh/i.test(term)) {
+                        cat = 'Datierung';
+                    } else if (uri.includes('Befund') || uri.includes('concept_4c5049c7') || /grube|mauer|grab|brunnen|fundament|graben|straße|ofen|kanal/i.test(term)) {
+                        cat = 'Befund';
+                    } else {
+                        for (let v of ALL_VOCAB_ITEMS) {
+                            if (v.termLower === termLow) {
+                                cat = v.category;
+                                break;
+                            }
+                        }
+                    }
+
+                    return {
+                        term: term,
+                        displayLabel: term,
+                        alt: item.altLabel ? [item.altLabel] : [],
+                        category: cat,
+                        uri: uri,
+                        score: item.prefLabel && item.prefLabel.toLowerCase() === cleanQ.toLowerCase() ? 100 : 92,
+                        reason: 'SKOSMOS Server-Treffer',
+                        isServer: true
+                    };
+                });
+            } catch (err) {
+                console.warn('SKOSMOS query error:', err);
+                throw err;
+            }
+        }
+
+        // =====================================================================
+        // MULTI-LLM MANAGEMENT (Gemini 3.8 Flash vs Claude 3.5 Sonnet)
+        // =====================================================================
+
+        let currentLlmProvider = localStorage.getItem('llm_provider') || 'gemini'; // 'gemini' | 'claude'
+        let currentGeminiModel = localStorage.getItem('llm_gemini_model') || 'gemini-3.8-flash';
+        let currentClaudeModel = localStorage.getItem('llm_claude_model') || 'claude-3-5-sonnet-20241022';
+        let geminiApiKey = localStorage.getItem('llm_gemini_key') || (typeof INJECTED_DEFAULT_GEMINI_KEY !== 'undefined' && INJECTED_DEFAULT_GEMINI_KEY ? INJECTED_DEFAULT_GEMINI_KEY : '');
+        let claudeApiKey = localStorage.getItem('llm_claude_key') || (typeof INJECTED_DEFAULT_CLAUDE_KEY !== 'undefined' && INJECTED_DEFAULT_CLAUDE_KEY ? INJECTED_DEFAULT_CLAUDE_KEY : '');
+
+        function initLlmSettings() {
+            currentLlmProvider = localStorage.getItem('llm_provider') || 'gemini';
+            currentGeminiModel = localStorage.getItem('llm_gemini_model') || 'gemini-3.8-flash';
+            currentClaudeModel = localStorage.getItem('llm_claude_model') || 'claude-3-5-sonnet-20241022';
+
+            if (!localStorage.getItem('llm_gemini_key') && typeof INJECTED_DEFAULT_GEMINI_KEY !== 'undefined' && INJECTED_DEFAULT_GEMINI_KEY) {
+                geminiApiKey = INJECTED_DEFAULT_GEMINI_KEY;
+            } else {
+                geminiApiKey = localStorage.getItem('llm_gemini_key') || '';
+            }
+
+            if (!localStorage.getItem('llm_claude_key') && typeof INJECTED_DEFAULT_CLAUDE_KEY !== 'undefined' && INJECTED_DEFAULT_CLAUDE_KEY) {
+                claudeApiKey = INJECTED_DEFAULT_CLAUDE_KEY;
+            } else {
+                claudeApiKey = localStorage.getItem('llm_claude_key') || '';
+            }
+
+            updateLlmUiState();
+        }
+
+        function updateLlmUiState() {
+            const isClaude = (currentLlmProvider === 'claude');
+            
+            // Subheader Badge
+            const badgeLabel = document.getElementById('llmModelLabel');
+            const badgeDot = document.getElementById('llmModelDot');
+            if (badgeLabel && badgeDot) {
+                if (isClaude) {
+                    badgeDot.style.background = '#d97706';
+                    badgeLabel.innerText = `🤖 KI: Claude 3.5 Sonnet`;
+                } else {
+                    badgeDot.style.background = '#0284c7';
+                    badgeLabel.innerText = `🤖 KI: Gemini 3.8 Flash`;
+                }
+            }
+
+            // PDF Modal model label
+            const pdfModelLabel = document.getElementById('pdfActiveModelNameDisplay');
+            if (pdfModelLabel) {
+                pdfModelLabel.innerText = isClaude ? `Claude 3.5 Sonnet` : `Gemini 3.8 Flash`;
+            }
+
+            // Modal Radio and Cards
+            const rGemini = document.getElementById('radioProviderGemini');
+            const rClaude = document.getElementById('radioProviderClaude');
+            if (rGemini && rClaude) {
+                rGemini.checked = !isClaude;
+                rClaude.checked = isClaude;
+            }
+            const cardGem = document.getElementById('cardProviderGemini');
+            const cardClaud = document.getElementById('cardProviderClaude');
+            if (cardGem && cardClaud) {
+                cardGem.classList.toggle('selected', !isClaude);
+                cardClaud.classList.toggle('selected', isClaude);
+            }
+
+            const boxGem = document.getElementById('geminiSettingsBox');
+            const boxClaud = document.getElementById('claudeSettingsBox');
+            if (boxGem && boxClaud) {
+                boxGem.style.display = !isClaude ? 'block' : 'none';
+                boxClaud.style.display = isClaude ? 'block' : 'none';
+            }
+
+            // Status badges in settings modal
+            const gemBadge = document.getElementById('geminiKeyStatusBadge');
+            if (gemBadge) {
+                gemBadge.innerText = geminiApiKey ? 'Geprüft' : 'Fehlt';
+                gemBadge.style.background = geminiApiKey ? '#dcfce7' : '#fee2e2';
+                gemBadge.style.color = geminiApiKey ? '#166534' : '#991b1b';
+            }
+            const claudBadge = document.getElementById('claudeKeyStatusBadge');
+            if (claudBadge) {
+                claudBadge.innerText = claudeApiKey ? 'Geprüft' : 'Fehlt';
+                claudBadge.style.background = claudeApiKey ? '#dcfce7' : '#fee2e2';
+                claudBadge.style.color = claudeApiKey ? '#166534' : '#991b1b';
+            }
+        }
+
+        function openLlmSettingsModal() {
+            selectLlmProvider(currentLlmProvider);
+            
+            const selGem = document.getElementById('selGeminiModel');
+            if (selGem) selGem.value = currentGeminiModel;
+            const inputGem = document.getElementById('inputGeminiApiKey');
+            if (inputGem) inputGem.value = geminiApiKey;
+
+            const selClaud = document.getElementById('selClaudeModel');
+            if (selClaud) selClaud.value = currentClaudeModel;
+            const inputClaud = document.getElementById('inputClaudeApiKey');
+            if (inputClaud) inputClaud.value = claudeApiKey;
+
+            updateLlmUiState();
+            document.getElementById('llmSettingsModal').style.display = 'flex';
+        }
+
+        function closeLlmSettingsModal() {
+            document.getElementById('llmSettingsModal').style.display = 'none';
+        }
+
+        function selectLlmProvider(provider) {
+            currentLlmProvider = provider;
+            const rGem = document.getElementById('radioProviderGemini');
+            const rClaud = document.getElementById('radioProviderClaude');
+            if (rGem && rClaud) {
+                rGem.checked = (provider === 'gemini');
+                rClaud.checked = (provider === 'claude');
+            }
+            const cardGem = document.getElementById('cardProviderGemini');
+            const cardClaud = document.getElementById('cardProviderClaude');
+            if (cardGem && cardClaud) {
+                cardGem.classList.toggle('selected', provider === 'gemini');
+                cardClaud.classList.toggle('selected', provider === 'claude');
+            }
+            const boxGem = document.getElementById('geminiSettingsBox');
+            const boxClaud = document.getElementById('claudeSettingsBox');
+            if (boxGem && boxClaud) {
+                boxGem.style.display = (provider === 'gemini') ? 'block' : 'none';
+                boxClaud.style.display = (provider === 'claude') ? 'block' : 'none';
+            }
+        }
+
+        function saveLlmSettings() {
+            const rClaude = document.getElementById('radioProviderClaude');
+            currentLlmProvider = (rClaude && rClaude.checked) ? 'claude' : 'gemini';
+            localStorage.setItem('llm_provider', currentLlmProvider);
+
+            const selGem = document.getElementById('selGeminiModel');
+            if (selGem) {
+                currentGeminiModel = selGem.value;
+                localStorage.setItem('llm_gemini_model', currentGeminiModel);
+            }
+            const inputGem = document.getElementById('inputGeminiApiKey');
+            if (inputGem) {
+                geminiApiKey = inputGem.value.trim();
+                localStorage.setItem('llm_gemini_key', geminiApiKey);
+            }
+
+            const selClaud = document.getElementById('selClaudeModel');
+            if (selClaud) {
+                currentClaudeModel = selClaud.value;
+                localStorage.setItem('llm_claude_model', currentClaudeModel);
+            }
+            const inputClaud = document.getElementById('inputClaudeApiKey');
+            if (inputClaud) {
+                claudeApiKey = inputClaud.value.trim();
+                localStorage.setItem('llm_claude_key', claudeApiKey);
+            }
+
+            updateLlmUiState();
+            closeLlmSettingsModal();
+            showToast(`💾 KI-Einstellungen gespeichert (${currentLlmProvider === 'claude' ? 'Claude' : 'Gemini 3.8 Flash'})`, 'success');
+        }
+
+        function togglePasswordVisibility(inputId) {
+            const el = document.getElementById(inputId);
+            if (!el) return;
+            el.type = (el.type === 'password') ? 'text' : 'password';
+        }
+
+        async function testGeminiApiKey() {
+            const input = document.getElementById('inputGeminiApiKey');
+            const key = input ? input.value.trim() : geminiApiKey;
+            const feedback = document.getElementById('geminiTestFeedback');
+            if (!key) {
+                if (feedback) {
+                    feedback.style.display = 'block';
+                    feedback.style.color = '#991b1b';
+                    feedback.innerText = 'Bitte zuerst einen Gemini API-Key eingeben.';
+                }
+                return;
+            }
+            if (feedback) {
+                feedback.style.display = 'block';
+                feedback.style.color = '#0284c7';
+                feedback.innerText = '⏳ Teste Gemini API-Key...';
+            }
+
+            try {
+                const model = document.getElementById('selGeminiModel')?.value || currentGeminiModel;
+                const testUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+                const resp = await fetch(testUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: "Antworte kurz mit OK" }] }]
+                    })
+                });
+                if (resp.ok) {
+                    feedback.style.color = '#166534';
+                    feedback.innerText = '✅ Gemini API-Key ist gültig und aktiv!';
+                    geminiApiKey = key;
+                    localStorage.setItem('llm_gemini_key', key);
+                    updateLlmUiState();
+                } else {
+                    const errData = await resp.json().catch(() => ({}));
+                    feedback.style.color = '#991b1b';
+                    feedback.innerText = `❌ Fehler HTTP ${resp.status}: ${errData.error?.message || resp.statusText}`;
+                }
+            } catch(e) {
+                feedback.style.color = '#991b1b';
+                feedback.innerText = `❌ Netzwerkfehler: ${e.message}`;
+            }
+        }
+
+        async function testClaudeApiKey() {
+            const input = document.getElementById('inputClaudeApiKey');
+            const key = input ? input.value.trim() : claudeApiKey;
+            const feedback = document.getElementById('claudeTestFeedback');
+            if (!key) {
+                if (feedback) {
+                    feedback.style.display = 'block';
+                    feedback.style.color = '#991b1b';
+                    feedback.innerText = 'Bitte zuerst einen Claude API-Key eingeben.';
+                }
+                return;
+            }
+            if (feedback) {
+                feedback.style.display = 'block';
+                feedback.style.color = '#0284c7';
+                feedback.innerText = '⏳ Teste Anthropic Claude API-Key...';
+            }
+
+            try {
+                const model = document.getElementById('selClaudeModel')?.value || currentClaudeModel;
+                const testUrl = `https://api.anthropic.com/v1/messages`;
+                const resp = await fetch(testUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': key,
+                        'anthropic-version': '2023-06-01',
+                        'anthropic-dangerous-direct-browser-access': 'true'
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        max_tokens: 10,
+                        messages: [{ role: 'user', content: 'Antworte kurz mit OK' }]
+                    })
+                });
+                if (resp.ok) {
+                    feedback.style.color = '#166534';
+                    feedback.innerText = '✅ Anthropic Claude API-Key ist gültig und aktiv!';
+                    claudeApiKey = key;
+                    localStorage.setItem('llm_claude_key', key);
+                    updateLlmUiState();
+                } else {
+                    const errData = await resp.json().catch(() => ({}));
+                    feedback.style.color = '#991b1b';
+                    feedback.innerText = `❌ Fehler HTTP ${resp.status}: ${errData.error?.message || resp.statusText}`;
+                }
+            } catch(e) {
+                feedback.style.color = '#991b1b';
+                feedback.innerText = `❌ Netzwerkfehler: ${e.message}`;
+            }
+        }
+
+        // =====================================================================
+        // IN-BROWSER PDF ENGINE (Page selection, 1-col / 2-col, AI Extraction)
+        // =====================================================================
+
+        let currentPdfDoc = null;
+        let currentPdfFile = null;
+        let currentPdfFileName = '';
+        let currentPdfTotalPages = 0;
+        let currentPdfSelectedPages = new Set();
+        let currentPdfColumnLayout = 'auto'; // 'auto' | '2col' | '1col'
+        let currentPdfActionMode = 'text'; // 'text' | 'ai'
+        let isAiExtractionCancelled = false;
+
+        function openPdfProcessingModal() {
+            document.getElementById('pdfProcessingModal').style.display = 'flex';
+            updateLlmUiState();
+        }
+
+        function closePdfProcessingModal() {
+            document.getElementById('pdfProcessingModal').style.display = 'none';
+        }
+
+        async function handlePdfSelectedForModal(evt) {
+            const file = evt.target.files[0];
+            if (!file) return;
+
+            if (typeof pdfjsLib === 'undefined') {
+                alert("PDF.js ist im Browser nicht verfügbar.");
+                return;
+            }
+
+            currentPdfFile = file;
+            currentPdfFileName = file.name;
+
+            document.getElementById('pdfModalFileName').innerText = file.name;
+            document.getElementById('pdfModalFileInfo').innerText = `Lade PDF-Seiten (${(file.size / (1024*1024)).toFixed(1)} MB)...`;
+
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                currentPdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                currentPdfTotalPages = currentPdfDoc.numPages;
+
+                document.getElementById('pdfModalFileInfo').innerText = `PDF geladen: ${currentPdfTotalPages} Seiten.`;
+
+                // Show options
+                document.getElementById('pdfPageSelectionGroup').style.display = 'block';
+                document.getElementById('pdfColumnLayoutGroup').style.display = 'block';
+                document.getElementById('pdfActionModeGroup').style.display = 'block';
+                document.getElementById('btnRunPdfExtraction').disabled = false;
+
+                // Initial selection: first 10 pages or all if <= 10
+                const initialEnd = Math.min(10, currentPdfTotalPages);
+                document.getElementById('pdfPageRangeInput').value = `1-${initialEnd}`;
+                setPdfRangePreset(`1-${initialEnd}`);
+            } catch(err) {
+                alert(`Fehler beim Öffnen der PDF: ${err.message}`);
+            }
+        }
+
+        function setPdfRangePreset(preset) {
+            if (!currentPdfTotalPages) return;
+            currentPdfSelectedPages.clear();
+
+            if (preset === 'all') {
+                for (let i = 1; i <= currentPdfTotalPages; i++) currentPdfSelectedPages.add(i);
+                document.getElementById('pdfPageRangeInput').value = `1-${currentPdfTotalPages}`;
+            } else if (preset === 'first5') {
+                const maxP = Math.min(5, currentPdfTotalPages);
+                for (let i = 1; i <= maxP; i++) currentPdfSelectedPages.add(i);
+                document.getElementById('pdfPageRangeInput').value = `1-${maxP}`;
+            } else if (preset === 'first10') {
+                const maxP = Math.min(10, currentPdfTotalPages);
+                for (let i = 1; i <= maxP; i++) currentPdfSelectedPages.add(i);
+                document.getElementById('pdfPageRangeInput').value = `1-${maxP}`;
+            } else if (preset === 'first20') {
+                const maxP = Math.min(20, currentPdfTotalPages);
+                for (let i = 1; i <= maxP; i++) currentPdfSelectedPages.add(i);
+                document.getElementById('pdfPageRangeInput').value = `1-${maxP}`;
+            } else if (preset.includes('-')) {
+                const parts = preset.split('-');
+                const s = parseInt(parts[0], 10);
+                const e = Math.min(parseInt(parts[1], 10), currentPdfTotalPages);
+                for (let i = s; i <= e; i++) currentPdfSelectedPages.add(i);
+            }
+            renderPdfPageTiles();
+        }
+
+        function handlePdfRangeInput(val) {
+            if (!currentPdfTotalPages) return;
+            const rangeStr = val.trim();
+            if (!rangeStr) return;
+
+            currentPdfSelectedPages.clear();
+            const segments = rangeStr.split(/[,;\s]+/);
+            for (const seg of segments) {
+                if (seg.includes('-')) {
+                    const [sStr, eStr] = seg.split('-');
+                    let s = parseInt(sStr, 10);
+                    let e = parseInt(eStr, 10);
+                    if (!isNaN(s) && !isNaN(e)) {
+                        s = Math.max(1, Math.min(s, currentPdfTotalPages));
+                        e = Math.max(1, Math.min(e, currentPdfTotalPages));
+                        for (let i = Math.min(s, e); i <= Math.max(s, e); i++) {
+                            currentPdfSelectedPages.add(i);
+                        }
+                    }
+                } else {
+                    const p = parseInt(seg, 10);
+                    if (!isNaN(p) && p >= 1 && p <= currentPdfTotalPages) {
+                        currentPdfSelectedPages.add(p);
+                    }
+                }
+            }
+            renderPdfPageTiles();
+        }
+
+        function togglePdfPageTile(pNum) {
+            if (currentPdfSelectedPages.has(pNum)) {
+                currentPdfSelectedPages.delete(pNum);
+            } else {
+                currentPdfSelectedPages.add(pNum);
+            }
+            const sorted = Array.from(currentPdfSelectedPages).sort((a,b) => a - b);
+            if (sorted.length > 0) {
+                document.getElementById('pdfPageRangeInput').value = formatPageRangeList(sorted);
+            }
+            renderPdfPageTiles();
+        }
+
+        function formatPageRangeList(arr) {
+            if (arr.length === 0) return '';
+            let ranges = [];
+            let start = arr[0], prev = arr[0];
+            for (let i = 1; i < arr.length; i++) {
+                if (arr[i] === prev + 1) {
+                    prev = arr[i];
+                } else {
+                    ranges.push(start === prev ? `${start}` : `${start}-${prev}`);
+                    start = prev = arr[i];
+                }
+            }
+            ranges.push(start === prev ? `${start}` : `${start}-${prev}`);
+            return ranges.join(', ');
+        }
+
+        function renderPdfPageTiles() {
+            const grid = document.getElementById('pdfPageTilesGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const maxRender = Math.min(currentPdfTotalPages, 120);
+            for (let i = 1; i <= maxRender; i++) {
+                const tile = document.createElement('div');
+                tile.className = `page-tile ${currentPdfSelectedPages.has(i) ? 'selected' : ''}`;
+                tile.innerText = i;
+                    tile.onclick = () => togglePdfPageTile(i);
+                grid.appendChild(tile);
+            }
+            if (currentPdfTotalPages > 120) {
+                const moreNote = document.createElement('span');
+                moreNote.style.cssText = 'font-size:10.5px; color:var(--text-muted); align-self:center; margin-left:4px;';
+                moreNote.innerText = `(+ ${currentPdfTotalPages - 120} weitere)`;
+                grid.appendChild(moreNote);
+            }
+
+            const countLabel = document.getElementById('pdfSelectedPageCountLabel');
+            if (countLabel) {
+                countLabel.innerText = `${currentPdfSelectedPages.size} von ${currentPdfTotalPages} Seiten gewählt`;
+            }
+        }
+
+        function setPdfColumnLayout(layout) {
+            currentPdfColumnLayout = layout;
+            const rAuto = document.getElementById('radioColAuto');
+            const r1 = document.getElementById('radioCol1');
+            const r2 = document.getElementById('radioCol2');
+            if (rAuto) rAuto.checked = (layout === 'auto');
+            if (r1) r1.checked = (layout === '1col');
+            if (r2) r2.checked = (layout === '2col');
+
+            const cAuto = document.getElementById('cardColLayoutAuto');
+            const c1 = document.getElementById('cardColLayout1');
+            const c2 = document.getElementById('cardColLayout2');
+            if (cAuto) cAuto.classList.toggle('selected', layout === 'auto');
+            if (c1) c1.classList.toggle('selected', layout === '1col');
+            if (c2) c2.classList.toggle('selected', layout === '2col');
+        }
+
+        // Intelligently repair OCR glued words & missing spaces around punctuation
+        function repairGluedWords(str) {
+            if (!str) return '';
+            return str
+                // Missing space after sentence-ending punctuation when followed by uppercase: "Museum.Das" -> "Museum. Das"
+                .replace(/([a-zäöüß0-9]{2,})([.!?])([A-ZÄÖÜ])/g, '$1$2 $3')
+                // Missing space after comma/colon/semicolon: "Scherben,Münzen" -> "Scherben, Münzen", "einzelnen,8" -> "einzelnen, 8"
+                .replace(/([a-zäöüß0-9])([,;:])([A-ZÄÖÜa-zäöüß0-9])/g, '$1$2 $3')
+                // Missing space around dashes/em-dashes: "nachgewiesen.–Aus" -> "nachgewiesen. – Aus"
+                .replace(/([a-zäöüß0-9])([–—])([A-ZÄÖÜa-zäöüß])/g, '$1 $2 $3')
+                // Run-together prepositions followed by word: "Sachverhaltsermittlungbei Siersdorf" -> "Sachverhaltsermittlung bei Siersdorf"
+                .replace(/([a-zäöüß]{3,})(bei|auf|in|im|aus|nach|vor|unter|über|vom|von|mit|durch|zu|zur|zum|und|oder)\s+([A-ZÄÖÜ])/g, '$1 $2 $3')
+                // Run-together word and s.o. / s.u. / vgl.: "Haarens.o." -> "Haaren s. o."
+                .replace(/([a-zäöüß]{3,})(s\.o\.|s\.u\.|vgl\.)/g, '$1 $2')
+                .replace(/\bs\.o\./g, 's. o.')
+                .replace(/\bs\.u\./g, 's. u.')
+                .replace(/\bd\.h\./g, 'd. h.')
+                // S.296 -> S. 296
+                .replace(/(\b[A-Za-zäöüÄÖÜß]+)\.(\d+)/g, '$1. $2')
+                // Lowercase directly glued to uppercase: "MuseumDuisburg" -> "Museum Duisburg" (min 3 lowercase, min 2 uppercase)
+                .replace(/([a-zäöüß]{3,})([A-ZÄÖÜ][a-zäöüß]{2,})/g, '$1 $2')
+                // Clean multiple spaces
+                .replace(/[ \t]{2,}/g, ' ');
+        }
+
+        // Clean, de-hyphenate and reflow raw text streams into true readable paragraphs
+        function cleanAndReflowText(rawText) {
+            if (!rawText) return '';
+            let text = repairGluedWords(rawText);
+            // Rejoin line-broken hyphens: "geschich-\n tem" -> "geschichtetem"
+            text = text.replace(/(\b[\wöäüß]+)-[­]?\s*\n\s*([\wöäüß]+)/gi, '$1$2');
+
+            // Split into lines and reconstruct clean paragraphs
+            const lines = text.split('\n');
+            const outParagraphs = [];
+            let curPara = "";
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) {
+                    if (curPara) { outParagraphs.push(curPara); curPara = ""; }
+                    continue;
+                }
+
+                // Page divider line: --- SEITE X ---
+                if (/^---\s*SEITE\s*\d+\s*---$/i.test(line)) {
+                    if (curPara) { outParagraphs.push(curPara); curPara = ""; }
+                    outParagraphs.push(line);
+                    continue;
+                }
+
+                if (!curPara) {
+                    curPara = line;
+                } else {
+                    // Check if current paragraph should break before this line
+                    const prevEndsPunct = /[.!?]$/.test(curPara);
+                    const nextIsMeasure = /^\d+\.\s+[A-ZÄÖÜ]/.test(line);
+                    const nextIsLocation = /^[A-ZÄÖÜ][a-zäöüß]+,\s+[A-ZÄÖÜ]/.test(line);
+                    const nextIsVerbleib = /^Verbleib:/i.test(line);
+
+                    if (prevEndsPunct && (nextIsMeasure || nextIsLocation || nextIsVerbleib)) {
+                        outParagraphs.push(curPara);
+                        curPara = line;
+                    } else if (nextIsMeasure || nextIsLocation) {
+                        outParagraphs.push(curPara);
+                        curPara = line;
+                    } else {
+                        // Join into same flowing paragraph with space
+                        curPara += ' ' + line;
+                    }
+                }
+            }
+            if (curPara) outParagraphs.push(curPara);
+
+            return outParagraphs.join('\n\n');
+        }
+
+        // Analyze page items to find true vertical column gutter
+        function analyzePageColumns(items, pageWidth, colLayoutSetting) {
+            if (colLayoutSetting === '1col') return null; // forced single column
+            if (colLayoutSetting === '2col') return pageWidth / 2.0; // forced two column
+
+            // AUTO-DETECTION:
+            const centerStart = pageWidth * 0.38;
+            const centerEnd = pageWidth * 0.62;
+            const validItems = items.filter(it => it.str && it.str.trim().length > 0 && (it.width || 0) > 3);
+
+            if (validItems.length < 10) return null;
+
+            // Filter out obvious wide banner/divider lines for gutter detection
+            const nonBanner = validItems.filter(it => !it.str.startsWith('Abb.') && (it.width || 0) < pageWidth * 0.40);
+
+            let bestX = null;
+            let minCrossing = 999;
+            let maxGutter = 0;
+
+            for (let cx = centerStart; cx <= centerEnd; cx += 2) {
+                let minLeftDist = 999;
+                let minRightDist = 999;
+                let crossing = 0;
+
+                for (const it of nonBanner) {
+                    const x0 = it.transform[4];
+                    const x1 = x0 + (it.width || 0);
+                    if (x0 < cx && x1 > cx) {
+                        crossing++;
+                    }
+                    if (x1 < cx) {
+                        const d = cx - x1;
+                        if (d < minLeftDist) minLeftDist = d;
+                    } else if (x0 > cx) {
+                        const d = x0 - cx;
+                        if (d < minRightDist) minRightDist = d;
+                    }
+                }
+
+                const gutter = minLeftDist + minRightDist;
+                if (crossing < minCrossing || (crossing === minCrossing && gutter > maxGutter)) {
+                    minCrossing = crossing;
+                    maxGutter = gutter;
+                    bestX = cx;
+                }
+            }
+
+            // If a distinct gutter of >= 6px exists and crossing is minimal (<= 3 words), it's 2-column!
+            if (maxGutter >= 6.0 && minCrossing <= 3 && bestX !== null) {
+                return bestX;
+            }
+            return null; // Otherwise 1-column full width
+        }
+
+        // Assemble text items of a column into fluid, de-hyphenated paragraphs
+        function assembleColumnParagraphs(colItems, dehyphenate) {
+            if (!colItems || colItems.length === 0) return "";
+
+            // Sort top-to-bottom (y descending in PDF coords), left-to-right (x ascending)
+            colItems.sort((a, b) => {
+                const ay = a.transform[5], by = b.transform[5];
+                if (Math.abs(ay - by) <= 3.5) {
+                    return a.transform[4] - b.transform[4];
+                }
+                return by - ay;
+            });
+
+            // Group into lines
+            const lines = [];
+            let curLineItems = [];
+            let curY = null;
+
+            for (const it of colItems) {
+                const y = it.transform[5];
+                if (curY === null || Math.abs(y - curY) <= 3.5) {
+                    curLineItems.push(it);
+                    if (curY === null) curY = y;
+                } else {
+                    lines.push({ items: curLineItems, y: curY });
+                    curLineItems = [it];
+                    curY = y;
+                }
+            }
+            if (curLineItems.length > 0) lines.push({ items: curLineItems, y: curY });
+            if (lines.length === 0) return "";
+
+            // Assemble line texts with horizontal space detection
+            const assembledLines = [];
+            for (const line of lines) {
+                let lineText = "";
+                let prevItem = null;
+
+                for (const it of line.items) {
+                    const str = it.str;
+                    if (!str) continue;
+
+                    if (prevItem) {
+                        const prevX1 = prevItem.transform[4] + (prevItem.width || 0);
+                        const currX0 = it.transform[4];
+                        const gap = currX0 - prevX1;
+
+                        if (gap >= 2.0) {
+                            if (!lineText.endsWith(' ') && !str.startsWith(' ')) {
+                                lineText += ' ';
+                            }
+                        }
+                    }
+                    lineText += str;
+                    prevItem = it;
+                }
+
+                lineText = repairGluedWords(lineText.trim());
+                if (lineText) {
+                    assembledLines.push({
+                        text: lineText,
+                        y: line.y,
+                        x: line.items[0]?.transform[4] || 0
+                    });
+                }
+            }
+
+            if (assembledLines.length === 0) return "";
+
+            // Compute average line delta-y
+            let totalDy = 0, countDy = 0;
+            for (let i = 1; i < assembledLines.length; i++) {
+                const dy = assembledLines[i-1].y - assembledLines[i].y;
+                if (dy > 0 && dy < 35) {
+                    totalDy += dy;
+                    countDy++;
+                }
+            }
+            const avgDy = countDy > 0 ? (totalDy / countDy) : 14;
+
+            // Group assembled lines into PARAGRAPHS
+            const paragraphs = [];
+            let curPara = "";
+
+            for (let i = 0; i < assembledLines.length; i++) {
+                const curLine = assembledLines[i];
+                const nextLine = (i + 1 < assembledLines.length) ? assembledLines[i+1] : null;
+
+                if (!curPara) {
+                    curPara = curLine.text;
+                } else {
+                    if (dehyphenate && /[\wöäüß]-[­]?$/i.test(curPara)) {
+                        curPara = curPara.replace(/-[­]?$/, '') + curLine.text;
+                    } else {
+                        curPara += ' ' + curLine.text;
+                    }
+                }
+
+                let isBoundary = false;
+                if (nextLine) {
+                    const dy = curLine.y - nextLine.y;
+                    if (dy > avgDy * 1.38) {
+                        isBoundary = true;
+                    } else if (/[.!?]$/.test(curLine.text.trim())) {
+                        const nextTrim = nextLine.text.trim();
+                        if (/^\d+\.\s+[A-ZÄÖÜ]/.test(nextTrim) ||
+                            /^[A-ZÄÖÜ][a-zäöüß]+,\s+[A-ZÄÖÜ]/.test(nextTrim) ||
+                            /^Verbleib:/i.test(nextTrim) ||
+                            /^Abb\.\s*\d+/i.test(nextTrim) ||
+                            (nextLine.x - curLine.x >= 7.0)) {
+                            isBoundary = true;
+                        }
+                    } else if (/^\d+\.\s+[A-ZÄÖÜ]/.test(nextLine.text.trim()) || /^Verbleib:/i.test(nextLine.text.trim())) {
+                        isBoundary = true;
+                    }
+                } else {
+                    isBoundary = true;
+                }
+
+                if (isBoundary) {
+                    paragraphs.push(curPara.trim());
+                    curPara = "";
+                }
+            }
+            if (curPara.trim()) paragraphs.push(curPara.trim());
+
+            return paragraphs.join('\n\n');
+        }
+
+        function setPdfActionMode(mode) {
+            currentPdfActionMode = mode;
+            const rText = document.getElementById('radioActionText');
+            const rAi = document.getElementById('radioActionAi');
+            if (rText && rAi) {
+                rText.checked = (mode === 'text');
+                rAi.checked = (mode === 'ai');
+            }
+            const cText = document.getElementById('cardActionTextOnly');
+            const cAi = document.getElementById('cardActionAi');
+            if (cText && cAi) {
+                cText.classList.toggle('selected', mode === 'text');
+                cAi.classList.toggle('selected', mode === 'ai');
+            }
+            const aiSec = document.getElementById('pdfAiSettingsSection');
+            if (aiSec) aiSec.style.display = (mode === 'ai') ? 'block' : 'none';
+        }
+
+        async function runPdfProcessing() {
+            if (!currentPdfDoc || currentPdfSelectedPages.size === 0) {
+                alert("Bitte wählen Sie mindestens eine PDF-Seite aus.");
+                return;
+            }
+
+            const selectedPages = Array.from(currentPdfSelectedPages).sort((a,b) => a - b);
+            const colLayout = currentPdfColumnLayout;
+            const dehyphenate = document.getElementById('chkPdfDehyphenate')?.checked !== false;
+            const detectBookPages = document.getElementById('chkDetectBookPages')?.checked !== false;
+
+            closePdfProcessingModal();
+
+            if (currentPdfActionMode === 'text') {
+                showToast(`📖 Extrahiere ${selectedPages.length} Seiten (Layout: ${colLayout})...`, 'info');
+                try {
+                    let fullDocText = "";
+                    for (let idx = 0; idx < selectedPages.length; idx++) {
+                        const pNum = selectedPages[idx];
+                        const page = await currentPdfDoc.getPage(pNum);
+                        const pageTextObj = await extractSinglePageFromPdf(page, pNum, colLayout, dehyphenate, detectBookPages);
+                        fullDocText += `\n\n--- SEITE ${pageTextObj.label} ---\n\n` + pageTextObj.text;
+                    }
+                    const docTitle = currentPdfFileName.replace(/\.pdf$/i, '');
+                    loadParsedTextIntoEditor(docTitle, fullDocText.trim());
+                    showToast(`✅ ${selectedPages.length} Seiten erfolgreich geladen!`, 'success');
+                } catch(err) {
+                    alert(`Fehler bei der PDF-Extraktion: ${err.message}`);
+                }
+            } else {
+                startAiExtractionWorkflow(selectedPages, colLayout, dehyphenate, detectBookPages);
+            }
+        }
+
+        async function extractSinglePageFromPdf(page, pdfPageNum, colLayout, dehyphenate, detectBookPages) {
+            const viewport = page.getViewport({ scale: 1.0 });
+            const textContent = await page.getTextContent({ normalizeWhitespace: false });
+            const items = textContent.items.filter(it => it.str && it.str.length > 0);
+
+            let pageText = "";
+            const gutterX = analyzePageColumns(items, viewport.width, colLayout);
+
+            if (gutterX !== null) {
+                // Group items into visual lines across the page to detect horizontal dividers
+                const pageLines = new Map();
+                for (const it of items) {
+                    const y = Math.round(it.transform[5] / 4.0) * 4.0;
+                    if (!pageLines.has(y)) pageLines.set(y, []);
+                    pageLines.get(y).push(it);
+                }
+
+                const dividers = [];
+                const sortedYs = Array.from(pageLines.keys()).sort((a, b) => b - a); // PDF Y is descending (top of page has highest Y)
+
+                for (const y of sortedYs) {
+                    const row = pageLines.get(y).sort((a, b) => a.transform[4] - b.transform[4]);
+                    const rowText = row.map(it => it.str).join(' ').trim();
+                    const minX = row[0].transform[4];
+                    const lastIt = row[row.length - 1];
+                    const maxX = lastIt.transform[4] + (lastIt.width || 0);
+
+                    // Must cross or touch the gutter corridor
+                    if (maxX < gutterX - 10 || minX > gutterX + 10) continue;
+
+                    const touchesLeftMargin = (minX < viewport.width * 0.22);
+                    const touchesRightMargin = (maxX > viewport.width * 0.78);
+
+                    const isFigureCaption = /^(?:Abb\.|Taf\.|Karte|Fig\.)\s*\d+/i.test(rowText);
+                    const isCenterHeading = (!touchesLeftMargin && !touchesRightMargin && row.length <= 6);
+                    const isWideBanner = (!touchesLeftMargin && row.length <= 8 && /zeit|epoche|ausgrabung|jahrhundert/i.test(rowText));
+
+                    if (isFigureCaption || isCenterHeading || isWideBanner) {
+                        const divTop = Math.max(...row.map(it => it.transform[5]));
+                        const divBot = Math.min(...row.map(it => it.transform[5]));
+                        dividers.push({ divTop, divBot, rowText, row });
+                    }
+                }
+
+                if (dividers.length === 0) {
+                    const leftItems = items.filter(it => it.transform[4] < gutterX);
+                    const rightItems = items.filter(it => it.transform[4] >= gutterX);
+                    const leftText = assembleColumnParagraphs(leftItems, dehyphenate);
+                    const rightText = assembleColumnParagraphs(rightItems, dehyphenate);
+                    pageText = (leftText && rightText) ? `${leftText}\n\n${rightText}` : (leftText || rightText || "");
+                } else {
+                    // Segment into horizontal bands
+                    // In PDF coords, higher Y is higher up on page!
+                    const bandRanges = [];
+                    let currY = 99999;
+
+                    for (const div of dividers) {
+                        if (currY > div.divTop + 8) {
+                            bandRanges.push({ type: 'columns', yTop: currY, yBot: div.divTop + 2 });
+                        }
+                        bandRanges.push({ type: 'banner', yTop: div.divTop + 2, yBot: div.divBot - 2, content: div.row });
+                        currY = div.divBot - 2;
+                    }
+                    bandRanges.push({ type: 'columns', yTop: currY, yBot: -9999 });
+
+                    const reconstructedBands = [];
+                    for (const band of bandRanges) {
+                        if (band.type === 'banner') {
+                            const bText = assembleColumnParagraphs(band.content, dehyphenate);
+                            if (bText) reconstructedBands.push(bText);
+                        } else {
+                            const bandItems = items.filter(it => it.transform[5] <= band.yTop && it.transform[5] > band.yBot);
+                            if (bandItems.length === 0) continue;
+                            const leftItems = bandItems.filter(it => it.transform[4] < gutterX);
+                            const rightItems = bandItems.filter(it => it.transform[4] >= gutterX);
+                            const lt = assembleColumnParagraphs(leftItems, dehyphenate);
+                            const rt = assembleColumnParagraphs(rightItems, dehyphenate);
+                            if (lt) reconstructedBands.push(lt);
+                            if (rt) reconstructedBands.push(rt);
+                        }
+                    }
+                    pageText = reconstructedBands.join('\n\n');
+                }
+            } else {
+                // 1-Column full width layout
+                pageText = assembleColumnParagraphs(items, dehyphenate);
+            }
+
+            let pageLabel = `${pdfPageNum}`;
+            if (detectBookPages) {
+                const headerFooter = pageText.slice(0, 150) + " " + pageText.slice(-150);
+                const m = headerFooter.match(/\b(\d{3,4})\b/);
+                if (m) {
+                    pageLabel = m[1];
+                }
+            }
+
+            return { text: pageText.trim(), label: pageLabel };
+        }
+
+        async function startAiExtractionWorkflow(selectedPages, colLayout, dehyphenate, detectBookPages) {
+            const isClaude = (currentLlmProvider === 'claude');
+            const activeKey = isClaude ? claudeApiKey : geminiApiKey;
+
+            if (!activeKey) {
+                alert(`Kein API-Key für ${isClaude ? 'Anthropic Claude' : 'Google Gemini'} hinterlegt.\nBitte tragen Sie zuerst Ihren Key in «🔑 KI / API-Keys» ein.`);
+                openLlmSettingsModal();
+                return;
+            }
+
+            isAiExtractionCancelled = false;
+            document.getElementById('aiProgressModal').style.display = 'flex';
+            document.getElementById('aiProgressTitle').innerText = isClaude ? `🤖 Claude 3.5 Sonnet Extraktion...` : `🤖 Gemini 3.8 Flash Extraktion...`;
+
+            const progressBar = document.getElementById('aiProgressBarFill');
+            const statusText = document.getElementById('aiProgressStatusText');
+            const counterText = document.getElementById('aiProgressCounter');
+            const logBox = document.getElementById('aiProgressLog');
+            if (logBox) logBox.innerHTML = '';
+
+            let allExtractedEntries = [];
+            let fullDocText = "";
+            const total = selectedPages.length;
+
+            try {
+                for (let idx = 0; idx < total; idx++) {
+                    if (isAiExtractionCancelled) {
+                        showToast("⚠️ Extraktion vom Benutzer abgebrochen.", "error");
+                        break;
+                    }
+
+                    const pNum = selectedPages[idx];
+                    const pct = Math.round(((idx) / total) * 100);
+                    if (progressBar) progressBar.style.width = `${pct}%`;
+                    if (counterText) counterText.innerText = `Seite ${idx + 1} von ${total} (PDF-S. ${pNum})`;
+                    if (statusText) statusText.innerText = `Analysiere Seite mit ${isClaude ? 'Claude' : 'Gemini 3.8 Flash'}...`;
+
+                    const page = await currentPdfDoc.getPage(pNum);
+                    const pageTextObj = await extractSinglePageFromPdf(page, pNum, colLayout, dehyphenate, detectBookPages);
+                    fullDocText += `\n\n--- SEITE ${pageTextObj.label} ---\n` + pageTextObj.text;
+
+                    if (pageTextObj.text.length > 50) {
+                        try {
+                            const result = isClaude ?
+                                await callClaudeExtraction(pageTextObj.text, pageTextObj.label) :
+                                await callGeminiExtraction(pageTextObj.text, pageTextObj.label);
+
+                            const entries = result.eintraege || [];
+                            if (entries.length > 0) {
+                                allExtractedEntries.push(...entries);
+                                if (logBox) {
+                                    const itemLog = document.createElement('div');
+                                    itemLog.innerText = `✓ S. ${pageTextObj.label}: ${entries.length} Maßnahmen (${entries.map(e => e.ort || 'Ort').join(', ')})`;
+                                    logBox.appendChild(itemLog);
+                                    logBox.scrollTop = logBox.scrollHeight;
+                                }
+                            }
+                        } catch(apiErr) {
+                            console.warn(`KI-Fehler auf Seite ${pageTextObj.label}:`, apiErr);
+                            if (logBox) {
+                                const errLog = document.createElement('div');
+                                errLog.style.color = '#ef4444';
+                                errLog.innerText = `⚠️ S. ${pageTextObj.label}: ${apiErr.message}`;
+                                logBox.appendChild(errLog);
+                            }
+                        }
+                    }
+                }
+
+                if (progressBar) progressBar.style.width = '100%';
+                if (statusText) statusText.innerText = 'Extraktion abgeschlossen!';
+
+                setTimeout(() => {
+                    document.getElementById('aiProgressModal').style.display = 'none';
+
+                    const docTitle = currentPdfFileName.replace(/\.pdf$/i, '');
+                    loadParsedTextIntoEditor(docTitle, fullDocText.trim());
+
+                    if (allExtractedEntries.length > 0) {
+                        const targetRows = EMBEDDED_DOCS[activeDocKey]?.table_rows || [];
+                        targetRows.length = 0;
+
+                        allExtractedEntries.forEach((entry, rIdx) => {
+                            targetRows.push({
+                                row_id: `row_${rIdx}`,
+                                page: `${entry.seite || '1'}`,
+                                ort: entry.ort || '',
+                                kreis: entry.kreis || '',
+                                massnahme: entry.massnahme || '',
+                                datierung: Array.isArray(entry.datierung) ? entry.datierung : (entry.datierung ? [entry.datierung] : []),
+                                befund: Array.isArray(entry.befund) ? entry.befund : (entry.befund ? [entry.befund] : []),
+                                fund: Array.isArray(entry.fund) ? entry.fund : (entry.fund ? [entry.fund] : []),
+                                text_snippet: entry.text_snippet || ''
+                            });
+                        });
+
+                        renderTable();
+                        markDocumentText();
+                        showToast(`🎉 Extraktion fertig: ${allExtractedEntries.length} Maßnahmen aus ${selectedPages.length} Seiten erkannt!`, 'success');
+                    } else {
+                        showToast(`Text geladen. Keine strukturierten Maßnahmen erkannt.`, 'info');
+                    }
+                }, 700);
+
+            } catch(outerErr) {
+                alert(`Fehler während der Extraktion: ${outerErr.message}`);
+                document.getElementById('aiProgressModal').style.display = 'none';
+            }
+        }
+
+        function cancelAiExtraction() {
+            isAiExtractionCancelled = true;
+            document.getElementById('aiProgressStatusText').innerText = 'Breche ab...';
+        }
+
+        function buildArchaeologySystemPrompt() {
+            const dTerms = (activeLocalVocab.Datierung || []).map(i => i.term).slice(0, 70).join(', ');
+            const bTerms = (activeLocalVocab.Befund || []).map(i => i.term).slice(0, 90).join(', ');
+            const fTerms = (activeLocalVocab.Fund || []).map(i => i.term).slice(0, 110).join(', ');
+
+            return `Du bist ein spezialisierter archäologischer Datenextraktor für Ausgrabungsberichte der Bonner Jahrbücher (BJB).
+Extrahiere alle archäologischen Maßnahmen, Fundstellen, Datierungen, Befunde und Funde exakt als JSON.
+
+OFFIZIELLES KONTROLLIERTES SKOS-VOKABULAR:
+- DATIERUNG: ${dTerms}
+- BEFUND: ${bTerms}
+- FUND: ${fTerms}
+
+REGELN:
+1. ORT & KREIS: Fundort (Gemeinde/Stadt, z. B. Bergheim, Thorr), ggf. Landkreis (z. B. Rhein-Erft-Kreis).
+2. MASSNAHME: Fundstellen- oder Maßnahmennummer (z. B. 25, NW97/102).
+3. NEGATIVE BEFUNDE ("keine Funde", "ohne Befund") NIEMALS als Fund/Befund extrahieren!
+4. SKOS-NORMALISIERUNG: Passende Begriffe aus der obigen Vokabularliste bevorzugen und "(SKOS)" anhängen.
+5. FORMAT: Antworte AUSSCHLIESSLICH mit einem JSON-Objekt ohne Markdown:
+{
+  "eintraege": [
+    {
+      "ort": "Ortsname",
+      "kreis": "Kreisname oder leer",
+      "massnahme": "Maßnahmennummer oder Flurname",
+      "datierung": ["Römisch (SKOS)"],
+      "befund": ["Mauer (SKOS)"],
+      "fund": ["Terra Sigillata (SKOS)"],
+      "seite": 599
+    }
+  ]
+}`;
+        }
+
+        async function callGeminiExtraction(pageText, pageLabel) {
+            const model = currentGeminiModel || 'gemini-3.8-flash';
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiApiKey}`;
+            const sysPrompt = buildArchaeologySystemPrompt();
+
+            const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{
+                        role: 'user',
+                        parts: [{ text: `Analysiere exakt diesen Berichtstext von Seite ${pageLabel}:\n\n${pageText}` }]
+                    }],
+                    system_instruction: {
+                        parts: [{ text: sysPrompt }]
+                    },
+                    generationConfig: {
+                        temperature: 0.0,
+                        response_mime_type: 'application/json'
+                    }
+                })
+            });
+
+            if (!resp.ok) {
+                const errData = await resp.json().catch(() => ({}));
+                throw new Error(errData.error?.message || `HTTP ${resp.status}`);
+            }
+
+            const jsonResp = await resp.json();
+            const textContent = jsonResp.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+            try {
+                return JSON.parse(textContent);
+            } catch(pe) {
+                const cleaned = textContent.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
+                return JSON.parse(cleaned);
+            }
+        }
+
+        async function callClaudeExtraction(pageText, pageLabel) {
+            const model = currentClaudeModel || 'claude-3-5-sonnet-20241022';
+            const url = `https://api.anthropic.com/v1/messages`;
+            const sysPrompt = buildArchaeologySystemPrompt() + "\nAntworte AUSSCHLIESSLICH mit gültigem JSON ohne jede Begrüßung oder Markdown-Tags.";
+
+            const resp = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': claudeApiKey,
+                    'anthropic-version': '2023-06-01',
+                    'anthropic-dangerous-direct-browser-access': 'true'
+                },
+                body: JSON.stringify({
+                    model: model,
+                    max_tokens: 4096,
+                    temperature: 0.0,
+                    system: sysPrompt,
+                    messages: [
+                        {
+                            role: 'user',
+                            content: `Analysiere exakt diesen Berichtstext von Seite ${pageLabel} und gib nur JSON zurück:\n\n${pageText}`
+                        }
+                    ]
+                })
+            });
+
+            if (!resp.ok) {
+                const errData = await resp.json().catch(() => ({}));
+                throw new Error(errData.error?.message || `HTTP ${resp.status}`);
+            }
+
+            const jsonResp = await resp.json();
+            const textContent = jsonResp.content?.[0]?.text || '{}';
+            try {
+                return JSON.parse(textContent);
+            } catch(pe) {
+                const cleaned = textContent.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
+                return JSON.parse(cleaned);
+            }
         }
 
         // Initialize fast lookup index for direct 1:1 thesaurus matches
@@ -1239,72 +3498,113 @@
                 let matchReason = '';
                 let matchedLabel = item.term;
 
-                // 1. Exact match
+                // 1. Exact match in prefLabel
                 if (t === q) {
                     bestScore = 100;
                     matchReason = 'Exakt';
                 }
-                // 2. Exact match in altLabel
+                // 2. Exact match in altLabel (Synonym)
                 else if (item.altLowers.includes(q)) {
-                    bestScore = 98;
-                    matchReason = 'Synonym';
+                    bestScore = 100;
                     const matchedAlt = item.alt[item.altLowers.indexOf(q)];
+                    matchReason = `Synonym (${matchedAlt})`;
                     matchedLabel = `${item.term} (~ ${matchedAlt})`;
                 }
-                // 3. Substring / Prefix match
+                // 3. Substring / Prefix match in prefLabel
                 else if (t.startsWith(q) || q.startsWith(t)) {
                     const ratio = Math.min(t.length, q.length) / Math.max(t.length, q.length);
-                    bestScore = 85 + Math.round(ratio * 12);
+                    bestScore = 88 + Math.round(ratio * 10);
                     matchReason = 'Präfix';
                 }
-                else if (t.includes(q)) {
-                    const ratio = q.length / t.length;
-                    bestScore = 75 + Math.round(ratio * 15);
-                    matchReason = 'Enthalten';
-                }
-                else if (q.includes(t) && t.length >= 4) {
-                    const ratio = t.length / q.length;
-                    bestScore = 70 + Math.round(ratio * 15);
-                    matchReason = 'Teilbegriff';
-                }
+                // 4. Substring / Prefix match in altLabel
                 else {
                     for (let j = 0; j < item.altLowers.length; j++) {
                         const a = item.altLowers[j];
-                        if (a.includes(q) || (q.includes(a) && a.length >= 4)) {
-                            bestScore = 72;
-                            matchReason = 'Synonym-Teil';
-                            matchedLabel = `${item.term} (~ ${item.alt[j]})`;
-                            break;
+                        if (a.startsWith(q) || q.startsWith(a)) {
+                            const ratio = Math.min(a.length, q.length) / Math.max(a.length, q.length);
+                            const s = 86 + Math.round(ratio * 10);
+                            if (s > bestScore) {
+                                bestScore = s;
+                                matchReason = `Synonym-Präfix (${item.alt[j]})`;
+                                matchedLabel = `${item.term} (~ ${item.alt[j]})`;
+                            }
+                        } else if (a.includes(q)) {
+                            const ratio = q.length / a.length;
+                            const s = 78 + Math.round(ratio * 12);
+                            if (s > bestScore) {
+                                bestScore = s;
+                                matchReason = `Synonym (${item.alt[j]})`;
+                                matchedLabel = `${item.term} (~ ${item.alt[j]})`;
+                            }
+                        } else if (q.includes(a) && a.length >= 4) {
+                            const ratio = a.length / q.length;
+                            const s = 74 + Math.round(ratio * 12);
+                            if (s > bestScore) {
+                                bestScore = s;
+                                matchReason = `Synonym-Teil (${item.alt[j]})`;
+                                matchedLabel = `${item.term} (~ ${item.alt[j]})`;
+                            }
+                        }
+                    }
+
+                    if (t.includes(q)) {
+                        const ratio = q.length / t.length;
+                        const s = 78 + Math.round(ratio * 12);
+                        if (s > bestScore) {
+                            bestScore = s;
+                            matchReason = 'Enthalten';
+                        }
+                    } else if (q.includes(t) && t.length >= 4) {
+                        const ratio = t.length / q.length;
+                        const s = 72 + Math.round(ratio * 12);
+                        if (s > bestScore) {
+                            bestScore = s;
+                            matchReason = 'Teilbegriff';
                         }
                     }
                 }
 
-                // 4. Common Stem / Prefix Match (e.g. "Badegebäude" vs "Badehaus", "Kanalgraben" vs "Kanal")
-                if (bestScore < 80 && qLen >= 4 && t.length >= 4) {
-                    let commonPfx = 0;
-                    while (commonPfx < qLen && commonPfx < t.length && q[commonPfx] === t[commonPfx]) {
-                        commonPfx++;
-                    }
-                    if (commonPfx >= 4) {
-                        const pfxScore = 72 + Math.round((commonPfx / Math.max(qLen, t.length)) * 24);
-                        if (pfxScore > bestScore) {
-                            bestScore = pfxScore;
-                            matchReason = 'Wortstamm';
+                // 5. Common Stem / Prefix Match for both term and altLabels
+                if (bestScore < 82 && qLen >= 4) {
+                    const targets = [t, ...item.altLowers];
+                    for (let target of targets) {
+                        if (target.length < 4) continue;
+                        let commonPfx = 0;
+                        while (commonPfx < qLen && commonPfx < target.length && q[commonPfx] === target[commonPfx]) {
+                            commonPfx++;
+                        }
+                        if (commonPfx >= 4) {
+                            const pfxScore = 74 + Math.round((commonPfx / Math.max(qLen, target.length)) * 22);
+                            if (pfxScore > bestScore) {
+                                bestScore = pfxScore;
+                                matchReason = 'Wortstamm';
+                                if (target !== t) {
+                                    const altOriginal = item.alt[item.altLowers.indexOf(target)];
+                                    matchedLabel = `${item.term} (~ ${altOriginal})`;
+                                }
+                            }
                         }
                     }
                 }
 
-                // 5. Token Overlap
-                if (bestScore < 80 && qWords.length > 0) {
-                    let matchedWords = 0;
-                    for (let w of qWords) {
-                        if (t.includes(w)) matchedWords++;
-                    }
-                    if (matchedWords > 0) {
-                        const tokenScore = 60 + Math.round((matchedWords / Math.max(qWords.length, 1)) * 25);
-                        if (tokenScore > bestScore) {
-                            bestScore = tokenScore;
-                            matchReason = 'Wortübereinstimmung';
+                // 6. Token Overlap for both term and altLabels
+                if (bestScore < 82 && qWords.length > 0) {
+                    const targets = [t, ...item.altLowers];
+                    for (let target of targets) {
+                        let matchedWords = 0;
+                        for (let w of qWords) {
+                            if (target.includes(w)) matchedWords++;
+                        }
+                        if (matchedWords > 0) {
+                            const tokenScore = 65 + Math.round((matchedWords / Math.max(qWords.length, 1)) * 22);
+                            if (tokenScore > bestScore) {
+                                bestScore = tokenScore;
+                                matchReason = 'Wortübereinstimmung';
+                                if (target !== t) {
+                                    const altOriginal = item.alt[item.altLowers.indexOf(target)];
+                                    matchedLabel = `${item.term} (~ ${altOriginal})`;
+                                }
+                            }
                         }
                     }
                 }
@@ -1446,8 +3746,10 @@
                 docData.non_skos_candidates = data.non_skos_candidates || [];
 
                 // Restore text body (marks + banners are saved as innerHTML)
-                if (data.textBodyHTML) {
+                if (data.textBodyHTML && !data.textBodyHTML.includes('--- LEFT COLUMN ---') && !data.textBodyHTML.includes('Sachverhaltsermittlungbei')) {
                     document.getElementById('textBody').innerHTML = data.textBodyHTML;
+                } else {
+                    renderDocumentContent(docData);
                 }
                 renderCandidatesTable();
                 return true;
@@ -1549,14 +3851,133 @@
             }
         }
 
+        // ==========================================
+        // READING VIEW CONTROLS & PARAGRAPH FORMATTING
+        // ==========================================
+
+        function setReadingFont(font) {
+            const tb = document.getElementById('textBody');
+            const btnSerif = document.getElementById('btnFontSerif');
+            const btnSans = document.getElementById('btnFontSans');
+            if (!tb) return;
+            if (font === 'sans') {
+                tb.classList.add('font-sans');
+                tb.classList.remove('font-serif');
+                if (btnSans) btnSans.classList.add('active');
+                if (btnSerif) btnSerif.classList.remove('active');
+                try { localStorage.setItem('editor_reading_font', 'sans'); } catch(e) {}
+            } else {
+                tb.classList.remove('font-sans');
+                tb.classList.add('font-serif');
+                if (btnSerif) btnSerif.classList.add('active');
+                if (btnSans) btnSans.classList.remove('active');
+                try { localStorage.setItem('editor_reading_font', 'serif'); } catch(e) {}
+            }
+        }
+
+        function toggleLineSpacing() {
+            const tb = document.getElementById('textBody');
+            if (!tb) return;
+            tb.classList.toggle('spacing-compact');
+            const isCompact = tb.classList.contains('spacing-compact');
+            showToast(`Zeilenabstand: ${isCompact ? 'Kompakt (1.6)' : 'Komfortabel (1.84)'}`);
+        }
+
+        function toggleReadingWidth() {
+            const tb = document.getElementById('textBody');
+            if (!tb) return;
+            tb.classList.toggle('width-full');
+            const isFull = tb.classList.contains('width-full');
+            showToast(`Lesebreite: ${isFull ? '100% Vollbreite' : 'Fokus (820px)'}`);
+        }
+
+        function reflowCurrentDocumentText() {
+            if (!activeDocKey || !EMBEDDED_DOCS[activeDocKey]) return;
+            const docData = EMBEDDED_DOCS[activeDocKey];
+            docData.raw_text = cleanAndReflowText(docData.raw_text);
+            try { localStorage.removeItem(`annot_manual_${activeDocKey}`); } catch(e) {}
+            renderDocumentContent(docData);
+            showToast("✨ Text geglättet, Absätze formatiert & Wörter getrennt!", "success");
+        }
+
+        function toggleDropdown(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const wasOpen = el.classList.contains('open');
+            closeAllDropdowns();
+            if (!wasOpen) {
+                el.classList.add('open');
+            }
+        }
+
+        function closeAllDropdowns() {
+            document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
+        }
+
+        // Close dropdowns on outside click
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.dropdown')) {
+                closeAllDropdowns();
+            }
+        });
+
+        // Keyboard shortcuts for categories: 1, 2, 3, 4, 5
+        document.addEventListener('keydown', (e) => {
+            if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+            if (e.key === '1') { setWorkingCategory('datierung'); showToast("Kategorie: 🟨 Datierung"); }
+            else if (e.key === '2') { setWorkingCategory('befund'); showToast("Kategorie: 🟥 Befund"); }
+            else if (e.key === '3') { setWorkingCategory('fund'); showToast("Kategorie: 🟩 Fund"); }
+            else if (e.key === '4') { setWorkingCategory('ort'); showToast("Kategorie: 🪨 Ort / Kreis"); }
+            else if (e.key === '5') { setWorkingCategory('aktivitaet'); showToast("Kategorie: 🟦 Maßnahme"); }
+        });
+
+        function updateDocumentStats(text) {
+            if (!text) return;
+            const words = text.match(/\S+/g) || [];
+            const paras = text.split(/\n\s*\n/).filter(p => p.trim() && !p.trim().startsWith('---'));
+            const statsEl = document.getElementById('docStatsDisplay');
+            if (statsEl) {
+                statsEl.innerText = `(${words.length} Wörter, ${paras.length} Absätze)`;
+            }
+            const titleEl = document.getElementById('docTitleDisplay');
+            if (titleEl && activeDocKey) {
+                titleEl.innerText = activeDocKey;
+            }
+        }
+
+        function formatDocumentDividersHtml(html) {
+            if (!html) return '';
+            return html.replace(/---\s*SEITE\s*(\d+)\s*---/gi, '<div class="page-divider" data-page="$1"><span class="page-divider-pill">📄 Seite $1</span></div>');
+        }
+
+        function formatDocumentTextHtml(rawText) {
+            if (!rawText) return '';
+            const paras = rawText.split(/\n\s*\n/);
+            let html = "";
+            for (let p of paras) {
+                p = p.trim();
+                if (!p) continue;
+                const pageMatch = p.match(/^---\s*SEITE\s*(\d+)\s*---$/i);
+                if (pageMatch) {
+                    html += `<div class="page-divider" data-page="${pageMatch[1]}"><span class="page-divider-pill">📄 Seite ${pageMatch[1]}</span></div>`;
+                } else {
+                    html += `<p class="reading-para">${escapeHtml(p)}</p>`;
+                }
+            }
+            return html;
+        }
+
         // Render Document Text with In-Place Measure Banners
         function renderDocumentContent(docData) {
             const textBody = document.getElementById('textBody');
             const rawText = docData.raw_text;
 
-            // In manual mode: Show clean text with provisional transparent direct matches!
+            // In manual mode: Show clean text formatted into paragraphs with page dividers!
             if (currentAnnotationMode === 'manual') {
-                textBody.innerHTML = escapeHtml(rawText);
+                textBody.innerHTML = formatDocumentTextHtml(rawText);
+                updateDocumentStats(rawText);
                 if (isAutoDirectMatchEnabled()) {
                     markAllDirectThesaurusMatchesProvisionally();
                 }
@@ -1599,7 +4020,9 @@
                 currPos = s.start;
             }
             parts.push(escapeHtml(rawText.substring(0, currPos)));
-            textBody.innerHTML = parts.reverse().join('');
+            const renderedPipelineHtml = parts.reverse().join('');
+            textBody.innerHTML = formatDocumentDividersHtml(renderedPipelineHtml);
+            updateDocumentStats(rawText);
         }
 
         // Set Active Measure (Both in text and table)
@@ -1744,18 +4167,69 @@
 
         function handlePopoverSearchInput(val) {
             const query = val.trim();
-            currentSuggestions = query ? findSimilarSkosConcepts(query, 6) : findSimilarSkosConcepts(currentSelectedText, 6);
-            renderPopoverSuggestions(currentSuggestions);
+            const qTerm = query || currentSelectedText;
+
+            if (skosSourceMode === 'server') {
+                // Show instant local suggestions right away so there is zero UI delay
+                currentSuggestions = findSimilarSkosConcepts(qTerm, 6);
+                renderPopoverSuggestions(currentSuggestions, true, false);
+
+                clearTimeout(popoverServerDebounceTimer);
+                popoverServerDebounceTimer = setTimeout(async () => {
+                    try {
+                        const serverHits = await querySkosmosServer(qTerm, 8);
+                        if (serverHits && serverHits.length > 0) {
+                            const seenTerms = new Set(serverHits.map(s => s.term.toLowerCase()));
+                            const combined = [...serverHits];
+                            for (let loc of findSimilarSkosConcepts(qTerm, 6)) {
+                                if (!seenTerms.has(loc.term.toLowerCase()) && combined.length < 9) {
+                                    combined.push(loc);
+                                    seenTerms.add(loc.term.toLowerCase());
+                                }
+                            }
+                            currentSuggestions = combined;
+                            renderPopoverSuggestions(currentSuggestions, false, false);
+                        } else {
+                            renderPopoverSuggestions(currentSuggestions, false, false);
+                        }
+                    } catch (err) {
+                        // Server failed or unreachable: show local fallback with switch button
+                        renderPopoverSuggestions(currentSuggestions, false, true);
+                    }
+                    activeSuggestionIndex = 0;
+                    updateActiveSuggestionHighlight();
+                }, 220);
+            } else {
+                currentSuggestions = findSimilarSkosConcepts(qTerm, 6);
+                renderPopoverSuggestions(currentSuggestions, false, false);
+            }
+
             activeSuggestionIndex = 0;
             updateActiveSuggestionHighlight();
         }
 
-        function renderPopoverSuggestions(sugs) {
+        function renderPopoverSuggestions(sugs, isSearchingServer = false, serverError = false) {
             const listEl = document.getElementById('popoverSuggestionsList');
             listEl.innerHTML = '';
 
-            if (sugs.length === 0) {
-                listEl.innerHTML = `
+            // Server status banner in popover
+            if (isSearchingServer) {
+                const searchBanner = document.createElement('div');
+                searchBanner.style.cssText = 'padding: 4px 8px; font-size: 11px; background: #e0f2fe; color: #0369a1; border-radius: 4px; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;';
+                searchBanner.innerHTML = '<span>🌐 Frage SKOSMOS Server ab...</span>';
+                listEl.appendChild(searchBanner);
+            } else if (serverError) {
+                const errBanner = document.createElement('div');
+                errBanner.style.cssText = 'padding: 5px 8px; font-size: 11px; background: #fee2e2; color: #991b1b; border-radius: 4px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; gap: 4px;';
+                errBanner.innerHTML = `
+                    <span>⚠️ SKOSMOS Server nicht erreichbar</span>
+                    <button onclick="switchSkosSource('local'); handlePopoverSearchInput('');" style="font-size:10px; padding:2px 7px; background:#10b981; color:#fff; border:none; border-radius:4px; font-weight:700; cursor:pointer;">📁 Zu lokaler Datei</button>
+                `;
+                listEl.appendChild(errBanner);
+            }
+
+            if (sugs.length === 0 && !isSearchingServer) {
+                listEl.innerHTML += `
                     <div style="padding: 14px; text-align: center; color: var(--text-muted); font-size: 12.5px;">
                         Kein passender SKOS-Begriff gefunden.<br>
                         <button onclick="openNonSkosModalForSelection()" style="margin-top:8px; background:#7e22ce; color:#fff; border:none; padding:5px 12px; border-radius:6px; font-weight:700; cursor:pointer;">🟣 Als neuen Begriff (ohne SKOS) erfassen</button>
@@ -1772,12 +4246,14 @@
 
                 const catClass = s.category.toLowerCase();
                 const isDirectMatch = s.score >= 95;
+                const isServerTag = s.isServer;
 
                 item.innerHTML = `
                     <div class="sug-info">
                         <div class="sug-title">
                             ${escapeHtml(s.displayLabel)}
-                            ${isDirectMatch ? '<span style="display:inline-block; font-size:10px; padding:1px 6px; border-radius:10px; background:#10b981; color:#fff; font-weight:700; margin-left:6px;">⚡ Direkttreffer</span>' : ''}
+                            ${isServerTag ? '<span style="display:inline-block; font-size:9.5px; padding:1px 5px; border-radius:8px; background:#0284c7; color:#fff; font-weight:700; margin-left:5px;">🌐 SKOSMOS</span>' : ''}
+                            ${isDirectMatch && !isServerTag ? '<span style="display:inline-block; font-size:9.5px; padding:1px 5px; border-radius:8px; background:#10b981; color:#fff; font-weight:700; margin-left:5px;">⚡ Direkttreffer</span>' : ''}
                         </div>
                         <div class="sug-sub">${escapeHtml(s.reason)} • Relevanz: ${s.score}%</div>
                     </div>
@@ -1788,6 +4264,16 @@
                 `;
                 listEl.appendChild(item);
             });
+
+            // Source Switch Link at bottom
+            const bottomBar = document.createElement('div');
+            bottomBar.style.cssText = 'padding: 5px 8px; margin-top: 4px; border-top: 1px solid var(--border-color); font-size: 10.5px; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between;';
+            if (skosSourceMode === 'server') {
+                bottomBar.innerHTML = `<span>Quelle: <strong>SKOSMOS Server</strong></span><a href="javascript:void(0)" onclick="switchSkosSource('local'); handlePopoverSearchInput('');" style="color:var(--primary); text-decoration:underline; font-weight:600;">📁 Zu lokaler Datei wechseln</a>`;
+            } else {
+                bottomBar.innerHTML = `<span>Quelle: <strong>Lokale Datei</strong> (${ALL_VOCAB_ITEMS.length})</span><a href="javascript:void(0)" onclick="switchSkosSource('server'); handlePopoverSearchInput('');" style="color:var(--primary); text-decoration:underline; font-weight:600;">🌐 Zu SKOSMOS Server wechseln</a>`;
+            }
+            listEl.appendChild(bottomBar);
         }
 
         function updateActiveSuggestionHighlight() {
@@ -2722,7 +5208,10 @@
 
         // Remove a specific term from a row (works for both manual and pipeline mode)
         function removeTermFromRow(rowId, cat, idx, evt) {
-            if (evt) evt.stopPropagation();
+            if (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+            }
             const docData = EMBEDDED_DOCS[activeDocKey];
             if (!docData) return;
 
@@ -2734,6 +5223,14 @@
             const row = activeRows.find(r => r.id === rowId);
             if (!row) return;
 
+            // Ensure column arrays are real arrays (not legacy strings)
+            if (typeof row.datierung === 'string') row.datierung = normalizeRowTerms(row.datierung);
+            if (typeof row.befunde === 'string') row.befunde = normalizeRowTerms(row.befunde);
+            if (typeof row.funde === 'string') row.funde = normalizeRowTerms(row.funde);
+            if (!Array.isArray(row.datierung)) row.datierung = [];
+            if (!Array.isArray(row.befunde)) row.befunde = [];
+            if (!Array.isArray(row.funde)) row.funde = [];
+
             let col;
             if (cat === 'datierung') col = row.datierung;
             else if (cat === 'befund' || cat === 'befunde') col = row.befunde;
@@ -2742,23 +5239,31 @@
             if (!col || idx < 0 || idx >= col.length) return;
 
             const removed = col[idx];
+            col.splice(idx, 1);
 
-            // Remove the mark from the text by matching the concept label
-            const marks = document.querySelectorAll(`#textBody mark[data-skos]`);
+            // Also clean up from pendingAnnotations if present
+            if (pendingAnnotations[rowId]) {
+                pendingAnnotations[rowId] = pendingAnnotations[rowId].filter(p => p.conceptLabel !== removed);
+            }
+
+            // Remove and unwrap the mark from the text body
+            const cleanRemoved = removed.replace(/\s*\(SKOS\)/gi, '').trim().toLowerCase();
+            const marks = document.querySelectorAll(`#textBody mark`);
             for (const m of marks) {
-                if (m.getAttribute('data-row') === rowId && m.getAttribute('data-skos') === removed) {
-                    // Unwrap the mark: replace it with its text content
+                const mSkos = (m.getAttribute('data-skos') || '').replace(/\s*\(SKOS\)/gi, '').trim().toLowerCase();
+                const mRow = m.getAttribute('data-row');
+                if (mSkos === cleanRemoved && (!mRow || mRow === rowId)) {
                     const parent = m.parentNode;
                     while (m.firstChild) parent.insertBefore(m.firstChild, m);
                     parent.removeChild(m);
-                    break; // Remove only the first match
+                    break;
                 }
             }
 
-            col.splice(idx, 1);
             renderPipelineTable();
+            saveManualState();
             setActiveMeasure(currentActiveRowId);
-            showToast(`✕ «${removed}» entfernt.`);
+            showToast(`✕ «${removed}» entfernt.`, "info");
         }
 
         // Delete an entire measure row
@@ -3078,11 +5583,12 @@
 
         // Ingest parsed text into application
         function loadParsedTextIntoEditor(docKey, rawText) {
-            const parsed = autoSegmentTextIntoMeasures(rawText, docKey);
+            const cleanedText = cleanAndReflowText(rawText);
+            const parsed = autoSegmentTextIntoMeasures(cleanedText, docKey);
 
             EMBEDDED_DOCS[docKey] = {
                 title: docKey,
-                raw_text: rawText,
+                raw_text: cleanedText,
                 spans: parsed.spans,
                 table_rows: parsed.table_rows
             };
@@ -3108,31 +5614,10 @@
 
             const fname = file.name;
 
-            // PDF in-browser loading via PDF.js
+            // PDF in-browser loading via PDF.js modal
             if (fname.toLowerCase().endsWith('.pdf')) {
-                if (typeof pdfjsLib === 'undefined') {
-                    alert("PDF.js ist im Browser nicht geladen.\nBitte führen Sie im Terminal aus:\npython read_pdf.py " + fname + "\nund öffnen Sie die erzeugte Textdatei.");
-                    return;
-                }
-                showToast("📖 Lese PDF-Seiten im Browser ein...", "info");
-                const reader = new FileReader();
-                reader.onload = async (e) => {
-                    try {
-                        const typedarray = new Uint8Array(e.target.result);
-                        const pdf = await pdfjsLib.getDocument(typedarray).promise;
-                        let fullText = "";
-                        for (let i = 1; i <= pdf.numPages; i++) {
-                            const page = await pdf.getPage(i);
-                            const textContent = await page.getTextContent();
-                            const pageText = textContent.items.map(item => item.str).join(' ');
-                            fullText += `\n\n--- SEITE ${i} ---\n` + pageText;
-                        }
-                        loadParsedTextIntoEditor(fname.replace('.pdf', ''), fullText);
-                    } catch(err) {
-                        alert("Fehler beim Lesen der PDF im Browser: " + err.message + "\nTipp: Führen Sie 'python read_pdf.py " + fname + "' im Terminal aus.");
-                    }
-                };
-                reader.readAsArrayBuffer(file);
+                openPdfProcessingModal();
+                handlePdfSelectedForModal({ target: { files: [file] } });
                 evt.target.value = '';
                 return;
             }
@@ -3180,23 +5665,96 @@
             listEl.innerHTML = '';
             const q = query.toLowerCase().trim();
 
+            if (skosSourceMode === 'server' && q) {
+                // Show loading indicator
+                listEl.innerHTML = `
+                    <div style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 12.5px;">
+                        🌐 Frage SKOSMOS Server für «${escapeHtml(q)}» ab...
+                    </div>
+                `;
+
+                querySkosmosServer(q, 50).then(results => {
+                    listEl.innerHTML = '';
+                    if (results.length === 0) {
+                        listEl.innerHTML = `
+                            <div style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 12.5px;">
+                                Kein passender Begriff auf dem SKOSMOS Server gefunden.<br>
+                                <button onclick="switchSkosSource('local')" style="margin-top:8px; font-size:11.5px; padding:4px 10px; background:#10b981; color:#fff; border:none; border-radius:6px; cursor:pointer;">📁 In lokaler Datei suchen</button>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    results.forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'vocab-card';
+                        const catClass = item.category.toLowerCase();
+
+                        card.innerHTML = `
+                            <div style="overflow:hidden;">
+                                <strong style="font-size:13px;">${escapeHtml(item.term)}</strong>
+                                ${item.uri ? `<div style="font-size:10.5px; color:var(--text-muted); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><a href="${escapeHtml(item.uri)}" target="_blank" style="color:var(--primary); text-decoration:none;">🔗 ${escapeHtml(item.uri.split('/').slice(-1)[0])}</a></div>` : ''}
+                            </div>
+                            <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                                <span class="badge-tag" style="background:#e0f2fe; color:#0369a1; font-size:10px;">🌐 Server</span>
+                                <span class="badge-tag ${catClass}">${escapeHtml(item.category)}</span>
+                                <button class="btn-primary" style="font-size:11px; padding:3px 8px;" onclick="assignVocabDirect('${escapeHtml(item.term)}', '${item.category}')">Zuweisen</button>
+                            </div>
+                        `;
+                        listEl.appendChild(card);
+                    });
+                }).catch(err => {
+                    listEl.innerHTML = `
+                        <div style="padding: 16px; text-align: center; color: #991b1b; background: #fee2e2; border-radius: 6px; font-size: 12px; margin: 8px 0;">
+                            ⚠️ <strong>SKOSMOS Server nicht erreichbar oder veraltet:</strong> ${escapeHtml(err.message)}<br>
+                            <button onclick="switchSkosSource('local')" style="margin-top:8px; font-size:11.5px; padding:4px 10px; background:#10b981; color:#fff; border:none; border-radius:6px; font-weight:700; cursor:pointer;">📁 Zu lokaler Datei wechseln</button>
+                        </div>
+                    `;
+                });
+                return;
+            }
+
+            // Local file search (or server mode with empty query)
+            const qWords = q.split(/[\s,.;:/\-–]+/).filter(w => w.length > 1);
             const filtered = ALL_VOCAB_ITEMS.filter(item => {
                 if (activeVocabCat !== 'all' && item.category !== activeVocabCat) return false;
                 if (!q) return true;
-                return item.termLower.includes(q) || item.altLowers.some(a => a.includes(q));
-            }).slice(0, 80);
+                const matchTerm = item.termLower.includes(q);
+                const matchAlt = item.altLowers.some(a => a.includes(q));
+                const matchWords = (qWords.length > 1) && qWords.every(w => item.termLower.includes(w) || item.altLowers.some(a => a.includes(w)));
+                return matchTerm || matchAlt || matchWords;
+            }).slice(0, 100);
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `
+                    <div style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 12.5px;">
+                        Kein passender Begriff in lokaler Datei gefunden (weder im Vorzugs- noch im Alternativbegriff/Synonym).
+                    </div>
+                `;
+                return;
+            }
 
             filtered.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'vocab-card';
                 const catClass = item.category.toLowerCase();
 
+                // Check which alt matched the query
+                let matchedAltText = '';
+                if (q) {
+                    const matchedAlts = item.alt.filter(a => a.toLowerCase().includes(q));
+                    if (matchedAlts.length > 0) {
+                        matchedAltText = `<div style="font-size:11px; color:var(--primary); font-weight:600; margin-top:2px;">🔍 Treffer in Synonym: ${escapeHtml(matchedAlts.join(', '))}</div>`;
+                    }
+                }
+
                 card.innerHTML = `
-                    <div>
+                    <div style="overflow:hidden; max-width:65%;">
                         <strong style="font-size:13px;">${escapeHtml(item.term)}</strong>
-                        ${item.alt.length > 0 ? `<div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Synonyme: ${escapeHtml(item.alt.slice(0, 3).join(', '))}</div>` : ''}
+                        ${matchedAltText}
+                        ${item.alt.length > 0 && !matchedAltText ? `<div style="font-size:11px; color:var(--text-muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(item.alt.join(', '))}">Alt / Synonyme: ${escapeHtml(item.alt.join(', '))}</div>` : ''}
                     </div>
-                    <div style="display:flex; align-items:center; gap:6px;">
+                    <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
                         <span class="badge-tag ${catClass}">${escapeHtml(item.category)}</span>
                         <button class="btn-primary" style="font-size:11px; padding:3px 8px;" onclick="assignVocabDirect('${escapeHtml(item.term)}', '${item.category}')">Zuweisen</button>
                     </div>
@@ -3334,6 +5892,8 @@
 
         // Boot
         initVocabIndex();
+        initSkosSource();
+        initLlmSettings();
         initDocumentsDropdown();
     </script>
 </body>

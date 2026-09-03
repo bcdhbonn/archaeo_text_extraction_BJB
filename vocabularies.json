@@ -1,6 +1,43 @@
 {
   "Datierung": [
     {
+      "term": "Frührömisch",
+      "alt": [],
+      "category": "Datierung",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_45c90f93"
+    },
+    {
+      "term": "Frühe Neuzeit",
+      "alt": [
+        "frühneuzeitlich"
+      ],
+      "category": "Datierung",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_6386ef38"
+    },
+    {
+      "term": "Linearbandkeramische Kultur",
+      "alt": [
+        "Bandkeramische Kultur",
+        "LBK"
+      ],
+      "category": "Datierung",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_7aa92087"
+    },
+    {
+      "term": "Frühgeschichte",
+      "alt": [
+        "frühgeschichtlich"
+      ],
+      "category": "Datierung",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_e5ed79ef"
+    },
+    {
+      "term": "Hilversum Kultur",
+      "alt": [],
+      "category": "Datierung",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_fa878640"
+    },
+    {
       "term": "Silbannacus",
       "alt": [],
       "category": "Datierung",
@@ -139,14 +176,6 @@
       "alt": [],
       "category": "Datierung",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_14ccb393"
-    },
-    {
-      "term": "Frühneolithikum",
-      "alt": [
-        "Altneolithikum"
-      ],
-      "category": "Datierung",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_150e4564"
     },
     {
       "term": "Numerian",
@@ -831,7 +860,10 @@
         "Mittelarchaik",
         "Mittelarchaische Epoche",
         "Reifarchaik",
-        "Reifarchaische Epoche"
+        "Reifarchaische Epoche",
+        "hocharchaisch",
+        "mittelarchaisch",
+        "reifarchaisch"
       ],
       "category": "Datierung",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_58c5290a"
@@ -1283,12 +1315,6 @@
       "alt": [],
       "category": "Datierung",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_9aae4bd7"
-    },
-    {
-      "term": "Frühe Bronzezeit",
-      "alt": [],
-      "category": "Datierung",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_9ad88dd4"
     },
     {
       "term": "1. Viertel 19. Jh. n. Chr.",
@@ -2245,14 +2271,12 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_feb287d0"
     },
     {
-      "term": "Kupferzeit",
+      "term": "Frühneolithikum",
       "alt": [
-        "Chalkolithikum",
-        "kupferzeitlich",
-        "Äneolithikum"
+        "Altneolithikum"
       ],
       "category": "Datierung",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_070f3e75"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_150e4564"
     },
     {
       "term": "Jungneolithikum",
@@ -2274,7 +2298,10 @@
     },
     {
       "term": "Späte Bronzezeit",
-      "alt": [],
+      "alt": [
+        "Spätbronzezeit",
+        "spätbronzezeitlich"
+      ],
       "category": "Datierung",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_450dc8e6"
     },
@@ -2297,6 +2324,15 @@
       ],
       "category": "Datierung",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_6ba0a074"
+    },
+    {
+      "term": "Frühe Bronzezeit",
+      "alt": [
+        "Frühbronzezeit",
+        "frühbronzezeitlich"
+      ],
+      "category": "Datierung",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_9ad88dd4"
     },
     {
       "term": "3. Jahrtausend n. Chr.",
@@ -2332,6 +2368,12 @@
       "alt": [],
       "category": "Datierung",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_dc69e82a"
+    },
+    {
+      "term": "Römische Zeit",
+      "alt": [],
+      "category": "Datierung",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_93dcc278"
     },
     {
       "term": "2. Hälfte 13. Jh. v. Chr.",
@@ -3252,10 +3294,38 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_ffdbdd11"
     },
     {
+      "term": "Metallzeit",
+      "alt": [
+        "metalzeitlich"
+      ],
+      "category": "Datierung",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_8fa140ae"
+    },
+    {
+      "term": "Urgeschichte",
+      "alt": [
+        "Vorgeschichte",
+        "urgeschichtlich",
+        "vorgeschichtlich"
+      ],
+      "category": "Datierung",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_9f0be81f"
+    },
+    {
       "term": "Mittelneolithikum",
       "alt": [],
       "category": "Datierung",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_03a66bfd"
+    },
+    {
+      "term": "Kupferzeit",
+      "alt": [
+        "Chalkolithikum",
+        "kupferzeitlich",
+        "Äneolithikum"
+      ],
+      "category": "Datierung",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_070f3e75"
     },
     {
       "term": "Helladische Epoche",
@@ -3377,13 +3447,19 @@
     },
     {
       "term": "Hallstattzeit",
-      "alt": [],
+      "alt": [
+        "Fühe Eisenzeit",
+        "früheisenzeitlich"
+      ],
       "category": "Datierung",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_66f0e2cc"
     },
     {
       "term": "Jungsteinzeit",
-      "alt": [],
+      "alt": [
+        "Neolithikum",
+        "neolithisch"
+      ],
       "category": "Datierung",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_ac85549f"
     },
@@ -3411,16 +3487,22 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_f1f874e7"
     },
     {
-      "term": "Bronzezeit",
-      "alt": [],
-      "category": "Datierung",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_918898bf"
-    },
-    {
       "term": "20. Jahrhundert n. Chr.",
       "alt": [],
       "category": "Datierung",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_ab1a1cc2"
+    },
+    {
+      "term": "Chronologisches Raster",
+      "alt": [],
+      "category": "Datierung",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_78c41ba4"
+    },
+    {
+      "term": "Griechische Eisenzeit",
+      "alt": [],
+      "category": "Datierung",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_c283d5a3"
     },
     {
       "term": "Eisenzeit",
@@ -3437,22 +3519,10 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_63dcc1d1"
     },
     {
-      "term": "Chronologisches Raster",
+      "term": "Bronzezeit",
       "alt": [],
       "category": "Datierung",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_78c41ba4"
-    },
-    {
-      "term": "Griechische Eisenzeit",
-      "alt": [],
-      "category": "Datierung",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_c283d5a3"
-    },
-    {
-      "term": "Epoche",
-      "alt": [],
-      "category": "Datierung",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_4de8f3b0"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_918898bf"
     },
     {
       "term": "2. Jahrtausend n. Chr.",
@@ -3465,6 +3535,12 @@
       "alt": [],
       "category": "Datierung",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_3969b4b4"
+    },
+    {
+      "term": "Epoche",
+      "alt": [],
+      "category": "Datierung",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_4de8f3b0"
     },
     {
       "term": "2. Jahrtausend v. Chr.",
@@ -3519,22 +3595,102 @@
   ],
   "Befund": [
     {
-      "term": "Werkplatz",
-      "alt": [],
+      "term": "Zollfestung",
+      "alt": [
+        "Zollfeste"
+      ],
       "category": "Befund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_4131f204"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_1f44d942"
     },
     {
-      "term": "Schützengraben",
-      "alt": [],
+      "term": "Flur",
+      "alt": [
+        "Flurstück"
+      ],
       "category": "Befund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_992cb8c4"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_2ecebfc1"
     },
     {
-      "term": "Gräberfeld",
+      "term": "Fundschleier",
       "alt": [],
       "category": "Befund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_a737b9b7"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_31615f15"
+    },
+    {
+      "term": "Retentura",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_3f47887a"
+    },
+    {
+      "term": "Töpferbezirk",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_4ffb1cba"
+    },
+    {
+      "term": "Sechspfostenbau",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_71a681f8"
+    },
+    {
+      "term": "Praetorium",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_760c8cee"
+    },
+    {
+      "term": "Luftbildanomalie",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_845b4432"
+    },
+    {
+      "term": "Schulterwehr",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_98fe7e24"
+    },
+    {
+      "term": "Festungsmauer",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_b8e7e6de"
+    },
+    {
+      "term": "Auxiliarkastell",
+      "alt": [
+        "Auxiliarlager"
+      ],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_c48e4058"
+    },
+    {
+      "term": "Ausfalltor",
+      "alt": [
+        "Poterne"
+      ],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_db93b6f3"
+    },
+    {
+      "term": "Eifelwasserleitung",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_e8ef8210"
+    },
+    {
+      "term": "Vie Belgica",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_eaac7841"
+    },
+    {
+      "term": "Splitterschutz",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_ee3da0ae"
     },
     {
       "term": "Totenbrett",
@@ -3891,6 +4047,12 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_1f0c19c4"
     },
     {
+      "term": "Gräberfeld",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_1f6c3dcc"
+    },
+    {
       "term": "Ständerwand (Ofen)",
       "alt": [],
       "category": "Befund",
@@ -3940,7 +4102,9 @@
     },
     {
       "term": "Villa rustica",
-      "alt": [],
+      "alt": [
+        "Landgut"
+      ],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_23106784"
     },
@@ -4041,12 +4205,6 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_2ace3f1d"
     },
     {
-      "term": "Pfostenbau (Bauwerk)",
-      "alt": [],
-      "category": "Befund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_2b8899a6"
-    },
-    {
       "term": "Absetzbecken",
       "alt": [],
       "category": "Befund",
@@ -4071,10 +4229,10 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_2c4f0e40"
     },
     {
-      "term": "Festung",
+      "term": "Werkplatz",
       "alt": [],
       "category": "Befund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_2c698655"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_2dba42f2"
     },
     {
       "term": "Ölmühle",
@@ -4347,7 +4505,7 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_3d95a0aa"
     },
     {
-      "term": "Schürfgrube",
+      "term": "Schürfgrube (Bauwesen)",
       "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_3f9bda1d"
@@ -4369,6 +4527,12 @@
       "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_43415787"
+    },
+    {
+      "term": "Flachsröste (Grube)",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_434632d5"
     },
     {
       "term": "Hypokaustum",
@@ -4534,9 +4698,7 @@
     },
     {
       "term": "Materialentnahmegrube",
-      "alt": [
-        "Materialentnahme"
-      ],
+      "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_4ea8265a"
     },
@@ -4575,6 +4737,12 @@
       "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_511278ca"
+    },
+    {
+      "term": "Befund (Archäologie)",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_51edfb24"
     },
     {
       "term": "Körpergrab",
@@ -4674,7 +4842,9 @@
     },
     {
       "term": "Kreisgraben",
-      "alt": [],
+      "alt": [
+        "Kreisgrabensegment"
+      ],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_583b389a"
     },
@@ -5051,7 +5221,7 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_772eecff"
     },
     {
-      "term": "Schanze",
+      "term": "Schanze (Befestigungsanlage)",
       "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_785ad094"
@@ -5070,7 +5240,9 @@
     },
     {
       "term": "Kohlenmeiler",
-      "alt": [],
+      "alt": [
+        "Holzkohlemeiler"
+      ],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_79f23ff3"
     },
@@ -5225,12 +5397,6 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_80ca0940"
     },
     {
-      "term": "Praetorium",
-      "alt": [],
-      "category": "Befund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_81661f83"
-    },
-    {
       "term": "Trockenrinne",
       "alt": [],
       "category": "Befund",
@@ -5265,14 +5431,6 @@
       "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_83fcbdf7"
-    },
-    {
-      "term": "Siedlung",
-      "alt": [
-        "Siedlungsreste"
-      ],
-      "category": "Befund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_84a4e3a5"
     },
     {
       "term": "Ausbruchgrube",
@@ -5575,7 +5733,7 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_9cd8b9b3"
     },
     {
-      "term": "Aschengrube",
+      "term": "Aschengrube (Ofen)",
       "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_9d119603"
@@ -5665,7 +5823,7 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_a43e8236"
     },
     {
-      "term": "Erdwerk (Archäologie)",
+      "term": "Erdwerk",
       "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_a4420a89"
@@ -5779,7 +5937,7 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_ab4bf629"
     },
     {
-      "term": "Altacker (Landwirtschaft)",
+      "term": "Altacker",
       "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_ab59ffc6"
@@ -5858,7 +6016,11 @@
     },
     {
       "term": "Einzelhof",
-      "alt": [],
+      "alt": [
+        "Einzelgehöft",
+        "Hofplatz",
+        "Hofstelle"
+      ],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_b36d4929"
     },
@@ -6139,12 +6301,6 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_c97f7c4d"
     },
     {
-      "term": "Kloster (Architektur)",
-      "alt": [],
-      "category": "Befund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_ca47ae79"
-    },
-    {
       "term": "Schurf",
       "alt": [],
       "category": "Befund",
@@ -6259,7 +6415,7 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_d2fac050"
     },
     {
-      "term": "Wehr",
+      "term": "Wehr (Stauanlage)",
       "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_d3ddf567"
@@ -6451,12 +6607,6 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_e31adda8"
     },
     {
-      "term": "Kohortenkastell",
-      "alt": [],
-      "category": "Befund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_e4455f3c"
-    },
-    {
       "term": "Abraumhalde",
       "alt": [],
       "category": "Befund",
@@ -6553,7 +6703,7 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_e934cbe6"
     },
     {
-      "term": "Lichtloch",
+      "term": "Lichtschacht (Architektur)",
       "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_e960fccb"
@@ -6607,7 +6757,7 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_ed3f93af"
     },
     {
-      "term": "Findling (Geologie)",
+      "term": "Findling",
       "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_ee18f494"
@@ -6727,12 +6877,6 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_f6ad28bc"
     },
     {
-      "term": "Numeruskastell",
-      "alt": [],
-      "category": "Befund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_f7219f6d"
-    },
-    {
       "term": "Glasofen",
       "alt": [],
       "category": "Befund",
@@ -6751,8 +6895,10 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_f98d8a42"
     },
     {
-      "term": "Ofen (Vorrichtung)",
-      "alt": [],
+      "term": "Ofen",
+      "alt": [
+        "Brennofen"
+      ],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_f9fe1448"
     },
@@ -6817,6 +6963,12 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_feb8f9a6"
     },
     {
+      "term": "Befund nicht interpretierbar",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_ff29f8f9"
+    },
+    {
       "term": "Schicht (Archäologie)",
       "alt": [],
       "category": "Befund",
@@ -6833,6 +6985,30 @@
       "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_ffdd45f2"
+    },
+    {
+      "term": "Römerstraße",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_2f2a06ac"
+    },
+    {
+      "term": "Klostermauer",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_8ed0d9a3"
+    },
+    {
+      "term": "Siedlungsgrube",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_ecfb37ff"
+    },
+    {
+      "term": "Pfostenbau",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_2b8899a6"
     },
     {
       "term": "Quellheiligtum",
@@ -6853,28 +7029,49 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_7e4fbae9"
     },
     {
+      "term": "Siedlung",
+      "alt": [
+        "Besiedlung",
+        "Siedlungsstelle"
+      ],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_84a4e3a5"
+    },
+    {
       "term": "Kirchengebäude",
       "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_88f23419"
     },
     {
-      "term": "Befestigungselement",
+      "term": "Kloster (Architektur)",
       "alt": [],
       "category": "Befund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/befestigungselement"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_ca47ae79"
+    },
+    {
+      "term": "Kastell Elemente",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_1005be64"
+    },
+    {
+      "term": "Archäologische Beobachtung",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_a62bbfd9"
+    },
+    {
+      "term": "Schützengraben",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_325d7203"
     },
     {
       "term": "Weg (Verkehr)",
       "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_38795406"
-    },
-    {
-      "term": "Aquädukt",
-      "alt": [],
-      "category": "Befund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_4232cbcc"
     },
     {
       "term": "Brunnen",
@@ -6895,10 +7092,16 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_f0489169"
     },
     {
-      "term": "Straße",
+      "term": "Festung",
       "alt": [],
       "category": "Befund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_06678d7e"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_2c698655"
+    },
+    {
+      "term": "Aquädukt",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_4232cbcc"
     },
     {
       "term": "Grube und Vertiefung",
@@ -6907,7 +7110,19 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_492f747f"
     },
     {
-      "term": "Schacht",
+      "term": "Kastell",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_842b03fc"
+    },
+    {
+      "term": "Straße",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_06678d7e"
+    },
+    {
+      "term": "Schacht (Bauwesen)",
       "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_065c5159"
@@ -6920,23 +7135,21 @@
     },
     {
       "term": "Befund",
-      "alt": [
-        "Befundstreuung"
-      ],
-      "category": "Befund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_4c5049c7"
-    },
-    {
-      "term": "Landwirtschaft und Flurstruktur",
       "alt": [],
       "category": "Befund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_902bfe53"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_4c5049c7"
     },
     {
       "term": "Sepulkral- und Bestattungsbefund",
       "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_8e462332"
+    },
+    {
+      "term": "Landwirtschaft und Flurstruktur",
+      "alt": [],
+      "category": "Befund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_902bfe53"
     },
     {
       "term": "Geologie, Stratigraphie und Naturform",
@@ -6946,9 +7159,7 @@
     },
     {
       "term": "Graben",
-      "alt": [
-        "Gräbchen"
-      ],
+      "alt": [],
       "category": "Befund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_30060d07"
     },
@@ -7093,40 +7304,112 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/aquamanile"
     },
     {
-      "term": "Dolium",
-      "alt": [],
+      "term": "Natursteinmauerwerk",
+      "alt": [
+        "Bruchsteinmauer"
+      ],
       "category": "Fund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_40a92de4"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_0d2f0a5c"
     },
     {
-      "term": "Zweihenkelkrug",
+      "term": "Depotfund",
       "alt": [],
       "category": "Fund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_66bd98a9"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_153d3150"
     },
     {
-      "term": "Randscherbe",
+      "term": "Schwerkeramik",
       "alt": [],
       "category": "Fund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_834ec013"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_5aa855bc"
     },
     {
-      "term": "Einhenkelkrug",
+      "term": "Helmbusch",
       "alt": [],
       "category": "Fund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_846df329"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_70c529f2"
     },
     {
-      "term": "Pithos",
+      "term": "Haltern",
       "alt": [],
       "category": "Fund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_cc50ecad"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_803f00dc"
     },
     {
-      "term": "Wandscherbe",
+      "term": "Mayener Ware",
       "alt": [],
       "category": "Fund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_ef0267df"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_862d3886"
+    },
+    {
+      "term": "Jupitergigantensäule",
+      "alt": [
+        "Jupitersäule"
+      ],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_89235491"
+    },
+    {
+      "term": "Keramikgefäß",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_9204fdf8"
+    },
+    {
+      "term": "Glasgefäß",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_9f4391bb"
+    },
+    {
+      "term": "Scharnierfiebel",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_a0659e6e"
+    },
+    {
+      "term": "Kleinfund",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_d0e983ee"
+    },
+    {
+      "term": "Gebrauchskeramik",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_d6a1afda"
+    },
+    {
+      "term": "Durchgang",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_e0e411b4"
+    },
+    {
+      "term": "Engobierte Ware",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_e7dcdb69"
+    },
+    {
+      "term": "Lichthäuschen",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_f0adac86"
+    },
+    {
+      "term": "Dragendorff",
+      "alt": [
+        "Drag."
+      ],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_f5707028"
+    },
+    {
+      "term": "Terranigra",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_febec2e2"
     },
     {
       "term": "Architekturfragment",
@@ -7183,6 +7466,12 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/aurignacienklinge"
     },
     {
+      "term": "Ausgesplittertes Stück",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/ausgesplittertes_stueck"
+    },
+    {
       "term": "Ausguss",
       "alt": [],
       "category": "Fund",
@@ -7207,7 +7496,7 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/axt_waffe"
     },
     {
-      "term": "Axt",
+      "term": "Axt (Werkzeug)",
       "alt": [],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/axt_werkzeug"
@@ -7219,7 +7508,7 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/axtklinge"
     },
     {
-      "term": "Balken",
+      "term": "Balken (Bauteil)",
       "alt": [],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/balken_bauteil"
@@ -7277,6 +7566,12 @@
       "alt": [],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/becher_trinkgefaess"
+    },
+    {
+      "term": "Befestigungselement",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/befestigungselement"
     },
     {
       "term": "Beil",
@@ -7388,7 +7683,9 @@
     },
     {
       "term": "Bodenscherbe",
-      "alt": [],
+      "alt": [
+        "BS"
+      ],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/bodenscherbe"
     },
@@ -7715,6 +8012,12 @@
       "alt": [],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/dolchscheide"
+    },
+    {
+      "term": "Dolium",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/dolium"
     },
     {
       "term": "Dose (Behälter)",
@@ -8425,12 +8728,6 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/heizanlage"
     },
     {
-      "term": "Helm (Kopfbedeckung)",
-      "alt": [],
-      "category": "Fund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/helm_kopfbedeckung"
-    },
-    {
       "term": "Hemd (Oberbekleidung)",
       "alt": [],
       "category": "Fund",
@@ -8575,7 +8872,7 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/keilmesser"
     },
     {
-      "term": "Kelch",
+      "term": "Kelch (Gefäß)",
       "alt": [],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/kelch_gefaess"
@@ -8785,6 +9082,12 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/kreuz_visuelles_werk"
     },
     {
+      "term": "Krug (Gefäß)",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/krug_gefaess"
+    },
+    {
       "term": "Küchenherd",
       "alt": [],
       "category": "Fund",
@@ -8815,7 +9118,7 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/kummet"
     },
     {
-      "term": "Kumpf",
+      "term": "Kumpf (Gefäß)",
       "alt": [],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/kumpf_gefaess"
@@ -9005,12 +9308,6 @@
       "alt": [],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/matrize_stempel"
-    },
-    {
-      "term": "Mauer",
-      "alt": [],
-      "category": "Fund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/mauer"
     },
     {
       "term": "Mauerziegel",
@@ -9493,7 +9790,7 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/plombe_siegel"
     },
     {
-      "term": "Pokal",
+      "term": "Pokal (Trinkgefäß)",
       "alt": [],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/pokal_trinkgefaess"
@@ -9587,6 +9884,12 @@
       "alt": [],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/raeuchergeraet"
+    },
+    {
+      "term": "Randscherbe",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/randscherbe"
     },
     {
       "term": "Rasiermesser",
@@ -9824,7 +10127,9 @@
     },
     {
       "term": "Schale",
-      "alt": [],
+      "alt": [
+        "Schälchen"
+      ],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/schale_gefaess"
     },
@@ -10051,7 +10356,7 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/schuerhaken"
     },
     {
-      "term": "Schüssel",
+      "term": "Schüssel (Gefäß)",
       "alt": [],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/schuessel_gefaess"
@@ -10315,7 +10620,7 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/stab_objekttyp"
     },
     {
-      "term": "Standfuß",
+      "term": "Standfuß (Gefäßfuß)",
       "alt": [],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/standfuss_gefaessfuss"
@@ -10711,7 +11016,7 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/unifaziales_messer"
     },
     {
-      "term": "Urne",
+      "term": "Urne (Grabgefäß)",
       "alt": [],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/urne_grabgefaess"
@@ -10813,6 +11118,14 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/wandputz"
     },
     {
+      "term": "Wandscherbe",
+      "alt": [
+        "WS"
+      ],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/wandscherbe"
+    },
+    {
       "term": "Wandteppich",
       "alt": [],
       "category": "Fund",
@@ -10847,12 +11160,6 @@
       "alt": [],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/webschwert"
-    },
-    {
-      "term": "Weihedenkmal",
-      "alt": [],
-      "category": "Fund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/weihedenkmal"
     },
     {
       "term": "Weihrauchfass",
@@ -10975,24 +11282,24 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/zwiebelknopffibel"
     },
     {
-      "term": "Gefäß und Behältnis",
+      "term": "Lampe",
       "alt": [],
       "category": "Fund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/Gefaess_und_Behaeltnis"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_5205ef29"
+    },
+    {
+      "term": "Öllampe",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/arch_vocab_rhineland/concept_ebc5bc9a"
     },
     {
       "term": "Keramik",
       "alt": [
-        "Keramikgefäß"
+        "Scherbe"
       ],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_01b77638"
-    },
-    {
-      "term": "Archäologie",
-      "alt": [],
-      "category": "Fund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_25c54f17"
     },
     {
       "term": "Klassifizierung",
@@ -11001,18 +11308,10 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_86c4a69a"
     },
     {
-      "term": "Römische Keramik",
+      "term": "Helm",
       "alt": [],
       "category": "Fund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_dd749656"
-    },
-    {
-      "term": "Terra Sigillata",
-      "alt": [
-        "TS"
-      ],
-      "category": "Fund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_e2c50426"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/helm_kopfbedeckung"
     },
     {
       "term": "Münze (Tauschmittel)",
@@ -11021,10 +11320,12 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/muenze_tauschmittel"
     },
     {
-      "term": "Krug",
-      "alt": [],
+      "term": "Weihedenkmal",
+      "alt": [
+        "Denkmal"
+      ],
       "category": "Fund",
-      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/krug_gefaess"
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/weihedenkmal"
     },
     {
       "term": "Lanze (Waffe)",
@@ -11033,10 +11334,38 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/lanze_waffe"
     },
     {
+      "term": "Mauer",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/mauer"
+    },
+    {
       "term": "Schild (Waffe)",
       "alt": [],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/schild_waffe"
+    },
+    {
+      "term": "Gefäß und Behältnis",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/Gefaess_und_Behaeltnis"
+    },
+    {
+      "term": "Archäologie",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_25c54f17"
+    },
+    {
+      "term": "Terra Sigillata",
+      "alt": [
+        "Sigilata",
+        "Sigilaten",
+        "TS"
+      ],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_e2c50426"
     },
     {
       "term": "Schwert (Waffe)",
@@ -11051,13 +11380,19 @@
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_225cb316"
     },
     {
+      "term": "Römische Keramik",
+      "alt": [],
+      "category": "Fund",
+      "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/concept_dd749656"
+    },
+    {
       "term": "Schmuckring",
       "alt": [],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/schmuckring"
     },
     {
-      "term": "Fibel (Verschluss)",
+      "term": "Fibel",
       "alt": [],
       "category": "Fund",
       "uri": "http://vocabs.bcdh.uni-bonn.de/LVR_Fundansprachen/fibel_verschluss"
