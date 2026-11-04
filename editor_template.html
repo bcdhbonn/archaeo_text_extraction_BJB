@@ -1341,7 +1341,7 @@
             </div>
 
             <!-- Tab 4: 3-Tier GIS Map Verification & QGIS Integration -->
-            <div class="tab-content" id="tabContentMap" style="display: none; flex-direction: column; height: 100%;">
+            <div class="tab-content" id="tabContentMap" style="padding: 0; gap: 0; height: 100%; overflow: hidden;">
                 <div class="map-toolbar" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--bg-card-subtle); border-bottom: 1px solid var(--border-color); gap: 8px; flex-wrap: wrap;">
                     <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600;">
                         <span>🗺️ 3-Tier GIS:</span>
@@ -1354,11 +1354,19 @@
                         <button type="button" class="btn-primary" onclick="exportQgisGeoJSON()" style="font-size: 11px; padding: 3px 10px; background: #059669; border-color: #047857; font-weight: 700;" title="GeoJSON Layer herunterladen">📥 QGIS Export</button>
                     </div>
                 </div>
+                <!-- Notice Banner for Manual Mode without measures -->
+                <div id="mapManualEmptyNotice" style="display: none; padding: 6px 12px; background: #eff6ff; border-bottom: 1px solid #bfdbfe; font-size: 11.5px; color: #1e40af; align-items: center; justify-content: space-between; gap: 8px;">
+                    <span id="mapManualEmptyNoticeText">✍️ <strong>Hand-Annotation:</strong> Zeige Pipeline-Fundstellen als Orientierungshilfe.</span>
+                    <button type="button" class="btn-primary" onclick="setAnnotationMode('pipeline')" style="font-size: 10.5px; padding: 2px 8px; background: #2563eb; white-space: nowrap;">🤖 Zur Pipeline-Vorschau</button>
+                </div>
                 <div style="display: flex; gap: 6px; padding: 6px 12px; background: var(--bg-card); border-bottom: 1px solid var(--border-color); align-items: center;">
                     <input type="text" class="search-box-input" id="mapSearchInput" placeholder="🔍 Ort / Flurname suchen (z. B. Merzenicher Heide)..." onkeydown="if(event.key==='Enter') searchLocationNominatim(this.value)" style="margin: 0; font-size: 12px; padding: 4px 8px;">
                     <button type="button" class="btn-outline" onclick="searchLocationNominatim(document.getElementById('mapSearchInput').value)" style="font-size: 11px; padding: 4px 8px; white-space: nowrap;">Suchen</button>
+                    <label style="display:inline-flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted); cursor:pointer; margin-left:auto; white-space:nowrap;" title="Pipeline-Fundstellen auf der Karte anzeigen">
+                        <input type="checkbox" id="chkShowPipelineRef" checked onchange="renderGisMarkers()"> Pipeline-Orte
+                    </label>
                 </div>
-                <div id="leafletMapContainer" style="flex: 1; min-height: 480px; width: 100%; z-index: 10;"></div>
+                <div id="leafletMapContainer" style="flex: 1; min-height: 250px; width: 100%; z-index: 10;"></div>
                 <div style="padding: 6px 12px; font-size: 11px; color: var(--text-muted); background: var(--bg-card-subtle); border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
                     <span>📍 <em>Pinpoint:</em> Marker können per Drag-and-Drop direkt auf die Grabung verschoben werden.</span>
                     <span id="mapSelectedCoordsDisplay" style="font-family: monospace; font-size: 10.5px;"></span>
@@ -3854,6 +3862,9 @@ REGELN:
             // Render Pipeline Table
             renderPipelineTable();
 
+            // Update GIS map markers and counters
+            renderGisMarkers();
+
             // Set first measure active
             const activeRows = (currentAnnotationMode === 'manual') ? docData.manual_table_rows : docData.table_rows;
             if (activeRows && activeRows.length > 0) {
@@ -3876,6 +3887,7 @@ REGELN:
             if (docData) {
                 renderDocumentContent(docData);
                 renderPipelineTable();
+                renderGisMarkers();
             }
 
             if (mode === 'manual') {
@@ -5883,11 +5895,14 @@ REGELN:
             } else if (tabKey === 'map') {
                 document.getElementById('tabBtnMap').classList.add('active');
                 document.getElementById('tabContentMap').classList.add('active');
+                initLeafletMap();
+                renderGisMarkers();
+                if (leafletMapInstance) leafletMapInstance.invalidateSize();
                 setTimeout(() => {
                     initLeafletMap();
                     renderGisMarkers();
                     if (leafletMapInstance) leafletMapInstance.invalidateSize();
-                }, 100);
+                }, 120);
             } else if (tabKey === 'candidates') {
                 document.getElementById('tabBtnCandidates').classList.add('active');
                 document.getElementById('tabContentCandidates').classList.add('active');
@@ -5923,12 +5938,38 @@ REGELN:
                     zoomControl: true
                 });
 
-                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                // Reliable high-resolution tile layers (no API key required, no watermark, no 403 blocks)
+                const baseOsmDe = L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
                     maxZoom: 19,
-                    attribution: '© OpenStreetMap contributors'
-                }).addTo(leafletMapInstance);
+                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> Deutschland'
+                });
+
+                const baseTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 19,
+                    attribution: '© Esri, HERE, Garmin, USGS, NGA'
+                });
+
+                const baseSatellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 19,
+                    attribution: '© Esri, Maxar, Earthstar Geographics'
+                });
+
+                // Default: Topographic Map (optimal for archaeological terrain and contours)
+                baseTopo.addTo(leafletMapInstance);
+
+                const baseMaps = {
+                    "🗺️ Topo-Karte (Relief)": baseTopo,
+                    "🇩🇪 OSM Deutschland": baseOsmDe,
+                    "🛰️ Satellit (Luftbild)": baseSatellite
+                };
 
                 leafletMarkersLayer = L.layerGroup().addTo(leafletMapInstance);
+
+                const overlayMaps = {
+                    "📍 Fundstellen": leafletMarkersLayer
+                };
+
+                L.control.layers(baseMaps, overlayMaps, { position: 'topright' }).addTo(leafletMapInstance);
             }
         }
 
@@ -5958,6 +5999,45 @@ REGELN:
             });
         }
 
+        function createPipelineRefIcon(labelText) {
+            return L.divIcon({
+                className: 'custom-gis-pin custom-gis-pin-ref',
+                html: `<div style="background:#0284c7; width:22px; height:22px; border-radius:50%; border:2px solid #ffffff; box-shadow:0 2px 6px rgba(0,0,0,0.35); display:flex; align-items:center; justify-content:center; font-size:10px; cursor:pointer;" title="${labelText}">🏛️</div>`,
+                iconSize: [22, 22],
+                iconAnchor: [11, 11],
+                popupAnchor: [0, -12]
+            });
+        }
+
+        function adoptPipelineRefAsMeasure(ort, kreis, massnahme, page, lat, lon) {
+            const docData = EMBEDDED_DOCS[activeDocKey];
+            if (!docData) return;
+            if (!docData.manual_table_rows) initManualTableRows(docData);
+            const newRowId = `row_${Date.now()}`;
+            const newRow = {
+                id: newRowId,
+                page: page || '-',
+                ort: ort || 'Unbekannt',
+                kreis: kreis || '-',
+                massnahme: massnahme || '',
+                datierung: [],
+                befunde: [],
+                funde: [],
+                autor: "-",
+                lat: lat,
+                lon: lon,
+                coord_tier: 'Tier 1 (Aus Pipeline-Referenz übernommen)',
+                coord_tier_num: 1
+            };
+            docData.manual_table_rows.push(newRow);
+            renderPipelineTable();
+            renderCandidatesTable();
+            renderGisMarkers();
+            setActiveMeasure(newRowId);
+            saveManualState();
+            showToast(`📍 «${ort}» als Maßnahme in Hand-Annotation übernommen!`, 'success');
+        }
+
         function renderGisMarkers() {
             initLeafletMap();
             if (!leafletMarkersLayer) return;
@@ -5965,7 +6045,46 @@ REGELN:
 
             const docData = EMBEDDED_DOCS[activeDocKey];
             if (!docData) return;
-            const activeRows = (currentAnnotationMode === 'manual') ? (docData.manual_table_rows || []) : (docData.table_rows || []);
+
+            const isManual = (currentAnnotationMode === 'manual');
+            const manualRows = docData.manual_table_rows || [];
+            const pipeRows = docData.table_rows || [];
+
+            const chkRef = document.getElementById('chkShowPipelineRef');
+            const showPipelineRef = chkRef ? chkRef.checked : true;
+
+            const emptyNotice = document.getElementById('mapManualEmptyNotice');
+            if (emptyNotice) {
+                if (isManual && manualRows.length === 0) {
+                    emptyNotice.style.display = 'flex';
+                    const noticeText = document.getElementById('mapManualEmptyNoticeText');
+                    if (noticeText) {
+                        noticeText.innerHTML = `✍️ <strong>Hand-Annotation aktiv:</strong> Noch keine manuellen Maßnahmen angelegt. Zeige ${pipeRows.length} Pipeline-Fundstellen als Referenz.`;
+                    }
+                } else {
+                    emptyNotice.style.display = 'none';
+                }
+            }
+
+            // Determine rows to render
+            let activeRows = [];
+            if (isManual) {
+                if (manualRows.length > 0) {
+                    activeRows = [...manualRows];
+                    if (showPipelineRef && pipeRows.length > 0) {
+                        pipeRows.forEach(pr => {
+                            const prOrtNorm = (pr.ort || '').toLowerCase().trim();
+                            if (!activeRows.some(mr => (mr.ort || '').toLowerCase().trim() === prOrtNorm)) {
+                                activeRows.push({ ...pr, isPipelineRef: true });
+                            }
+                        });
+                    }
+                } else if (showPipelineRef) {
+                    activeRows = pipeRows.map(pr => ({ ...pr, isPipelineRef: true }));
+                }
+            } else {
+                activeRows = pipeRows;
+            }
 
             let t1Count = 0;
             let t2Count = 0;
@@ -6005,44 +6124,54 @@ REGELN:
                     else if (tier === 2) t2Count++;
                     else t3Count++;
 
+                    const isRef = Boolean(row.isPipelineRef);
                     const marker = L.marker([lat, lon], {
-                        icon: createPinIcon(tier, `${row.ort} (${row.massnahme})`),
-                        draggable: true
+                        icon: isRef ? createPipelineRefIcon(`${row.ort} (Pipeline-Referenz)`) : createPinIcon(tier, `${row.ort} (${row.massnahme || ''})`),
+                        draggable: !isRef
                     });
 
                     marker.rowRef = row;
 
-                    // Drag end: Pinpoint relocation
-                    marker.on('dragend', function(e) {
-                        const newPos = e.target.getLatLng();
-                        row.lat = Number(newPos.lat.toFixed(6));
-                        row.lon = Number(newPos.lng.toFixed(6));
-                        row.coord_tier = 'Tier 1 (Manuell per Drag&Drop verifiziert)';
-                        row.coord_tier_num = 1;
-                        saveManualState();
-                        showToast(`📍 Grabungsstelle für «${row.ort}» präzisiert: ${row.lat}, ${row.lon}`, 'success');
-                        const coordDisplay = document.getElementById('mapSelectedCoordsDisplay');
-                        if (coordDisplay) coordDisplay.innerText = `${row.lat}, ${row.lon}`;
-                    });
+                    if (!isRef) {
+                        // Drag end: Pinpoint relocation
+                        marker.on('dragend', function(e) {
+                            const newPos = e.target.getLatLng();
+                            row.lat = Number(newPos.lat.toFixed(6));
+                            row.lon = Number(newPos.lng.toFixed(6));
+                            row.coord_tier = 'Tier 1 (Manuell per Drag&Drop verifiziert)';
+                            row.coord_tier_num = 1;
+                            saveManualState();
+                            showToast(`📍 Grabungsstelle für «${row.ort}» präzisiert: ${row.lat}, ${row.lon}`, 'success');
+                            const coordDisplay = document.getElementById('mapSelectedCoordsDisplay');
+                            if (coordDisplay) coordDisplay.innerText = `${row.lat}, ${row.lon}`;
+                        });
+                    }
 
                     // Popup
                     const popupHtml = `
-                        <div class="gis-popup-content" style="min-width: 200px; font-family:'Inter',sans-serif;">
+                        <div class="gis-popup-content" style="min-width: 210px; font-family:'Inter',sans-serif;">
                             <div class="gis-popup-header" style="font-weight:700; font-size:13.5px; color:#0369a1; display:flex; justify-content:space-between; align-items:center;">
                                 <span>📍 ${escapeHtml(row.ort || '-')}</span>
-                                <span style="font-size:10px; padding:1px 6px; border-radius:10px; background:${tier===1?'#dcfce7':tier===2?'#fef9c3':'#ffedd5'}; color:${tier===1?'#166534':tier===2?'#854d0e':'#c2410c'}; font-weight:700;">${tier===1?'🟢 Tier 1':tier===2?'🟡 Tier 2':'🟠 Tier 3'}</span>
+                                ${isRef 
+                                    ? `<span style="font-size:10px; padding:1px 6px; border-radius:10px; background:#dbeafe; color:#1e40af; font-weight:700;">🤖 Pipeline</span>`
+                                    : `<span style="font-size:10px; padding:1px 6px; border-radius:10px; background:${tier===1?'#dcfce7':tier===2?'#fef9c3':'#ffedd5'}; color:${tier===1?'#166534':tier===2?'#854d0e':'#c2410c'}; font-weight:700;">${tier===1?'🟢 Tier 1':tier===2?'🟡 Tier 2':'🟠 Tier 3'}</span>`
+                                }
                             </div>
                             <div style="font-size:11px; color:#64748b; margin-bottom:4px;">
                                 Maßnahme: <strong>${escapeHtml(row.massnahme || '-')}</strong> ${row.kreis && row.kreis !== '-' ? `• ${escapeHtml(row.kreis)}` : ''} • Seite ${escapeHtml(row.page || '-')}
                             </div>
                             <div style="font-size:11.5px; margin-top:4px;">
-                                ${row.datierung && row.datierung.length ? `<div><strong>Datierung:</strong> ${row.datierung.map(d=>`<span style="background:#fef9c3; color:#854d0e; padding:0 4px; border-radius:3px;">${escapeHtml(d)}</span>`).join(' ')}</div>` : ''}
-                                ${row.befunde && row.befunde.length ? `<div style="margin-top:2px;"><strong>Befund:</strong> ${row.befunde.map(b=>`<span style="background:#fee2e2; color:#991b1b; padding:0 4px; border-radius:3px;">${escapeHtml(b)}</span>`).join(' ')}</div>` : ''}
-                                ${row.funde && row.funde.length ? `<div style="margin-top:2px;"><strong>Fund:</strong> ${row.funde.map(f=>`<span style="background:#dcfce7; color:#166534; padding:0 4px; border-radius:3px;">${escapeHtml(f)}</span>`).join(' ')}</div>` : ''}
+                                ${row.datierung && (Array.isArray(row.datierung) ? row.datierung.length : row.datierung !== '-') ? `<div><strong>Datierung:</strong> ${Array.isArray(row.datierung) ? row.datierung.map(d=>`<span style="background:#fef9c3; color:#854d0e; padding:0 4px; border-radius:3px;">${escapeHtml(d)}</span>`).join(' ') : escapeHtml(row.datierung)}</div>` : ''}
+                                ${row.befunde && (Array.isArray(row.befunde) ? row.befunde.length : row.befunde !== '-') ? `<div style="margin-top:2px;"><strong>Befund:</strong> ${Array.isArray(row.befunde) ? row.befunde.map(b=>`<span style="background:#fee2e2; color:#991b1b; padding:0 4px; border-radius:3px;">${escapeHtml(b)}</span>`).join(' ') : escapeHtml(row.befunde)}</div>` : ''}
+                                ${row.funde && (Array.isArray(row.funde) ? row.funde.length : row.funde !== '-') ? `<div style="margin-top:2px;"><strong>Fund:</strong> ${Array.isArray(row.funde) ? row.funde.map(f=>`<span style="background:#dcfce7; color:#166534; padding:0 4px; border-radius:3px;">${escapeHtml(f)}</span>`).join(' ') : escapeHtml(row.funde)}</div>` : ''}
                             </div>
                             <div style="margin-top:8px; display:flex; gap:6px; border-top:1px solid #e2e8f0; padding-top:6px;">
-                                <button onclick="focusRowFromMap('${row.id}')" style="font-size:10.5px; padding:3px 6px; background:#0284c7; color:white; border:none; border-radius:4px; cursor:pointer;">📊 In Tabelle</button>
-                                <button onclick="focusTextFromMap('${row.id}')" style="font-size:10.5px; padding:3px 6px; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;">📄 Zum Text</button>
+                                ${isRef && isManual ? `
+                                    <button onclick="adoptPipelineRefAsMeasure('${escapeHtml(row.ort || '')}', '${escapeHtml(row.kreis || '')}', '${escapeHtml(row.massnahme || '')}', '${escapeHtml(row.page || '')}', ${lat}, ${lon})" style="font-size:10.5px; padding:3px 6px; background:#059669; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:600;">➕ In Hand-Annotation</button>
+                                ` : `
+                                    <button onclick="focusRowFromMap('${row.id}')" style="font-size:10.5px; padding:3px 6px; background:#0284c7; color:white; border:none; border-radius:4px; cursor:pointer;">📊 In Tabelle</button>
+                                    <button onclick="focusTextFromMap('${row.id}')" style="font-size:10.5px; padding:3px 6px; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;">📄 Zum Text</button>
+                                `}
                             </div>
                         </div>
                     `;
@@ -6178,7 +6307,11 @@ REGELN:
                 alert("Kein Dokument geöffnet!");
                 return;
             }
-            const activeRows = (currentAnnotationMode === 'manual') ? (docData.manual_table_rows || []) : (docData.table_rows || []);
+            const isManual = (currentAnnotationMode === 'manual');
+            const manualRows = docData.manual_table_rows || [];
+            const activeRows = isManual 
+                ? (manualRows.length > 0 ? manualRows : (docData.table_rows || []))
+                : (docData.table_rows || []);
 
             const features = [];
 
@@ -6477,6 +6610,7 @@ REGELN:
                 resizer.classList.remove('dragging');
                 document.body.style.cursor = '';
                 document.body.style.userSelect = '';
+                if (leafletMapInstance) leafletMapInstance.invalidateSize();
             }
         });
 

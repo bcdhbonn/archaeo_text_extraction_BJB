@@ -647,8 +647,20 @@ if not docs_data:
     process_document("LVR_1973_Split_Fixed.csv", "LVR_1973_cleaned.txt", "LVR_1973_cleaned.txt", "LVR 1973")
     process_document("LVR_1970_Split_Fixed.csv", "LVR_1970_cleaned.txt", "LVR_1970_cleaned.txt", "LVR 1970")
 
+editor_path = os.path.join(root_dir, 'annotation_editor.html')
+if not docs_data and os.path.exists(editor_path):
+    with open(editor_path, 'r', encoding='utf-8') as f:
+        existing_editor = f.read()
+    m_docs = re.search(r'const EMBEDDED_DOCS = ({.*?});\s*const GAZETTEER_DATA', existing_editor, re.DOTALL)
+    if m_docs:
+        docs_json_str = m_docs.group(1)
+        print("ℹ️ Existing bundled EMBEDDED_DOCS preserved.")
+    else:
+        docs_json_str = json.dumps(docs_data, ensure_ascii=False)
+else:
+    docs_json_str = json.dumps(docs_data, ensure_ascii=False)
+
 vocab_json_str = json.dumps(vocab_data, ensure_ascii=False)
-docs_json_str = json.dumps(docs_data, ensure_ascii=False)
 gazetteer_json_str = json.dumps(gazetteer_data, ensure_ascii=False)
 
 
